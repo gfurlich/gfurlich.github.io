@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en"> <!--- Header --->
+<head>
+    <title>Greg Furlich</title>
+    <meta name="description" content="Personal Website of Greg Furlich, Graduate Student at the University of Utah, Department of Physics and Astronomy">
+    <meta name="keywords" content="Greg Furlich,Cosmic Rays,Telescope Array Project,University of Utah,Graduate Student,Physics,Data,Scientist">
+    <meta name="author" content="Greg Furlich">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+</head>
+<body><header>
+
+    <nav>
+       <div class="topnav">
+           <a href="/">
+               <p>
+                   <h> Greg Furlich</h>
+                   <!---<br>
+                   <hl>Science Elevated</hl>--->
+               </p>
+           </a>
+
+           <div class="topnav-right">
+               <a href="/Education.html"><p>Education</p></a>
+               <a href="/Research.html"><p>Research</p></a>
+               <!-- <a href="/Hobbies.html"><p>Hobbies</p></a> -->
+               <a href="/Projects.html"><p>Projects</p></a>
+               <!-- <a href="/Photography.html"><p>Photography</p></a> -->
+               <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/images/github.png" height=30vw></p></a>
+               <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/images/in.png" height=30vw></p></a>
+               <a href="mailto:g.furlich@gmail.com"><p><img id="mzil" src="/assets/images/mail.png" height=30vw></p></a>
+           </div>
+
+       </div>
+   </nav>
+
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+
+  <div style="height: 10vh"></div>
+  <header class="post-header">
+    <t>Telescope Array Weather Classification and Other Interesting Pedestal  Animations</t>
+    <!-- <h1 class="post-title p-name" itemprop="name headline">Telescope Array Weather Classification and Other Interesting Pedestal  Animations</h1> -->
+    <div style="height: 5vh"></div>
+    <p class="post-meta" style="font-size: 1em">
+
+        <i class="far fa-clock"></i> <time  class="dt-published" datetime="2019-11-10T21:52:07-07:00" itemprop="datePublished">Nov 10, 2019
+        </time>• <i class="far fa-user-circle"></i> <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Greg Furlich</span></span></p>
+
+
+    <h3>   <i class="fas fa-tags"></i>  Categories :
+        
+            Telescope Array,
+        
+            Research,
+        
+            Machine Learning,
+        
+            Transient Luminous Events,
+        
+    </h3>
+
+  </header>
+
+  <!-- <div class="post-content e-content" itemprop="articleBody"> -->
+  <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
+  text-justify: inter-word;">
+    <!-- <div style="text-align:justifty;display:inline-block;"> -->
+<p>In order to determine the weather of the field of view (FOV) of the array of telescopes at a Fluorescence Detector (FD) site at the <a href="http://telescopearray.org/">Telescope Array Cosmic Ray Observatory</a>, false color snapshots of the night sky were created using the minute average pedestal for each photomultiplier tube (PMT) in the whole array at the night sky and then classified using a trained neural network. More information on how the snapshots were created and results of the different neural network used for classification can be found in <bp style="font-size: 1em"><i><a href="https://pos.sissa.it/358/261/pdf">Telescope Array FD Weather Classification using Machine Learning</a></i>, <b>Greg Furlich</b>, Proceedings of Science (ICRC2019) 261, 36th International Cosmic Ray Conference, Madison, WI, July 2019</bp>.
+<br />
+<br />
+A series of different neural networks were designed starting from a deep neural network (DNN) to test keras with the data. However much of the features of the data, most importantly it’s dimensionality were lost. A Convolution Neural Network (CNN) was built to capture the spatial information when learning. Next a Recurrent Neural Network (RNN) was
+designed to capture the temporal features of the data. Lastly combing a the RNN and CNN into a Recurrent Convolution Neural Network (RCNN) to take full advantage of the temporal and spatial information of the data was designed. Training accuracy above 90% was achieved with good convergence between the training and validation set. Example code used in the project which were run on the Center for High Performance Computing (CHPC) computational clusters at the University of Utah can be found on my <a href="https://github.com/gfurlich/Research/tree/master/CHPC">github page</a>.
+<!-- </div> --></p>
+
+<div style="height: 5vh"></div>
+
+<ul id="markdown-toc">
+  <li><a href="#pedestal-snapshots" id="markdown-toc-pedestal-snapshots">Pedestal Snapshots</a>    <ul>
+      <li><a href="#feature-enhancement" id="markdown-toc-feature-enhancement">Feature Enhancement</a></li>
+    </ul>
+  </li>
+  <li><a href="#clear" id="markdown-toc-clear">Clear</a></li>
+  <li><a href="#cloudy" id="markdown-toc-cloudy">Cloudy</a></li>
+  <li><a href="#noisy" id="markdown-toc-noisy">Noisy</a></li>
+  <li><a href="#meteor-showers" id="markdown-toc-meteor-showers">Meteor Showers</a></li>
+  <li><a href="#meteor-candidates" id="markdown-toc-meteor-candidates">Meteor Candidates</a></li>
+  <li><a href="#high-atmospheric-elves-candidate" id="markdown-toc-high-atmospheric-elves-candidate">High Atmospheric Elves Candidate</a></li>
+  <li><a href="#aurora-borelas-and-air-glow-candidates" id="markdown-toc-aurora-borelas-and-air-glow-candidates">Aurora Borelas and Air Glow Candidates</a></li>
+  <li><a href="#octocopter" id="markdown-toc-octocopter">Octocopter</a></li>
+  <li><a href="#venus" id="markdown-toc-venus">Venus</a></li>
+</ul>
+
+<div style="height: 5vh"></div>
+<p>Below are some examples of animations and some that were found to be interesting.</p>
+<div style="height: 5vh"></div>
+
+<h1 id="pedestal-snapshots">Pedestal Snapshots</h1>
+
+<p>The arrangement of each 16x16 hexagonal grid of PMT cluster for each telescope was reconstructed to match the nominal pointing direction of each PMT to reconstruct FOV of the whole FD site. Each hexagonal pixel represents the pedestal minute average value of each PMT to create a false color image of the night sky in the field of view. Timing information and the nominal pointing direction were marked.</p>
+
+<h2 id="feature-enhancement">Feature Enhancement</h2>
+
+<p>To make the false color snapshot of the night features more clear, the following enhancements were made:</p>
+<ul>
+  <li>Each frame had proceeding the frame’s pixel values subtracted to make moving objects more prominent.</li>
+  <li>All the values in the frame were logarithmically normalized when mapping the pixel(each Hexagonal PMT) to a false color scale.</li>
+</ul>
+<div style="height: 5vh"></div>
+
+<h1 id="clear">Clear</h1>
+
+<center>
+<img src="/assets/research/fov_clear.gif" alt="clear" style="width:50vw" />
+</center>
+<center><p>Example of a clear data part. Stars are clearly visible and moving across the FOV with the earth's rotation. Notice the asterism, the Big Dipper, in the upper right of the FOV.</p></center>
+
+<h1 id="cloudy">Cloudy</h1>
+
+<center>
+<img src="/assets/research/fov_cloudy.gif" alt="cloudy" style="width:50vw" />
+</center>
+<center><p>Example of a cloudy data part. Stars are obscured as nebulous clouds move across the whole FOV.</p></center>
+
+<h1 id="noisy">Noisy</h1>
+
+<center>
+<img src="/assets/research/fov_noisy.gif" alt="noisy" style="width:50vw" />
+</center>
+<center><p>Example of a noisy data part. No determinable structure or points in the field of view. FDs were possibly not behaving properly or overloaded from a bright source getting too close to the FD.</p></center>
+
+<h1 id="meteor-showers">Meteor Showers</h1>
+
+<center>
+<img src="/assets/research/20091214_BR_geminids.gif" alt="geminid" style="width:50vw" />
+</center>
+<center><p>2009 Geminid Meteor Shower seen in BR's FOV. Blips and transient streaks are seen throughout the FOV as oppossed to the smooth movement of the stars. Some of them have oblong, track shapes to them. Some Airplanes are flying through the BR FOV as seen by the longer streaks that persist for a couple of minutes and track across from one edge to another. Also small clouds are seen forming at some points in the FOV.</p></center>
+
+<center>
+<img src="/assets/research/meteor_shower.gif" alt="persied" style="width:50vw" />
+</center>
+<center><p>2016 Persied Meteor Shower seen in BR's FOV.</p></center>
+
+<h1 id="meteor-candidates">Meteor Candidates</h1>
+
+<center>
+<img src="/assets/research/meteor_br.gif" alt="meteor_1" style="width:50vw" />
+</center>
+<center><p>Bright Flash in BR's FOV. First idea is a meteor given the track shape. Again notice the asterism, the Big Dipper, in the upper right of the FOV.</p></center>
+
+<center>
+<img src="/assets/research/20100418_BR_meteor.gif" alt="meteor_2" style="width:50vw" />
+</center>
+<center><p>Bright Flash in BR's FOV.</p></center>
+
+<center>
+<img src="/assets/research/20110829_p35_BR_meteor.gif" alt="meteor_3" style="width:50vw" />
+</center>
+<center><p>Bright Flash in BR's FOV in the lower right.</p></center>
+
+<h1 id="high-atmospheric-elves-candidate">High Atmospheric Elves Candidate</h1>
+
+<center>
+<img src="/assets/research/y2013m05d08s1_elf.gif" alt="elf" style="width:50vw" />
+</center>
+<center><p>Expanding rings on the left, possibly an Elf. </p></center>
+
+<p>Two other similar detectors to TA have seen this: <a href="https://ui.adsabs.harvard.edu/abs/2016EGUGA..18.4769M/abstract">Auger</a> and <a href="http://jem-euso.roma2.infn.it/wp-content/uploads/2020/02/tlev4.gif">Mini JEM EUSO</a>.</p>
+
+<h1 id="aurora-borelas-and-air-glow-candidates">Aurora Borelas and Air Glow Candidates</h1>
+
+<center>
+<img src="/assets/research/y2015m07d13s1_aurora_borealis.gif" alt="aurora_borealis" style="width:50vw" />
+</center>
+<center><p>Bright vertical flowing source that seems to ripple in the northern part of the FOV. Thus I think this is a good candidate of the northern lights. </p></center>
+
+<p>According to this <a href="https://auroranotify.com/2015/07/13/july-1314-aurora-minor-storm-levels-tonight/">source</a> there was observed Aurora Borealis that night.</p>
+
+<center>
+<img src="/assets/research/y2010m12d27s1_airglow.gif" alt="airglow" style="width:50vw" />
+</center>
+<center><p>Transitions from being able to see stars into something bright rolling in. Seems different than the clouds given it's uniformaity in the bands.</p></center>
+
+<h1 id="octocopter">Octocopter</h1>
+
+<center>
+<img src="/assets/research/octo.gif" alt="octo" style="width:50vw" />
+</center>
+<center><p>An octocopter with a UVLED attached to it was flown in BR's FOV as a calibration method.</p></center>
+
+<h1 id="venus">Venus</h1>
+
+<center>
+<img src="/assets/research/venus.png" alt="venus" style="width:50vw" />
+</center>
+<center><p>A snapshot of the planet Venus, on the left, one of the biggest and brightest objects in BR's FOV.</p></center>
+
+  </div><a class="u-url" href="/telescope%20array/research/machine%20learning/transient%20luminous%20events/2019/11/10/weatherclassification.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+  <!--- Footer Content --->
+  	&copy Greg Furlich 2020 <br>
+  	All Rights Reserved<br>
+    This website is hosted on a Raspberry Pi!
+</footer>
+</body>
+
+</html>

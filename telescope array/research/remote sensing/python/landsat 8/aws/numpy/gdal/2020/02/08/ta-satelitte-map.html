@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en"> <!--- Header --->
+<head>
+    <title>Greg Furlich</title>
+    <meta name="description" content="Personal Website of Greg Furlich, Graduate Student at the University of Utah, Department of Physics and Astronomy">
+    <meta name="keywords" content="Greg Furlich,Cosmic Rays,Telescope Array Project,University of Utah,Graduate Student,Physics,Data,Scientist">
+    <meta name="author" content="Greg Furlich">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+</head>
+<body><header>
+
+    <nav>
+       <div class="topnav">
+           <a href="/">
+               <p>
+                   <h> Greg Furlich</h>
+                   <!---<br>
+                   <hl>Science Elevated</hl>--->
+               </p>
+           </a>
+
+           <div class="topnav-right">
+               <a href="/Education.html"><p>Education</p></a>
+               <a href="/Research.html"><p>Research</p></a>
+               <!-- <a href="/Hobbies.html"><p>Hobbies</p></a> -->
+               <a href="/Projects.html"><p>Projects</p></a>
+               <!-- <a href="/Photography.html"><p>Photography</p></a> -->
+               <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/images/github.png" height=30vw></p></a>
+               <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/images/in.png" height=30vw></p></a>
+               <a href="mailto:g.furlich@gmail.com"><p><img id="mzil" src="/assets/images/mail.png" height=30vw></p></a>
+           </div>
+
+       </div>
+   </nav>
+
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+
+  <div style="height: 10vh"></div>
+  <header class="post-header">
+    <t>Telescope Array Satellite Map using Landsat Data</t>
+    <!-- <h1 class="post-title p-name" itemprop="name headline">Telescope Array Satellite Map using Landsat Data</h1> -->
+    <div style="height: 5vh"></div>
+    <p class="post-meta" style="font-size: 1em">
+
+        <i class="far fa-clock"></i> <time  class="dt-published" datetime="2020-02-08T14:03:45-07:00" itemprop="datePublished">Feb 8, 2020
+        </time>• <i class="far fa-user-circle"></i> <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Greg Furlich</span></span></p>
+
+
+    <h3>   <i class="fas fa-tags"></i>  Categories :
+        
+            Telescope Array,
+        
+            Research,
+        
+            Remote Sensing,
+        
+            Python,
+        
+            LandSat 8,
+        
+            AWS,
+        
+            Numpy,
+        
+            GDAL,
+        
+    </h3>
+
+  </header>
+
+  <!-- <div class="post-content e-content" itemprop="articleBody"> -->
+  <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
+  text-justify: inter-word;">
+    <p>The map below was created using this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/Ta_sate.ipynb">Jupyter python notebook</a>. Python <a href="https://pypi.org/project/GDAL/">GDAL</a> module was used to import the rasters of different bands and Numpy was used to create a RGB composite image. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the curvature of the earth.</p>
+
+<div style="height: 5vh"></div>
+<ul id="markdown-toc">
+  <li><a href="#landsat-8-data-on-aws" id="markdown-toc-landsat-8-data-on-aws">LandSat 8 Data on AWS</a></li>
+  <li><a href="#ta-satellite-map" id="markdown-toc-ta-satellite-map">TA Satellite Map</a></li>
+</ul>
+<div style="height: 5vh"></div>
+
+<h1 id="landsat-8-data-on-aws">LandSat 8 Data on AWS</h1>
+
+<div style="height: 5vh"></div>
+
+<p>LandSat 8 is a <a href="https://www.usgs.gov/land-resources/nli/landsat/landsat-8?qt-science_support_page_related_con=0#qt-science_support_page_related_con">United States Geological Survey (USGS) satellite</a> which images the earth with 9 spectral bands. The data was retrieved from <a href="https://registry.opendata.aws/landsat-8/">AWS</a>.</p>
+
+<div style="height: 5vh"></div>
+
+<h1 id="ta-satellite-map">TA Satellite Map</h1>
+
+<div style="height: 5vh"></div>
+
+<center>
+<img src="/assets/coding/ta_map.png" alt="ta_map" style="width:50vw" />
+</center>
+<center><p>Satellite map of TA using Landsat 8 data.</p></center>
+
+<div style="height: 5vh"></div>
+
+  </div><a class="u-url" href="/telescope%20array/research/remote%20sensing/python/landsat%208/aws/numpy/gdal/2020/02/08/ta-satelitte-map.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+  <!--- Footer Content --->
+  	&copy Greg Furlich 2020 <br>
+  	All Rights Reserved<br>
+    This website is hosted on a Raspberry Pi!
+</footer>
+</body>
+
+</html>
