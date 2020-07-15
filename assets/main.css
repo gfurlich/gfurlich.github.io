@@ -312,6 +312,29 @@ contents a:hover {
   padding: 1.5em;
   display: inline-block; }
 
+top {
+  float: right;
+  color: white;
+  font-weight: bold;
+  padding: 1vh 1vw;
+  text-align: center;
+  bottom: 1em;
+  /* Place the button at the bottom of the page */
+  right: 2em;
+  /* Place the button 30px from the right */
+  border: none;
+  /* Remove borders */
+  outline: none;
+  /* Remove outline */ }
+
+top a {
+  color: white;
+  font-size: 1.5em; }
+
+top a:hover {
+  color: #0c314d;
+  text-decoration: none; }
+
 /**
  * Alignment
  */
