@@ -12,6 +12,10 @@
     <link rel="icon" href="/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+
+    <!-- Google Analyticss -->
+    
+
 </head>
 <body><header>
 
@@ -79,7 +83,10 @@
 
 <div style="height: 5vh"></div>
 <ul id="markdown-toc">
-  <li><a href="#pyroot" id="markdown-toc-pyroot">Pyroot</a></li>
+  <li><a href="#pyroot" id="markdown-toc-pyroot">Pyroot</a>    <ul>
+      <li><a href="#defining-a-histogram-in-pyroot" id="markdown-toc-defining-a-histogram-in-pyroot">Defining a histogram in Pyroot</a></li>
+    </ul>
+  </li>
   <li><a href="#pyroot-vs-scipy" id="markdown-toc-pyroot-vs-scipy">Pyroot vs Scipy</a></li>
 </ul>
 <div style="height: 5vh"></div>
@@ -87,6 +94,15 @@
 <h1 id="pyroot">Pyroot</h1>
 
 <div style="height: 5vh"></div>
+
+<h3 id="defining-a-histogram-in-pyroot">Defining a histogram in Pyroot</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">root_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nbins</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">root_hist</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">TH1D</span><span class="p">(</span><span class="s">'h'</span><span class="p">,</span><span class="s">'hist'</span><span class="p">,</span><span class="n">nbins</span><span class="p">,</span><span class="n">bin_edges</span><span class="p">)</span>
+<span class="n">h</span><span class="o">.</span><span class="n">SetContent</span><span class="p">(</span><span class="n">root_hist</span><span class="p">)</span>
+<span class="n">h</span><span class="o">.</span><span class="n">SetTitle</span><span class="p">(</span><span class="s">"Root Histogram with Fit;X Axis;Y Axis [Counts]"</span><span class="p">)</span>
+</code></pre></div></div>
 
 <center>
 <img src="/assets/coding/root_fit.png" alt="root_fit" style="width:50vw" />

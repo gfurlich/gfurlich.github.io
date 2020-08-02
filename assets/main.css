@@ -198,21 +198,19 @@ blockquote {
  */
 pre,
 code {
-  font-size: 0.9375em;
-  border: 1px solid #e8e8e8;
-  border-radius: 3px;
-  background-color: #eef; }
+  font-size: 0.9375em; }
 
 code {
-  padding: 1px 5px; }
+  padding: 5em; }
 
 pre {
-  padding: 8px 12px;
-  overflow-x: auto; }
+  padding: .5em;
+  background-color: #e8e8e8; }
   pre > code {
     border: 0;
     padding-right: 0;
-    padding-left: 0; }
+    padding-left: 0;
+    font-size: 150%; }
 
 /**
  * Wrapper
@@ -536,9 +534,9 @@ top a:hover {
  * Syntax highlighting styles
  */
 .highlight {
-  background: #fff; }
+  background: #ddeefa; }
   .highlighter-rouge .highlight {
-    background: #eef; }
+    background: #ddeefa; }
   .highlight .c {
     color: #998;
     font-style: italic; }
