@@ -89,24 +89,58 @@
   <!-- <div class="post-content e-content" itemprop="articleBody"> -->
   <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
   text-justify: inter-word;">
-    <p>CERN <a href="https://root.cern.ch/">Root</a> is a powerful statistical and fitting object oriented program that can be used in C++ by particle physicists. I use Root in my research in cosmic radiation given the amount of particle physicist in my community. However Root can now be imported into Python as <a href="https://root.cern.ch/pyroot">Pyroot</a>. I tested pyroot vs Scipy with fitting a random Gaussian histogram in a <a href="https://github.com/gfurlich/Projects/blob/master/pyroot/pyroot_fit.ipynb">Jupyter python notebook</a>.</p>
+    <p>CERN <a href="https://root.cern.ch/">Root</a> is a powerful statistical and fitting object oriented program in C++ used predominantly particle physicists. I used Root in my own graduate research in astroparticle physics given the amount of particle physicist in my community. While I started using Root in C/C++, I find Python to be a powerful interpreter. Luckily, Root can now be imported into Python as <a href="https://root.cern.ch/pyroot">Pyroot</a>. Python also has Scipy (<a href="https://www.scipy.org/">Scientific Python</a>) for fitting functions or distributions. This is an example of how to use Pyroot and comparing it to Scipy by fitting a Gaussian distribution. This example is in a <a href="https://github.com/gfurlich/Projects/blob/master/pyroot/pyroot_fit.ipynb">Jupyter python notebook</a>.</p>
 
 <div style="height: 5vh"></div>
 <ul id="markdown-toc">
-  <li><a href="#pyroot" id="markdown-toc-pyroot">Pyroot</a>    <ul>
-      <li><a href="#defining-a-histogram-in-pyroot" id="markdown-toc-defining-a-histogram-in-pyroot">Defining a histogram in Pyroot</a></li>
-    </ul>
-  </li>
+  <li><a href="#import-scipy-and-pyroot" id="markdown-toc-import-scipy-and-pyroot">Import Scipy and PyRoot</a></li>
+  <li><a href="#creating-a-scipy-histogram" id="markdown-toc-creating-a-scipy-histogram">Creating a Scipy Histogram</a></li>
+  <li><a href="#creating-the-histogram-in-pyroot" id="markdown-toc-creating-the-histogram-in-pyroot">Creating the histogram in Pyroot</a></li>
+  <li><a href="#fit-the-histogram-with-pyroot" id="markdown-toc-fit-the-histogram-with-pyroot">Fit the Histogram with Pyroot</a></li>
+  <li><a href="#plot-fitted-histogram-in-pyroot" id="markdown-toc-plot-fitted-histogram-in-pyroot">Plot Fitted Histogram in Pyroot</a></li>
+  <li><a href="#scipy-fit" id="markdown-toc-scipy-fit">Scipy Fit</a></li>
   <li><a href="#pyroot-vs-scipy" id="markdown-toc-pyroot-vs-scipy">Pyroot vs Scipy</a></li>
 </ul>
 <div style="height: 5vh"></div>
 
-<h1 id="pyroot">Pyroot</h1>
+<p>Reviewing the syntax in the jupyter notebook linked above.</p>
 
-<div style="height: 5vh"></div>
+<h1 id="import-scipy-and-pyroot">Import Scipy and PyRoot</h1>
 
-<h3 id="defining-a-histogram-in-pyroot">Defining a histogram in Pyroot</h3>
+<p>Import the desired python modules, specifically Scipy and Pyroot.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="n">sp</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">chi2</span>
+<span class="kn">from</span> <span class="nn">ROOT</span> <span class="kn">import</span> <span class="n">TCanvas</span><span class="p">,</span> <span class="n">TGraph</span><span class="p">,</span> <span class="n">TH1F</span><span class="p">,</span> <span class="n">TF1</span><span class="p">,</span> <span class="n">gStyle</span><span class="p">,</span> <span class="n">TH1D</span>
+</code></pre></div></div>
 
+<h1 id="creating-a-scipy-histogram">Creating a Scipy Histogram</h1>
+
+<p>Generate a Gaussian distribution to test the fitting:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Define Python Histogram #
+</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">,</span> <span class="mf">0.1</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span><span class="n">std</span><span class="p">,</span><span class="mi">500</span><span class="p">)</span>
+
+<span class="c1"># Define Bin Size #
+</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="mf">10.</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="nb">min</span><span class="p">())</span><span class="o">/</span><span class="mf">10.</span>
+<span class="n">xmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">10.</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="nb">max</span><span class="p">())</span><span class="o">/</span><span class="mf">10.</span>
+<span class="n">nbins</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">xmax</span><span class="o">-</span><span class="n">xmin</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
+<span class="c1"># print(xmin, xmax, nbins)
+</span>
+<span class="c1"># Create Python Histogram
+</span><span class="n">hist</span><span class="p">,</span> <span class="n">bin_edges</span><span class="p">,</span> <span class="n">patches</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">nbins</span><span class="p">,(</span><span class="n">xmin</span><span class="p">,</span><span class="n">xmax</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="s">'g'</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">bin_centers</span> <span class="o">=</span> <span class="p">(</span><span class="n">bin_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">+</span><span class="n">bin_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
+
+<span class="c1"># Find Non-zero bins in Histogram
+</span><span class="n">nz</span> <span class="o">=</span> <span class="n">hist</span><span class="o">&gt;</span><span class="mi">0</span>
+<span class="n">first_nz</span> <span class="o">=</span> <span class="n">bin_centers</span><span class="p">[</span><span class="n">nz</span><span class="p">][</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.005</span>
+<span class="n">last_nz</span>  <span class="o">=</span> <span class="n">bin_centers</span><span class="p">[</span><span class="n">nz</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.005</span>
+</code></pre></div></div>
+
+<h1 id="creating-the-histogram-in-pyroot">Creating the histogram in Pyroot</h1>
+
+<p>Using the randomly generated Scipy and load it into a Pyroot histogram with <b>SetContent()</b>.</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">root_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nbins</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 <span class="n">root_hist</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span>
 <span class="n">h</span> <span class="o">=</span> <span class="n">TH1D</span><span class="p">(</span><span class="s">'h'</span><span class="p">,</span><span class="s">'hist'</span><span class="p">,</span><span class="n">nbins</span><span class="p">,</span><span class="n">bin_edges</span><span class="p">)</span>
@@ -114,23 +148,93 @@
 <span class="n">h</span><span class="o">.</span><span class="n">SetTitle</span><span class="p">(</span><span class="s">"Root Histogram with Fit;X Axis;Y Axis [Counts]"</span><span class="p">)</span>
 </code></pre></div></div>
 
-<center>
-<img src="/assets/coding/root_fit.png" alt="root_fit" style="width:50vw" />
-</center>
-<center><p>Fitting a root Histogram and printing to a root Canvas.</p></center>
+<h1 id="fit-the-histogram-with-pyroot">Fit the Histogram with Pyroot</h1>
 
-<div style="height: 5vh"></div>
+<p>Fitting the Pyroot histogram with Fit() and retrieve the fit parameters with <b>GetFunction()</b>.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Fit histogram with root
+</span><span class="n">h</span><span class="o">.</span><span class="n">Fit</span><span class="p">(</span><span class="s">'gaus'</span><span class="p">,</span><span class="s">''</span><span class="p">,</span><span class="s">''</span><span class="p">,</span><span class="n">xmin</span><span class="p">,</span><span class="n">xmax</span><span class="p">)</span>
+
+<span class="c1"># Get Root Fit and Goodness of Fit Parameters #
+</span><span class="n">f</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">GetFunction</span><span class="p">(</span><span class="s">'gaus'</span><span class="p">)</span>
+<span class="n">const</span><span class="p">,</span><span class="n">mu</span><span class="p">,</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">GetParameter</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">f</span><span class="o">.</span><span class="n">GetParameter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">f</span><span class="o">.</span><span class="n">GetParameter</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">econst</span><span class="p">,</span><span class="n">emu</span><span class="p">,</span><span class="n">esigma</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">GetParError</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">f</span><span class="o">.</span><span class="n">GetParError</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">f</span><span class="o">.</span><span class="n">GetParError</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ndf</span><span class="p">,</span><span class="n">chi2</span><span class="p">,</span><span class="n">prob</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">GetNDF</span><span class="p">(),</span><span class="n">f</span><span class="o">.</span><span class="n">GetChisquare</span><span class="p">(),</span><span class="n">f</span><span class="o">.</span><span class="n">GetProb</span><span class="p">()</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">ndf</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">chi2</span><span class="o">/</span><span class="n">ndf</span><span class="p">,</span><span class="n">prob</span><span class="p">)</span>
+</code></pre></div></div>
+<p>which outputs the fit statistics</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(45.66295240018631, 51)
+(0.8953520078467905, 0.6848948146151015)
+ FCN=45.663 FROM MIGRAD    STATUS=CONVERGED      62 CALLS          63 TOTAL
+                     EDM=2.98837e-07    STRATEGY= 1      ERROR MATRIX ACCURATE
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE
+   1  Constant     1.90683e+01   1.18078e+00   2.98289e-03   4.76852e-04
+   2  Mean         1.00578e+00   4.84902e-03   1.55697e-05   7.70251e-02
+   3  Sigma        9.60935e-02   4.19436e-03   3.51281e-05  -1.83836e-02
+</code></pre></div></div>
+<h1 id="plot-fitted-histogram-in-pyroot">Plot Fitted Histogram in Pyroot</h1>
+
+<p>Plotting the Pyroot Canvas and save as a pdf.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Draw Fit and Histogram#
+</span><span class="n">h</span><span class="o">.</span><span class="n">Draw</span><span class="p">()</span>
+<span class="n">c1</span><span class="o">.</span><span class="n">Draw</span><span class="p">()</span>
+<span class="n">c1</span><span class="o">.</span><span class="n">SaveAs</span><span class="p">(</span><span class="s">'root_fit.png'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="scipy-fit">Scipy Fit</h1>
+
+<p>Fit the distrbution with Scipy using <b>curve_fit()</b></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#Scipy Fit #
+</span>
+<span class="c1"># Gaussian Fit Function :
+</span><span class="k">def</span> <span class="nf">gaus</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">const</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">const</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">sigma</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Define Range and Fit :
+</span><span class="n">coeff</span><span class="p">,</span> <span class="n">covar</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">gaus</span><span class="p">,</span> <span class="n">bin_centers</span><span class="p">[</span><span class="n">nz</span><span class="p">],</span> <span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span>
+</code></pre></div></div>
 
 <h1 id="pyroot-vs-scipy">Pyroot vs Scipy</h1>
 
-<div style="height: 5vh"></div>
+<p>Comparing Pyroot to scipy</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Define Fit Curves #
+</span><span class="n">x</span> <span class="o">=</span> <span class="n">bin_centers</span>
+<span class="n">root_gaus</span> <span class="o">=</span> <span class="p">(</span><span class="n">const</span><span class="p">,</span><span class="n">mu</span><span class="p">,</span><span class="n">sigma</span><span class="p">)</span>
+<span class="n">opti_gaus</span> <span class="o">=</span> <span class="n">coeff</span>
 
+<span class="c1"># Calculate chi Squared
+</span><span class="n">f_root</span> <span class="o">=</span> <span class="n">gaus</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">*</span><span class="n">root_gaus</span><span class="p">)</span>
+<span class="n">f_opti</span> <span class="o">=</span> <span class="n">gaus</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">*</span><span class="n">opti_gaus</span><span class="p">)</span>
+<span class="n">ch2_root</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span> <span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">]</span><span class="o">-</span><span class="n">f_root</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span>
+<span class="n">ch2_opti</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span> <span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">]</span><span class="o">-</span><span class="n">f_opti</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span>
+
+<span class="c1"># Calculate Degrees of Freedom with 3 fit parameters
+</span><span class="n">dof</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span><span class="o">-</span><span class="mi">3</span>
+
+<span class="c1"># Calculate Probablity #
+</span><span class="n">p_root</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">ch2_root</span><span class="p">,</span> <span class="n">dof</span><span class="p">)</span>
+<span class="n">p_opti</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">ch2_opti</span><span class="p">,</span> <span class="n">dof</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">'Hist</span><span class="se">\t</span><span class="s">Calc Package</span><span class="se">\t</span><span class="s">Chi Sq</span><span class="se">\t</span><span class="s"> Chi2/dof</span><span class="se">\t</span><span class="s">prob'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'Root</span><span class="se">\t</span><span class="s">Root</span><span class="se">\t</span><span class="s">{0}</span><span class="se">\t</span><span class="s">{1}</span><span class="se">\t</span><span class="s">{2}'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">chi2</span><span class="o">/</span><span class="n">dof</span><span class="p">,</span> <span class="n">prob</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'Root</span><span class="se">\t</span><span class="s">Python</span><span class="se">\t</span><span class="s">{0}</span><span class="se">\t</span><span class="s">{1}</span><span class="se">\t</span><span class="s">{2}'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">ch2_root</span><span class="p">,</span> <span class="n">ch2_root</span><span class="o">/</span><span class="n">dof</span><span class="p">,</span> <span class="n">p_root</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'Scipy</span><span class="se">\t</span><span class="s">Python</span><span class="se">\t</span><span class="s">{0}</span><span class="se">\t</span><span class="s">{1}</span><span class="se">\t</span><span class="s">{2}'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">ch2_opti</span><span class="p">,</span> <span class="n">ch2_opti</span><span class="o">/</span><span class="n">dof</span><span class="p">,</span> <span class="n">p_opti</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'Degrees of Freedom =</span><span class="se">\t</span><span class="s">{0}'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dof</span><span class="p">)))</span>
+</code></pre></div></div>
+<p>which outputs</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Degrees of Freedom =	51
+Hist	Calc Package	Chi Sq	 Chi2/dof	prob
+Root	Root	45.6629524002	0.895352007847	0.684894814615
+Root	Python	45.6629524002	0.895352007847	0.684894814615
+Scipy	Python	50.9517866666	0.999054640521	0.475559813748
+</code></pre></div></div>
+<p>Pyroot achieves a better Χ<sup>2</sup>/ndf and thus a better fit. Scipy has more examples online with how to use but this example will hopefully allow you to use Pyroot instead.</p>
 <center>
 <img src="/assets/coding/python_fit.png" alt="python_fit" style="width:50vw" />
 </center>
-<center><p>The same random Gaussian histogram was fit with both scipy and pyroot. Pyroot shows better ability to fit the histogram. </p></center>
-
-<div style="height: 5vh"></div>
+<center><p>Scipy in red and Pyroot in black.</p></center>
 
   </div><top id="go-to-top" title="Go to top"><a href="#" >&#9650;<br>Back to Top</a></top>
   <a class="u-url" href="/python/cern%20root/scipy/function%20fitting/2020/02/08/pyroot-vs-scipy-fitting-in-python.html" hidden></a>
