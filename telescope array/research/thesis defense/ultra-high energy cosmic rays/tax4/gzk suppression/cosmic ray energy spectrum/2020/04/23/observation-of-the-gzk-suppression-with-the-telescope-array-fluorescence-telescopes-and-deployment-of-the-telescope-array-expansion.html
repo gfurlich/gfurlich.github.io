@@ -95,15 +95,19 @@
   <!-- <div class="post-content e-content" itemprop="articleBody"> -->
   <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
   text-justify: inter-word;">
-    <p>I defended my thesis remotely due to the COVID-19 Pandemic. I was really happy I was able to defend even with social distancing. It gave me a unique experience from many in academia as they come up to the end of their graduate careers.</p>
+    <p>I spent 6 years at the University of Utah conducting research the Telescope Array Cosmic Ray Observatory with Douglas Bergman as my thesis advisor. My research focused on fluorescence detection of Ultra-High Energy Cosmic Rays (UHECRs). For my thesis, I refurbished, test, deployed, and collected the first light of the new TAx4 fluorescence telescopes, calculated a preliminary spectrum with the new TAx4 detectors, and calculated a 10 year cosmic ray energy spectrum using reconstructed monocular cosmic ray events from the Black Rock and Long Ridge detector sites. In Spring of 2020, I successfully defended my PhD thesis remotely due to the COVID-19 Pandemic.</p>
 
 <div style="height: 5vh"></div>
 <ul id="markdown-toc">
   <li><a href="#abstract" id="markdown-toc-abstract">Abstract</a></li>
-  <li><a href="#defense-slides" id="markdown-toc-defense-slides">Defense Slides</a></li>
-  <li><a href="#thesis" id="markdown-toc-thesis">Thesis</a></li>
-  <li><a href="#deployment-of-tax4" id="markdown-toc-deployment-of-tax4">Deployment of TAx4</a></li>
-  <li><a href="#preliminary-tax4-cosmic-ray-energy-spectrum" id="markdown-toc-preliminary-tax4-cosmic-ray-energy-spectrum">Preliminary TAx4 Cosmic Ray Energy Spectrum</a></li>
+  <li><a href="#thesis-defense-slides" id="markdown-toc-thesis-defense-slides">Thesis Defense Slides</a></li>
+  <li><a href="#thesis-manuscript" id="markdown-toc-thesis-manuscript">Thesis Manuscript</a></li>
+  <li><a href="#tax4-fluorescence-telescopes" id="markdown-toc-tax4-fluorescence-telescopes">TAx4 Fluorescence Telescopes</a>    <ul>
+      <li><a href="#deployment" id="markdown-toc-deployment">Deployment</a></li>
+      <li><a href="#first-light" id="markdown-toc-first-light">First Light</a></li>
+    </ul>
+  </li>
+  <li><a href="#preliminary-tax4-middle-drum-cosmic-ray-energy-spectrum" id="markdown-toc-preliminary-tax4-middle-drum-cosmic-ray-energy-spectrum">Preliminary TAx4 Middle Drum Cosmic Ray Energy Spectrum</a></li>
   <li><a href="#10-year-black-rock-and-long-ridge-monocular-cosmic-ray-energy-spectrum" id="markdown-toc-10-year-black-rock-and-long-ridge-monocular-cosmic-ray-energy-spectrum">10 year Black Rock and Long Ridge Monocular Cosmic Ray Energy Spectrum</a></li>
   <li><a href="#thank-you" id="markdown-toc-thank-you">Thank You</a></li>
 </ul>
@@ -111,31 +115,113 @@
 
 <h1 id="abstract">Abstract</h1>
 
-<p>The Telescope Array (TA) Cosmic Ray Observatory, located in Millard County, Utah, is the largest cosmic ray detector in the northern hemisphere. TA was built to study the highest energy particles in the universe, Ultra-High Energy Cosmic Rays (UHECRs) with energies above $10^{18}$ eV. TA is a hybrid detector that consists of three fluorescence detector (FD) stations overlooking a ground array of 507 scintillating surface detectors (SDs).</p>
+<p><i>
+The Telescope Array (TA) Cosmic Ray Observatory, located in Millard County, Utah, is the largest cosmic ray detector in the northern hemisphere. TA was built to study the highest energy particles in the universe, Ultra-High Energy Cosmic Rays (UHECRs) with energies above 10<sup>18</sup> eV. TA is a hybrid detector that consists of three fluorescence detector (FD) stations overlooking a ground array of 507 scintillating surface detectors (SDs).
+</i>
+<br /><br />
+<i>
+TA is currently undergoing an expansion known as TAx4, to quadruple the detection aperture with the addition of 500 SDs with a northern and a southern extension to the main array. The SD array expansion is accompanied by 4 new fluorescence telescopes at the Middle Drum (MD) FD station and 8 new fluorescence telescopes at the Black Rock (BR) FD station. The new fluorescence telescopes are comprised of refurbished and upgraded detectors from the HiRes-II experiment. The TAx4 FD expansion looks out over the TAx4 SDs to allow for hybrid energy calibration of the new surface array. TAx4 MD FD began operation in 2018. In this dissertation, we calculate a preliminary energy spectrum using the first year of data from the new TAx4 MD FD. This preliminary spectrum is in agreement with previous TA measurements.
+</i>
+<br /><br />
+<i>
+In the main effort for this dissertation, we calculate a combined cosmic ray energy spectrum using reconstructed monocular events with energy above 10<sup>17.5</sup> eV from the Black Rock (BR) and Long Ridge (LR) FD sites using 10 years of data, from 2008 to 2018. We implement a novel weather classification method using machine learning to increase the quality of the BR and LR FD data. We observe excellent agreement comparing the combined fluorescence spectrum to the TA SD measurement, as well as the HiRes experiment fluorescence measurement. We fit the monocular combined spectrum with a series of broken power law fits and found the spectrum fit well with three breaks in the spectrum. We claim the fourth observation of the GZK suppression with the combined fluorescence energy spectrum with a significance above 4σ.
+</i></p>
 
-<p>TA is currently undergoing an expansion known as TAx4, to quadruple the detection aperture with the addition of 500 SDs with a northern and a southern extension to the main array. The SD array expansion is accompanied by 4 new fluorescence telescopes at the Middle Drum (MD) FD station and 8 new fluorescence telescopes at the Black Rock (BR) FD station. The new fluorescence telescopes are comprised of refurbished and upgraded detectors from the HiRes-II experiment. The TAx4 FD expansion looks out over the TAx4 SDs to allow for hybrid energy calibration of the new surface array. TAx4 MD FD began operation in 2018. In this dissertation, we calculate a preliminary energy spectrum using the first year of data from the new TAx4 MD FD. This preliminary spectrum is in agreement with previous TA measurements.</p>
+<h1 id="thesis-defense-slides">Thesis Defense Slides</h1>
 
-<p>In the main effort for this dissertation, we calculate a combined cosmic ray energy spectrum using reconstructed monocular events with energy above $10^{17.5}$ eV from the Black Rock (BR) and Long Ridge (LR) FD sites using 10 years of data, from 2008 to 2018. We implement a novel weather classification method using machine learning to increase the quality of the BR and LR FD data. We observe excellent agreement comparing the combined fluorescence spectrum to the TA SD measurement, as well as the HiRes experiment fluorescence measurement. We fit the monocular combined spectrum with a series of broken power law fits and found the spectrum fit well with three breaks in the spectrum. We claim the fourth observation of the GZK suppression with the combined fluorescence energy spectrum with a significance above 4$sigma$.</p>
+<center>
+<iframe src="/assets/docs/thesis/GFurlich_Thesis_Defense.pdf" width="80%" height="500px"></iframe>
+</center>
 
-<h1 id="defense-slides">Defense Slides</h1>
+<p>To view the animations shown during my defense, here is a link to the <a href="/assets/docs/thesis/GFurlich_Thesis_Defense.zip">zipped pptx</a> version.</p>
 
-<p>To view the animations shown during my defense, here is a link to the <a href="/assets/docs/GFurlich_Thesis_Defense.zip">zipped pptx</a> version.</p>
-
-<p>Here is a <a href="/assets/docs/GFurlich_Thesis_Defense.pdf">pdf</a> version.</p>
-
-<h1 id="thesis">Thesis</h1>
+<h1 id="thesis-manuscript">Thesis Manuscript</h1>
 
 <p>My thesis has been approved by committee and has been submitted to the graduate school for approval for publication. Once it is in it’s final form, it will be uploaded here.</p>
 
-<h1 id="deployment-of-tax4">Deployment of TAx4</h1>
+<h1 id="tax4-fluorescence-telescopes">TAx4 Fluorescence Telescopes</h1>
 
-<h1 id="preliminary-tax4-cosmic-ray-energy-spectrum">Preliminary TAx4 Cosmic Ray Energy Spectrum</h1>
+<h2 id="deployment">Deployment</h2>
+
+<p>The Middle Drum TAx4 fluorescence detectors were deployed in late winter of 2018 and the Black Rock detectors were deployed in later summer 2019. Once the structures that housed the telescopes were completed, the primary mirror (re-used HiRes experiment mirrors), and electronic racks (refurbished HiRes-II experiment electronic racks) were installed. The mirrors were aligned and then 16x16 photomultiplier tube clusters (reused from HiRes-II experiment), referred to as cameras, were installed in front of the mirror. The PMT cluster was connected to the electronic racks.</p>
+
+<center>
+<img src="/assets/research/thesis/TAx4_construction3.jpg" alt="TAx4 Installing PMT Cluster" style="width:30vw;padding: 0vh 1vw;" />
+<img src="/assets/research/thesis/TAx4_construction2.jpg" alt="TAx4 PMT Cluster Wiring" style="width:30vw;padding: 0vh 1vw;" />
+</center>
+
+<center>
+<p>Image Credit: John Matthews and the Telescope Array Collaboration.<br />
+Left: TA collaboration members and I installing a PMT Cluster. <br />
+Right: I wiring a PMT cluster to the electronics rack.</p>
+</center>
+
+<center>
+<img src="/assets/research/thesis/tax4_mirror.jpg" alt="TAx4 Telescope Mirror" style="height:60vh;padding: 0vh 1vw;" />
+<img src="/assets/research/thesis/tax4_pmt_cluster.jpg" alt="TAx4 PMT Cluster" style="height:60vh;padding: 0vh 1vw;" />
+</center>
+
+<center>
+<p>
+Left: Fluorescence detector primary mirror composed of 4 mirror segments. <br />
+Right: Fluorescence detector camera composed of a 16x16 hexagonal PMTs grid. </p>
+</center>
+
+<center>
+<img src="/assets/research/thesis/MD_TAx4.JPG" alt="TAx4 Middle Drum Fluorescence Detector Site" style="height:30vw" />
+</center>
+
+<center>
+<p>
+The TAx4 Middle fluorescence detector site with all four telescopes installed.
+</p>
+</center>
+
+<h2 id="first-light">First Light</h2>
+
+<p>Once the new fluorescence telescopes were deployed at the site, connected to their electronics racks, the next step was to turn on the new detectors to collect first light. Below are cosmic ray events collected during the first operation of the new TAx4 Middle Drum and Black Rock detectors. Both first light events were observed by a single telescope at each site. The black circles represent the pointing direction of each photomultiplier tube (PMTS). The colored tubes are the triggered PMTS of each event. The size of the circle represents the signal received by the PMT and the color represents the trigger time on the color scale. The black line in the Black rock first light event represents the shower detector plane fit, the plane created by the shower axis and the point of the detector.</p>
+
+<center>
+<img src="/assets/research/thesis/MD_FL_Best_Event.png" alt="MD First Light" style="height:50vh;padding: 0vh 1vw;" />
+<img src="/assets/research/thesis/BR_First_Light_E8_Track.jpg" alt="BR First Light" style="height:50vh;padding: 0vh 1vw;" />
+</center>
+<center><p>Left: Middle Drum TAx4 first light of the new fluorescence telescopes. <br /> Right: Black Rock TAx4 first light of the new fluorescence telescopes.</p></center>
+
+<h1 id="preliminary-tax4-middle-drum-cosmic-ray-energy-spectrum">Preliminary TAx4 Middle Drum Cosmic Ray Energy Spectrum</h1>
+
+<p>To determine if the new TAx4 fluorescence detectors were working properly and could be used for hybrid event reconstruction to set the energy scale of the new TAx4 ground array of surface detectors. The surface detectors will collect more events of UHECRs to increase the statistics of the northern hemisphere cosmic ray anisotropy study. The preliminary results with about less than one year of events were consistent with previous TA results.</p>
+
+<center>
+<img src="/assets/research/thesis/tax4vsTAICRC2019_JE3_v2.png" alt="TAx4 MD FD Preliminary Spectrum JxE^3" style="width:50vw" />
+</center>
+
+<center>
+<p>The preliminary TAx4 Middle Drum fluorescence detector cosmic ray spectrum in blue compared to the ICRC 2019 results in red.</p>
+</center>
 
 <h1 id="10-year-black-rock-and-long-ridge-monocular-cosmic-ray-energy-spectrum">10 year Black Rock and Long Ridge Monocular Cosmic Ray Energy Spectrum</h1>
 
+<p>The main effort of my thesis was to calculate a cosmic ray energy spectrum using the Black Rock and Long Ridge reconstructed monocular event. This spectrum would have significant statistics compared to previous fluorescence results by TA. The Black Rock and Long Ridge events were combined in a fashion to not double count events observed by both detectors (tandem stereo events) to increase the statistics. The features seen in the BR (in blue), LR (in green), and Stereo (in dark red) spectra are in agreement. The combined spectrum (in red) follows the other three spectra well.</p>
+
+<center>
+<img src="/assets/research/thesis/comb_spectrum_vs_mono_spectra_JE3.svg" alt="TA BR and LR combined mono cosmic ray energy spectrum" style="width:50vw" />
+</center>
+
+<center><p>TA Black Rock and Long Ridge combined mono cosmic ray energy spectrum.</p></center>
+
+<p>The TA FD combined energy spectrum is in excellent agreement with other cosmic ray energy spectrum measured in the northern hemisphere.</p>
+
+<center>
+<img src="/assets/research/thesis/comb_JE3_vs_hires.png" alt="TA Mono Combined vs. HiRes Results" style="width:30vw;padding: 0vh 1vw;" />
+<img src="/assets/research/thesis/comb_JE3_vs_icrc2019.png" alt="TA Mono Combined vs. TA ICRC 2019 Results" style="width:30vw;padding: 0vh 1vw;" />
+</center>
+<center><p>Left: TA Mono Combined vs. HiRes-I and HiRes-II Results. <br /> Right: TA Mono Combined vs. ICRC 2019 (SD and TALE combined) Results.</p></center>
+
+<p>To observe the spectral features such as the ankle and GZK supression, the spectrum was fit with a series of broken power law functions and the Poisson deviance was minimized. Using the twice broken power law fit and comparing the events observed past the second break vs the events predicted if the spectral slope remained unbroken at the second break and continued, the GZK significance was observed above 4σ!</p>
+
 <h1 id="thank-you">Thank You</h1>
 
-<p>Thank you to the many friends, family members, and coworkers at the University of Utah and in the Telescope Array collaboration for their support! It was a long journey and I grateful to those that kept me on course and assisted me on my research.</p>
+<p>Thank you to the many friends, family members, and coworkers at the University of Utah and in the Telescope Array collaboration for their support! It was a long journey and I am very grateful to those that kept me on course and assisted me on my research.</p>
 
   </div><top id="go-to-top" title="Go to top"><a href="#" >&#9650;<br>Back to Top</a></top>
   <a class="u-url" href="/telescope%20array/research/thesis%20defense/ultra-high%20energy%20cosmic%20rays/tax4/gzk%20suppression/cosmic%20ray%20energy%20spectrum/2020/04/23/observation-of-the-gzk-suppression-with-the-telescope-array-fluorescence-telescopes-and-deployment-of-the-telescope-array-expansion.html" hidden></a>
