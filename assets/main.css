@@ -201,7 +201,8 @@ code {
   font-size: 0.9375em; }
 
 code {
-  padding: 5em; }
+  font-size: 1.3em;
+  background-color: #ddeefa; }
 
 pre {
   padding: .5em;
@@ -210,7 +211,8 @@ pre {
     border: 0;
     padding-right: 0;
     padding-left: 0;
-    font-size: 150%; }
+    font-size: 1.2em;
+    background-color: #ddeefa; }
 
 /**
  * Wrapper
