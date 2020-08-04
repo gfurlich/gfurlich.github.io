@@ -1,0 +1,3 @@
+User-agent: *
+Sitemap: https://gregfurlich.com/sitemap.xml
+Disallow: /assets/
