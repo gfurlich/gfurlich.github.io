@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en"> <!--- Header --->
 <head>
-    <title>Greg Furlich</title>
-    <meta name="description" content="Personal Website of Greg Furlich, Graduate Student at the University of Utah, Department of Physics and Astronomy">
-    <meta name="keywords" content="Greg Furlich,Cosmic Rays,Telescope Array Project,University of Utah,Graduate Student,Physics,Data,Scientist">
+    <title>
+        
+        Telescope Array Topography Maps using STRM Data
+    </title>
+    <meta itemprop="description" name="description" content="Created a topography map and shaded relief map of the Telescope Array Cosmic Ray Observatory located in the Sevier Desert of Millard County Utah using STRM data. STRM data was cropped to TA's location and an informational overlay was added. The curvature of the earth was taken into account using the Haversine formula." />
     <meta name="author" content="Greg Furlich">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,6 +14,8 @@
     <link rel="icon" href="/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+
+
 
     
     <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -63,12 +67,12 @@
 
   <div style="height: 10vh"></div>
   <header class="post-header">
-    <h4 style="font-size:1.8em">Telescope Array Satellite Map using Landsat Data</h4>
-    <!-- <h1 class="post-title p-name" itemprop="name headline">Telescope Array Satellite Map using Landsat Data</h1> -->
+    <h4 style="font-size:1.8em">Telescope Array Topography Maps using STRM Data</h4>
+    <!-- <h1 class="post-title p-name" itemprop="name headline">Telescope Array Topography Maps using STRM Data</h1> -->
     <div style="height: 5vh"></div>
     <p class="post-meta" style="font-size: 1em">
 
-        <i class="far fa-clock"></i> <time  class="dt-published" datetime="2020-02-08T14:03:45-07:00" itemprop="datePublished">Feb 8, 2020
+        <i class="far fa-clock"></i> <time  class="dt-published" datetime="2020-02-08T13:30:05-07:00" itemprop="datePublished">Feb 8, 2020
         </time>• <i class="far fa-user-circle"></i> <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Greg Furlich</span></span></p>
 
 
@@ -82,11 +86,7 @@
         
             Python,
         
-            LandSat 8,
-        
-            AWS,
-        
-            Numpy,
+            STRM,
         
             GDAL,
         
@@ -97,36 +97,48 @@
   <!-- <div class="post-content e-content" itemprop="articleBody"> -->
   <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
   text-justify: inter-word;">
-    <p>The map below was created using this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/Ta_sate.ipynb">Jupyter python notebook</a>. Python <a href="https://pypi.org/project/GDAL/">GDAL</a> module was used to import the rasters of different bands and Numpy was used to create a RGB composite image. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the curvature of the earth.</p>
+    <p>Both of the maps below were created using this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/TA_topo.ipynb">Jupyter python notebook</a>. Python <a href="https://pypi.org/project/GDAL/">GDAL</a> module was used to import the raster. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the curvature of the earth.</p>
 
 <div style="height: 5vh"></div>
 <ul id="markdown-toc">
-  <li><a href="#landsat-8-data-on-aws" id="markdown-toc-landsat-8-data-on-aws">LandSat 8 Data on AWS</a></li>
-  <li><a href="#ta-satellite-map" id="markdown-toc-ta-satellite-map">TA Satellite Map</a></li>
+  <li><a href="#strm-data" id="markdown-toc-strm-data">STRM Data</a></li>
+  <li><a href="#ta-topography-map" id="markdown-toc-ta-topography-map">TA Topography Map</a></li>
+  <li><a href="#ta-shaded-relief-map" id="markdown-toc-ta-shaded-relief-map">TA Shaded Relief Map</a></li>
 </ul>
 <div style="height: 5vh"></div>
 
-<h1 id="landsat-8-data-on-aws">LandSat 8 Data on AWS</h1>
+<h1 id="strm-data">STRM Data</h1>
 
 <div style="height: 5vh"></div>
 
-<p>LandSat 8 is a <a href="https://www.usgs.gov/land-resources/nli/landsat/landsat-8?qt-science_support_page_related_con=0#qt-science_support_page_related_con">United States Geological Survey (USGS) satellite</a> which images the earth with 9 spectral bands. The data was retrieved from <a href="https://registry.opendata.aws/landsat-8/">AWS</a>.</p>
+<p>STRM stands for the <a href="https://www2.jpl.nasa.gov/srtm/">Shuttle Radar Topography Mission</a>. Data was accessed form <a href="https://www.usgs.gov/centers/eros">Earth Resources Observation and Science (EROS) Center</a>. The data was cropped to the Center Laser Facility (CLF) of the array. Data can also be found <a href="http://srtm.csi.cgiar.org/wp-content/uploads/files/srtm_5x5/TIFF/srtm_14_05.zip">here</a> which has a beautiful view of the grand canyon and the green and Colorado River through the Colorado Plateau in Utah.</p>
 
 <div style="height: 5vh"></div>
 
-<h1 id="ta-satellite-map">TA Satellite Map</h1>
+<h1 id="ta-topography-map">TA Topography Map</h1>
 
 <div style="height: 5vh"></div>
 
 <center>
-<img src="/assets/coding/ta_map.png" alt="ta_map" style="width:50vw" />
+<img src="/assets/coding/ta_topo.png" alt="ta_topo" style="width:50vw" />
 </center>
-<center><p>Satellite map of TA using Landsat 8 data.</p></center>
+<center><p>Topographical map of TA using STRM data. TA is about 1400 meters above sea level surround by mountains as a part the great basin and range region of the USA. The FD with a arc 30 km arc of the field of view as blue triangles, SD sites as purple circles, and the CLF as an orange hexagon.</p></center>
+
+<div style="height: 5vh"></div>
+
+<h1 id="ta-shaded-relief-map">TA Shaded Relief Map</h1>
+
+<div style="height: 5vh"></div>
+
+<center>
+<img src="/assets/coding/ta_relief.png" alt="ta_relief" style="width:50vw" />
+</center>
+<center><p>Shaded relief map of TA using STRM data. The geographical feature of Longridge, Black Rock Mesa, and the Drum Mountains which the FD sites are named for are apparent.</p></center>
 
 <div style="height: 5vh"></div>
 
   </div><top id="go-to-top" title="Go to top"><a href="#" >&#9650;<br>Back to Top</a></top>
-  <a class="u-url" href="/telescope%20array/research/remote%20sensing/python/landsat%208/aws/numpy/gdal/2020/02/08/ta-satelitte-map.html" hidden></a>
+  <a class="u-url" href="/posts/telescope-array-topography-maps.html" hidden></a>
 </article>
 
       </div>
