@@ -3,9 +3,9 @@
 <head>
     <title>
         
-        Telescope Array Satellite Map using Landsat Data
+        Telescope Array Composite Satellite Map using Landsat Data
     </title>
-    <meta itemprop="description" name="description" content="Created a Satellite map of the Telescope Array Cosmic Ray Observatory located in the Sevier Desert of Millard County Utah using Landsat 8 data from AWS. The red, green, and blue bands were combined into a composite colored image using Numpy. Information was overlayed on the image. The curvature of the earth was taken into account using the Haversine formula." />
+    <meta itemprop="description" name="description" content="Created a composite satellite map of the Telescope Array Cosmic Ray Observatory using data from the LandSat 8. The Telescope Array Cosmic Ray Observatory is located in the Sevier Desert of Millard County, Utah. The Landsat 8 data was pulled from Amazon Web Services (AWS). The red, green, and blue bands were combined into a composite image using NumPy. Site information and points of interest were overlayed on the composite satellite image. The Haversine formula was used to calculate the great-circle distance between sites given their GPS location to place the sites relative on the satellite image." />
     <meta name="author" content="Greg Furlich">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -64,7 +64,7 @@
 
   <div style="height: 10vh"></div>
   <header class="post-header">
-    <h4 style="font-size:1.8em">Telescope Array Satellite Map using Landsat Data</h4>
+    <h4 style="font-size:1.8em">Telescope Array Composite Satellite Map using Landsat Data</h4>
     <div style="height: 1vh"></div>
     <p class="post-meta" style="font-size: 1.2em">
 
@@ -87,7 +87,7 @@
         
             AWS,
         
-            Numpy,
+            NumPy,
         
             GDAL,
         
@@ -98,20 +98,23 @@
   <!-- <div class="post-content e-content" itemprop="articleBody"> -->
   <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
   text-justify: inter-word;">
-    <p>The map below was created using this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/Ta_sate.ipynb">Jupyter python notebook</a>. Python <a href="https://pypi.org/project/GDAL/">GDAL</a> module was used to import the rasters of different bands and Numpy was used to create a RGB composite image. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the curvature of the earth.</p>
+    <p>The Telescope Array Cosmic Ray Observatory (TA) is the largest cosmic ray detector in the northern hemisphere. To better illustrate the observatory’s location and size for presentations and papers, I created my own composite satellite map. The Python <a href="https://pypi.org/project/GDAL/">GDAL</a> module was used to import the rasters of the different bands and NumPy (Numerical Python) was used to create a composite color image using the RGB bands. The satellite image was centered on the central laser facility (CLF) at the observatory. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the relative great-circle distance between sites from the center given curvature of the earth. The satellite image below was created in this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/Ta_sate.ipynb">Jupyter python notebook</a>.</p>
 
 <div style="height: 5vh"></div>
 <ul id="markdown-toc">
-  <li><a href="#landsat-8-data-on-aws" id="markdown-toc-landsat-8-data-on-aws">LandSat 8 Data on AWS</a></li>
+  <li><a href="#gdal" id="markdown-toc-gdal">GDAL</a></li>
+  <li><a href="#pulling-landsat-8-data-off-aws" id="markdown-toc-pulling-landsat-8-data-off-aws">Pulling LandSat 8 Data off AWS</a></li>
   <li><a href="#ta-satellite-map" id="markdown-toc-ta-satellite-map">TA Satellite Map</a></li>
 </ul>
 <div style="height: 5vh"></div>
 
-<h1 id="landsat-8-data-on-aws">LandSat 8 Data on AWS</h1>
+<h1 id="gdal">GDAL</h1>
+
+<h1 id="pulling-landsat-8-data-off-aws">Pulling LandSat 8 Data off AWS</h1>
 
 <div style="height: 5vh"></div>
 
-<p>LandSat 8 is a <a href="https://www.usgs.gov/land-resources/nli/landsat/landsat-8?qt-science_support_page_related_con=0#qt-science_support_page_related_con">United States Geological Survey (USGS) satellite</a> which images the earth with 9 spectral bands. The data was retrieved from <a href="https://registry.opendata.aws/landsat-8/">AWS</a>.</p>
+<p>LandSat 8 is a <a href="https://www.usgs.gov/land-resources/nli/landsat/landsat-8?qt-science_support_page_related_con=0#qt-science_support_page_related_con">United States Geological Survey (USGS) satellite</a> which images the earth with 9 spectral bands. The LandSat 8 data can be retrieved from AWS from this <a href="https://registry.opendata.aws/landsat-8/">link</a>.</p>
 
 <div style="height: 5vh"></div>
 
@@ -127,7 +130,7 @@
 <div style="height: 5vh"></div>
 
   </div><top id="go-to-top" title="Go to top"><a href="#" >&#9650;<br>Back to Top</a></top>
-  <a class="u-url" href="/posts/telescope-array-satelitte-map.html" hidden></a>
+  <a class="u-url" href="/posts/telescope-array-satellite-map.html" hidden></a>
 </article>
 
       </div>
