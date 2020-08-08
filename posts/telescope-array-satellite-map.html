@@ -98,32 +98,54 @@
   <!-- <div class="post-content e-content" itemprop="articleBody"> -->
   <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
   text-justify: inter-word;">
-    <p>The Telescope Array Cosmic Ray Observatory (TA) is the largest cosmic ray detector in the northern hemisphere. To better illustrate the observatory’s location and size for presentations and papers, I created my own composite satellite map. The Python <a href="https://pypi.org/project/GDAL/">GDAL</a> module was used to import the rasters of the different bands and NumPy (Numerical Python) was used to create a composite color image using the RGB bands. The satellite image was centered on the central laser facility (CLF) at the observatory. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the relative great-circle distance between sites from the center given curvature of the earth. The satellite image below was created in this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/Ta_sate.ipynb">Jupyter python notebook</a>.</p>
+    <p>The <a href="http://www.telescopearray.org/">Telescope Array Cosmic Ray Observatory (TA)</a> is the largest cosmic ray detector in the northern hemisphere. To better illustrate the observatory’s location and size for presentations and papers, I created my own composite satellite map. The python <a href="https://pypi.org/project/GDAL/">GDAL module</a> was used to import the rasters of the different bands and NumPy (Numerical Python) was used to create a composite color image using the RGB bands. The satellite image was centered on the central laser facility (CLF) at the observatory. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the relative great-circle distance between sites from the center given curvature of the earth. The satellite image below was created in this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/Ta_sate.ipynb">Jupyter python notebook</a>.</p>
 
 <div style="height: 5vh"></div>
 <ul id="markdown-toc">
-  <li><a href="#gdal" id="markdown-toc-gdal">GDAL</a></li>
+  <li><a href="#python-and-gdal" id="markdown-toc-python-and-gdal">Python and GDAL</a></li>
   <li><a href="#pulling-landsat-8-data-off-aws" id="markdown-toc-pulling-landsat-8-data-off-aws">Pulling LandSat 8 Data off AWS</a></li>
+  <li><a href="#creating-a-composite-image-from-the-rgb-layers" id="markdown-toc-creating-a-composite-image-from-the-rgb-layers">Creating a composite image from the RGB layers</a></li>
+  <li><a href="#map-information-overlay" id="markdown-toc-map-information-overlay">Map Information Overlay</a>    <ul>
+      <li><a href="#haversine-function-and-great-circle-distances" id="markdown-toc-haversine-function-and-great-circle-distances">Haversine Function and Great-Circle Distances</a></li>
+    </ul>
+  </li>
   <li><a href="#ta-satellite-map" id="markdown-toc-ta-satellite-map">TA Satellite Map</a></li>
 </ul>
 <div style="height: 5vh"></div>
 
-<h1 id="gdal">GDAL</h1>
+<h1 id="python-and-gdal">Python and GDAL</h1>
+
+<p>The &lt;a href”https://gdal.org/”&gt;Geospatial Data Abstraction Library (GDAL)&lt;/a&gt; is a library for working with the main forms of geospatial data (or images): rasters or vectors. The python GDAL module allows for importing raster and vector geospatial data in python.</p>
+
+<p>To import GDAL in python (and other modules I use in my example):</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Import Python Libraries #
+</span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="p">,</span> <span class="n">glob</span><span class="p">,</span> <span class="n">wget</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+</code></pre></div></div>
 
 <h1 id="pulling-landsat-8-data-off-aws">Pulling LandSat 8 Data off AWS</h1>
 
 <div style="height: 5vh"></div>
 
-<p>LandSat 8 is a <a href="https://www.usgs.gov/land-resources/nli/landsat/landsat-8?qt-science_support_page_related_con=0#qt-science_support_page_related_con">United States Geological Survey (USGS) satellite</a> which images the earth with 9 spectral bands. The LandSat 8 data can be retrieved from AWS from this <a href="https://registry.opendata.aws/landsat-8/">link</a>.</p>
+<p>The LandSat 8 satellite is a <a href="https://www.usgs.gov/land-resources/nli/landsat/landsat-8?qt-science_support_page_related_con=0#qt-science_support_page_related_con">United States Geological Survey (USGS) satellite</a> for continuously imaging the earth with 9 spectral bands. The LandSat 8 data (images) can be retrieved from Amazon Web Services (AWS) from this <a href="https://registry.opendata.aws/landsat-8/">link</a>.</p>
 
 <div style="height: 5vh"></div>
+
+<h1 id="creating-a-composite-image-from-the-rgb-layers">Creating a composite image from the RGB layers</h1>
+
+<h1 id="map-information-overlay">Map Information Overlay</h1>
+
+<h2 id="haversine-function-and-great-circle-distances">Haversine Function and Great-Circle Distances</h2>
 
 <h1 id="ta-satellite-map">TA Satellite Map</h1>
 
 <div style="height: 5vh"></div>
 
 <center>
-<img src="/assets/coding/ta_map.png" alt="ta_map" style="width:50vw" />
+<img src="/assets/coding/ta_map.png" alt="Satellite Map of the Telescope Array Cosmic " style="width:50vw" />
 </center>
 <center><p>Satellite map of TA using Landsat 8 data.</p></center>
 
