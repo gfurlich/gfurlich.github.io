@@ -98,12 +98,15 @@
   <!-- <div class="post-content e-content" itemprop="articleBody"> -->
   <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
   text-justify: inter-word;">
-    <p>The <a href="http://www.telescopearray.org/">Telescope Array Cosmic Ray Observatory (TA)</a> is the largest cosmic ray detector in the northern hemisphere. To better illustrate the observatory’s location and size for presentations and papers, I created my own composite satellite map. The python <a href="https://pypi.org/project/GDAL/">GDAL module</a> was used to import the rasters of the different bands and NumPy (Numerical Python) was used to create a composite color image using the RGB bands. The satellite image was centered on the central laser facility (CLF) at the observatory. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the relative great-circle distance between sites from the center given curvature of the earth. The satellite image below was created in this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/Ta_sate.ipynb">Jupyter python notebook</a>.</p>
+    <p>The <a href="http://www.telescopearray.org/">Telescope Array Cosmic Ray Observatory (TA)</a> is the largest cosmic ray detector in the northern hemisphere. To better illustrate the observatory’s location and size for presentations and papers, I created my own composite satellite map. The python <a href="https://pypi.org/project/GDAL/">GDAL module</a> was used to import the rasters of the different bands and NumPy (Numerical Python) was used to create a composite color image using the RGB bands. The satellite image was centered on the central laser facility (CLF) at the observatory. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the relative great-circle distance between sites from the center given curvature of the earth. The satellite image below was created in this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/Ta_satellite_map.ipynb">Jupyter python notebook</a> on my github profile.</p>
 
 <div style="height: 5vh"></div>
 <ul id="markdown-toc">
   <li><a href="#python-and-gdal" id="markdown-toc-python-and-gdal">Python and GDAL</a></li>
-  <li><a href="#pulling-landsat-8-data-off-aws" id="markdown-toc-pulling-landsat-8-data-off-aws">Pulling LandSat 8 Data off AWS</a></li>
+  <li><a href="#retrieving-landsat-8-data-off-aws" id="markdown-toc-retrieving-landsat-8-data-off-aws">Retrieving LandSat 8 Data off AWS</a>    <ul>
+      <li><a href="#landsat-8-bands" id="markdown-toc-landsat-8-bands">LandSat 8 Bands</a></li>
+    </ul>
+  </li>
   <li><a href="#creating-a-composite-image-from-the-rgb-layers" id="markdown-toc-creating-a-composite-image-from-the-rgb-layers">Creating a composite image from the RGB layers</a></li>
   <li><a href="#map-information-overlay" id="markdown-toc-map-information-overlay">Map Information Overlay</a>    <ul>
       <li><a href="#haversine-function-and-great-circle-distances" id="markdown-toc-haversine-function-and-great-circle-distances">Haversine Function and Great-Circle Distances</a></li>
@@ -115,7 +118,7 @@
 
 <h1 id="python-and-gdal">Python and GDAL</h1>
 
-<p>The &lt;a href”https://gdal.org/”&gt;Geospatial Data Abstraction Library (GDAL)&lt;/a&gt; is a library for working with the main forms of geospatial data (or images): rasters or vectors. The python GDAL module allows for importing raster and vector geospatial data in python.</p>
+<p>The <a href="https://gdal.org/">Geospatial Data Abstraction Library (GDAL)</a> is a library for working with the main forms of geospatial data (or images): rasters or vectors. The python GDAL module allows for importing raster and vector geospatial data in python.</p>
 
 <p>To import GDAL in python (and other modules I use in my example):</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Import Python Libraries #
@@ -126,13 +129,94 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
 </code></pre></div></div>
 
-<h1 id="pulling-landsat-8-data-off-aws">Pulling LandSat 8 Data off AWS</h1>
+<h1 id="retrieving-landsat-8-data-off-aws">Retrieving LandSat 8 Data off AWS</h1>
 
-<div style="height: 5vh"></div>
+<p>The <a href="https://www.usgs.gov/land-resources/nli/landsat/landsat-8?qt-science_support_page_related_con=0#qt-science_support_page_related_con">United States Geological Survey (USGS) LandSat 8 satellite</a> continuously images the earth with 9 spectral bands. Information on retrieving the LandSat 8 data (images) from Amazon Web Services (AWS) from this <a href="https://registry.opendata.aws/landsat-8/">link</a>. First you need the <a href="https://landsat-pds.s3.amazonaws.com/c1/L8/scene_list.gz">scene list</a></p>
 
-<p>The LandSat 8 satellite is a <a href="https://www.usgs.gov/land-resources/nli/landsat/landsat-8?qt-science_support_page_related_con=0#qt-science_support_page_related_con">United States Geological Survey (USGS) satellite</a> for continuously imaging the earth with 9 spectral bands. The LandSat 8 data (images) can be retrieved from Amazon Web Services (AWS) from this <a href="https://registry.opendata.aws/landsat-8/">link</a>.</p>
+<h2 id="landsat-8-bands">LandSat 8 Bands</h2>
 
-<div style="height: 5vh"></div>
+<p><strong>Operational Land Imager (OLI)</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Band</th>
+      <th style="text-align: left">Type</th>
+      <th style="text-align: left">Wavelength (λ)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: left">Visible</td>
+      <td style="text-align: left">0.43 - 0.45 µm</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: left">Visible</td>
+      <td style="text-align: left">0.450 - 0.51 µm</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: left">Visible</td>
+      <td style="text-align: left">0.53 - 0.59 µm)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">4</td>
+      <td style="text-align: left">Red</td>
+      <td style="text-align: left">0.64 - 0.67 µm</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: left">Near-Infrared</td>
+      <td style="text-align: left">0.85 - 0.88 µm</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">6</td>
+      <td style="text-align: left">SWIR 1</td>
+      <td style="text-align: left">1.57 - 1.65 µm</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">7</td>
+      <td style="text-align: left">SWIR 2</td>
+      <td style="text-align: left">2.11 - 2.29 µm</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">8</td>
+      <td style="text-align: left">Panchromatic</td>
+      <td style="text-align: left">0.50 - 0.68 µm</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">9</td>
+      <td style="text-align: left">Cirrus</td>
+      <td style="text-align: left">1.36 - 1.38 µm</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Thermal Infrared Sensor (TIRS)</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Band</th>
+      <th style="text-align: left">Type</th>
+      <th style="text-align: left">Wavelength (λ)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">10</td>
+      <td style="text-align: left">TIRS 1</td>
+      <td style="text-align: left">10.6 - 11.19 µm</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">11</td>
+      <td style="text-align: left">TIRS 2</td>
+      <td style="text-align: left">11.5 - 12.51 µm</td>
+    </tr>
+  </tbody>
+</table>
 
 <h1 id="creating-a-composite-image-from-the-rgb-layers">Creating a composite image from the RGB layers</h1>
 
@@ -142,10 +226,8 @@
 
 <h1 id="ta-satellite-map">TA Satellite Map</h1>
 
-<div style="height: 5vh"></div>
-
 <center>
-<img src="/assets/coding/ta_map.png" alt="Satellite Map of the Telescope Array Cosmic " style="width:50vw" />
+<img src="/assets/coding/ta_map.png" alt="Satellite Map of the Telescope Array Cosmic Observatory Using LandSat 8" style="width:50vw" />
 </center>
 <center><p>Satellite map of TA using Landsat 8 data.</p></center>
 
