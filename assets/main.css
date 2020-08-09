@@ -208,11 +208,11 @@ pre {
   padding: .5em;
   background-color: #e8e8e8; }
   pre > code {
-    border: 0;
-    padding-right: 0;
-    padding-left: 0;
     font-size: 1.2em;
-    background-color: #ddeefa; }
+    background-color: #ddeefa;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    display: block; }
 
 /**
  * Wrapper
@@ -258,17 +258,20 @@ pre {
  */
 table {
   margin-bottom: 1em;
-  width: 100%;
+  width: 66%;
   text-align: left;
   color: #1b72b3;
   border-collapse: collapse;
-  border: 1px solid #e8e8e8; }
+  border: 0.1em solid #e8e8e8;
+  margin-left: auto;
+  margin-right: auto; }
   table tr:nth-child(even) {
     background-color: #f7f7f7; }
   table th, table td {
     padding: 0.3333333333em 0.5em; }
   table th {
-    background-color: #f0f0f0;
+    background-color: #0f3f63;
+    color: white;
     border: 1px solid #dedede;
     border-bottom-color: #c9c9c9; }
   table td {
@@ -301,11 +304,12 @@ contents a:hover {
   color: white; }
 
 #markdown-toc::before {
-  content: "Contents";
+  content: "Post Contents:";
   font-weight: bold; }
 
 #markdown-toc ul {
-  list-style: decimal; }
+  padding: 0 1.5em;
+  list-style: lower-roman; }
 
 #markdown-toc {
   border: 1px solid #aaa;

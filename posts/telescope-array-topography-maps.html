@@ -5,7 +5,7 @@
         
         Telescope Array Topography Maps using STRM Data
     </title>
-    <meta itemprop="description" name="description" content="Created a topography map and shaded relief map of the Telescope Array Cosmic Ray Observatory located in the Sevier Desert of Millard County Utah using STRM data. STRM data was cropped to TA's location and an informational overlay was added. The curvature of the earth was taken into account using the Haversine formula." />
+    <meta itemprop="description" name="description" content="Created a topographic map and shaded relief map of the Telescope Array Cosmic Ray Observatory located in the Sevier Desert of Millard County Utah using STRM data. STRM data was cropped to TA's location and an informational overlay was added. The curvature of the earth was taken into account using the Haversine formula." />
     <meta name="author" content="Greg Furlich">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -60,7 +60,9 @@
 </header>
 <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+        <script src="https://kit.fontawesome.com/5289f3dc42.js" crossorigin="anonymous"></script>
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <div style="height: 10vh"></div>
   <header class="post-header">
@@ -68,12 +70,12 @@
     <div style="height: 1vh"></div>
     <p class="post-meta" style="font-size: 1.2em">
 
-        Date: <time  class="dt-published" datetime="2020-02-08T13:30:05-07:00" itemprop="datePublished">Feb 8, 2020
+        <i class="fa fa-calendar" aria-hidden="true"></i> <time  class="dt-published" datetime="2020-02-08T13:30:05-07:00" itemprop="datePublished">Feb 8, 2020
         </time><br>
-        Author: <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Greg Furlich</span></span></p>
+        <i class="fas fa-user-astronaut"></i> <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Greg Furlich</span></span></p>
 
 
-    <h3>  Tags :
+    <p style="color=$blue"><i class="fas fa-tags"></i>
         
             Telescope Array,
         
@@ -87,7 +89,7 @@
         
             GDAL,
         
-    </h3>
+    </p>
 
   </header>
 
@@ -99,7 +101,7 @@
 <div style="height: 5vh"></div>
 <ul id="markdown-toc">
   <li><a href="#strm-data" id="markdown-toc-strm-data">STRM Data</a></li>
-  <li><a href="#ta-topography-map" id="markdown-toc-ta-topography-map">TA Topography Map</a></li>
+  <li><a href="#ta-topographic-map" id="markdown-toc-ta-topographic-map">TA Topographic Map</a></li>
   <li><a href="#ta-shaded-relief-map" id="markdown-toc-ta-shaded-relief-map">TA Shaded Relief Map</a></li>
 </ul>
 <div style="height: 5vh"></div>
@@ -112,12 +114,12 @@
 
 <div style="height: 5vh"></div>
 
-<h1 id="ta-topography-map">TA Topography Map</h1>
+<h1 id="ta-topographic-map">TA Topographic Map</h1>
 
 <div style="height: 5vh"></div>
 
 <center>
-<img src="/assets/coding/ta_topo.png" alt="ta_topo" style="width:50vw" />
+<img src="/assets/research/TAmap/ta_topo.png" alt="Telescope Array Cosmic Ray Observatory Topographic Map" style="width:50vw" />
 </center>
 <center><p>Topographical map of TA using STRM data. TA is about 1400 meters above sea level surround by mountains as a part the great basin and range region of the USA. The FD with a arc 30 km arc of the field of view as blue triangles, SD sites as purple circles, and the CLF as an orange hexagon.</p></center>
 
@@ -128,7 +130,7 @@
 <div style="height: 5vh"></div>
 
 <center>
-<img src="/assets/coding/ta_relief.png" alt="ta_relief" style="width:50vw" />
+<img src="/assets/research/TAmap/ta_relief.png" alt="Telescope Array Cosmic Ray Observatory Topographic Relief Map" style="width:50vw" />
 </center>
 <center><p>Shaded relief map of TA using STRM data. The geographical feature of Longridge, Black Rock Mesa, and the Drum Mountains which the FD sites are named for are apparent.</p></center>
 

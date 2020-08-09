@@ -60,7 +60,9 @@
 </header>
 <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+        <script src="https://kit.fontawesome.com/5289f3dc42.js" crossorigin="anonymous"></script>
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <div style="height: 10vh"></div>
   <header class="post-header">
@@ -68,12 +70,24 @@
     <div style="height: 1vh"></div>
     <p class="post-meta" style="font-size: 1.2em">
 
-        Date: <time  class="dt-published" datetime="2020-02-08T14:03:45-07:00" itemprop="datePublished">Feb 8, 2020
+        <i class="fa fa-calendar" aria-hidden="true"></i> <time  class="dt-published" datetime="2020-02-08T14:03:45-07:00" itemprop="datePublished">Feb 8, 2020
         </time><br>
-        Author: <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Greg Furlich</span></span></p>
+        <i class="fas fa-user-astronaut"></i> <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Greg Furlich</span></span></p>
 
 
-    <h3>  Tags :
+    <p style="color=$blue"><i class="fas fa-tags"></i>
+        
+            GIS,
+        
+            GDAL,
+        
+            rasterio,
+        
+            LandSat 8,
+        
+            AWS,
+        
+            NumPy,
         
             Telescope Array,
         
@@ -83,57 +97,138 @@
         
             Python,
         
-            LandSat 8,
-        
-            AWS,
-        
-            NumPy,
-        
-            GDAL,
-        
-    </h3>
+    </p>
 
   </header>
 
   <!-- <div class="post-content e-content" itemprop="articleBody"> -->
   <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
   text-justify: inter-word;">
-    <p>The <a href="http://www.telescopearray.org/">Telescope Array Cosmic Ray Observatory (TA)</a> is the largest cosmic ray detector in the northern hemisphere. To better illustrate the observatory’s location and size for presentations and papers, I created my own composite satellite map. The python <a href="https://pypi.org/project/GDAL/">GDAL module</a> was used to import the rasters of the different bands and NumPy (Numerical Python) was used to create a composite color image using the RGB bands. The satellite image was centered on the central laser facility (CLF) at the observatory. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the relative great-circle distance between sites from the center given curvature of the earth. The satellite image below was created in this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/Ta_satellite_map.ipynb">Jupyter python notebook</a> on my github profile.</p>
+    <p>The <a href="http://www.telescopearray.org/">Telescope Array Cosmic Ray Observatory (TA)</a> is the largest cosmic ray detector in the northern hemisphere. To better illustrate the observatory’s location and size for presentations and papers, I created my own composite satellite map. The python <a href="https://pypi.org/project/GDAL/">GDAL module</a> was used to import the rasters of the different bands, <a href="https://rasterio.readthedocs.io/en/latest/index.html">rasterio module</a> was used to set the window on the raster, and NumPy (Numerical Python) was used to create a composite color image using the RGB bands. The satellite image was centered on the central laser facility (CLF) at the observatory. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the relative great-circle distance between sites from the center given curvature of the earth. The satellite image below was created in this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/Ta_satellite_map.ipynb">Jupyter python notebook</a> on my github profile.</p>
 
 <div style="height: 5vh"></div>
 <ul id="markdown-toc">
-  <li><a href="#python-and-gdal" id="markdown-toc-python-and-gdal">Python and GDAL</a></li>
+  <li><a href="#python-and-gis" id="markdown-toc-python-and-gis">Python and GIS</a></li>
   <li><a href="#retrieving-landsat-8-data-off-aws" id="markdown-toc-retrieving-landsat-8-data-off-aws">Retrieving LandSat 8 Data off AWS</a>    <ul>
-      <li><a href="#landsat-8-bands" id="markdown-toc-landsat-8-bands">LandSat 8 Bands</a></li>
+      <li><a href="#landsat-8-spectral-bands" id="markdown-toc-landsat-8-spectral-bands">LandSat 8 Spectral Bands</a></li>
     </ul>
   </li>
   <li><a href="#creating-a-composite-image-from-the-rgb-layers" id="markdown-toc-creating-a-composite-image-from-the-rgb-layers">Creating a composite image from the RGB layers</a></li>
-  <li><a href="#map-information-overlay" id="markdown-toc-map-information-overlay">Map Information Overlay</a>    <ul>
-      <li><a href="#haversine-function-and-great-circle-distances" id="markdown-toc-haversine-function-and-great-circle-distances">Haversine Function and Great-Circle Distances</a></li>
-    </ul>
-  </li>
+  <li><a href="#setting-raster-window" id="markdown-toc-setting-raster-window">Setting Raster Window</a></li>
+  <li><a href="#haversine-formula-and-great-circle-distances-to-clf-coordinates" id="markdown-toc-haversine-formula-and-great-circle-distances-to-clf-coordinates">Haversine Formula and Great-Circle Distances to CLF Coordinates</a></li>
   <li><a href="#ta-satellite-map" id="markdown-toc-ta-satellite-map">TA Satellite Map</a></li>
+  <li><a href="#resources" id="markdown-toc-resources">Resources</a></li>
 </ul>
 <div style="height: 5vh"></div>
 
-<h1 id="python-and-gdal">Python and GDAL</h1>
+<h1 id="python-and-gis">Python and GIS</h1>
 
-<p>The <a href="https://gdal.org/">Geospatial Data Abstraction Library (GDAL)</a> is a library for working with the main forms of geospatial data (or images): rasters or vectors. The python GDAL module allows for importing raster and vector geospatial data in python.</p>
+<p>Python can be used for Geographic Infromation Systems (GIS) using modules such as GDAL and rasterio. The <a href="https://gdal.org/">Geospatial Data Abstraction Library (GDAL)</a> is a library for working with the main forms of geospatial data (or images): rasters or vectors. The python GDAL module allows for importing raster and vector geospatial data in python. rasterio is also a library for interfacing with rasters of geospatial data.</p>
 
-<p>To import GDAL in python (and other modules I use in my example):</p>
+<p>To import GDAL and rasterio in python (and other modules I use in my example):</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Import Python Libraries #
 </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
 <span class="kn">import</span> <span class="nn">os</span><span class="p">,</span> <span class="n">glob</span><span class="p">,</span> <span class="n">wget</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">re</span>
 </code></pre></div></div>
 
 <h1 id="retrieving-landsat-8-data-off-aws">Retrieving LandSat 8 Data off AWS</h1>
 
-<p>The <a href="https://www.usgs.gov/land-resources/nli/landsat/landsat-8?qt-science_support_page_related_con=0#qt-science_support_page_related_con">United States Geological Survey (USGS) LandSat 8 satellite</a> continuously images the earth with 9 spectral bands. Information on retrieving the LandSat 8 data (images) from Amazon Web Services (AWS) from this <a href="https://registry.opendata.aws/landsat-8/">link</a>. First you need the <a href="https://landsat-pds.s3.amazonaws.com/c1/L8/scene_list.gz">scene list</a></p>
+<p>The <a href="https://www.usgs.gov/land-resources/nli/landsat/landsat-8?qt-science_support_page_related_con=0#qt-science_support_page_related_con">United States Geological Survey (USGS) LandSat 8 satellite</a> continuously images the earth with 11 spectral bands. Information on retrieving the LandSat 8 data (images) from Amazon Web Services (AWS) from this <a href="https://registry.opendata.aws/landsat-8/">link</a>. First you need the <a href="https://landsat-pds.s3.amazonaws.com/c1/L8/scene_list.gz">scene list</a>. With the scene list you have access to all the scenes that can be retrieved form AWS.</p>
 
-<h2 id="landsat-8-bands">LandSat 8 Bands</h2>
+<p>Reading the scene</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">f</span> <span class="o">=</span> <span class="s">'landsat_8_aws_scene_list_20200808'</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="c1"># Check Scene List #
+</span><span class="k">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">())</span>
+</code></pre></div></div>
+<p>We see shape of the list and the most recent scenes</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(2039703, 12)
+
+	productId 	entityId 	acquisitionDate 	cloudCover 	processingLevel 	path 	row 	min_lat 	min_lon 	max_lat 	max_lon 	download_url
+2039698 	LC08_L1GT_208004_20200806_20200807_01_RT 	LC82080042020219LGN00 	2020-08-06 11:27:39.935012 	98.45 	L1GT 	208 	4 	76.76868 	17.36822 	79.20000 	29.91599 	https://s3-us-west-2.amazonaws.com/landsat-pds...
+2039699 	LC08_L1TP_176062_20200806_20200807_01_RT 	LC81760622020219LGN00 	2020-08-06 08:32:59.402007 	62.79 	L1TP 	176 	62 	-3.94766 	23.41179 	-1.84473 	25.46072 	https://s3-us-west-2.amazonaws.com/landsat-pds...
+2039700 	LC08_L1TP_176079_20200806_20200807_01_RT 	LC81760792020219LGN00 	2020-08-06 08:39:46.324864 	0.01 	L1TP 	176 	79 	-28.48941 	17.69588 	-26.37063 	20.03246 	https://s3-us-west-2.amazonaws.com/landsat-pds...
+2039701 	LC08_L1TP_192036_20200806_20200807_01_RT 	LC81920362020219LGN00 	2020-08-06 10:01:30.892612 	0.00 	L1TP 	192 	36 	33.53324 	7.12533 	35.65588 	9.66675 	https://s3-us-west-2.amazonaws.com/landsat-pds...
+2039702 	LC08_L1TP_192044_20200806_20200807_01_RT 	LC81920442020219LGN00 	2020-08-06 10:04:42.059052 	29.92 	L1TP 	192 	44 	22.04505 	4.32692
+</code></pre></div></div>
+
+<p>The Central Laser Facility (CLF) at the Telescope Array Cosmic Ray Observatory is roughly centered between all three fluorescence detector sites. It is used the origin of coordinate system to determine the distance between TA sites relative to the CLF. We will use the CLF as the center of the satellite image we will create. The CLF is located 39.296944, -112.908611. Using the minimum and maximum of each scene, TA was determined to be in scenes with path = 38, row = 33. To select scenes over TA, find low cloud cover, and a spring month for aesthetics (for green fields in Delta, UT).</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Location of the TA Observatory in the Landsat 8 page #
+</span><span class="n">CLF_path</span> <span class="o">=</span> <span class="mi">38</span>
+<span class="n">CLF_row</span> <span class="o">=</span> <span class="mi">33</span>
+
+<span class="n">clf_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s">'path'</span><span class="p">]</span> <span class="o">==</span> <span class="n">CLF_path</span><span class="p">]</span>
+<span class="n">clf_df</span> <span class="o">=</span> <span class="n">clf_df</span><span class="p">[</span><span class="n">clf_df</span><span class="p">[</span><span class="s">'row'</span><span class="p">]</span> <span class="o">==</span> <span class="n">CLF_row</span><span class="p">]</span>
+
+<span class="c1">## Turn acquisition time into datetime ##
+</span><span class="n">clf_df</span><span class="p">[</span><span class="s">'acquisitionDate'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">clf_df</span><span class="p">[</span><span class="s">'acquisitionDate'</span><span class="p">])</span>
+
+<span class="c1">## Cut on cloud cover to less than 5% ##
+</span><span class="n">clf_df</span> <span class="o">=</span> <span class="n">clf_df</span><span class="p">[</span><span class="n">clf_df</span><span class="p">[</span><span class="s">'cloudCover'</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">5</span> <span class="p">]</span>
+
+<span class="c1">## Find a Spring Month (For aesthetics) ##
+</span><span class="n">clf_df</span> <span class="o">=</span> <span class="n">clf_df</span><span class="p">[</span><span class="n">clf_df</span><span class="p">[</span><span class="s">'acquisitionDate'</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="mi">4</span><span class="p">]</span>
+
+<span class="c1">## Sort by Most Recent Pass ##
+</span><span class="n">clf_df</span> <span class="o">=</span> <span class="n">clf_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s">'acquisitionDate'</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">clf_df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</code></pre></div></div>
+<p>which yields the at list of scenes with the selections above</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>productId 	entityId 	acquisitionDate 	cloudCover 	processingLevel 	path 	row 	min_lat 	min_lon 	max_lat 	max_lon 	download_url
+1948587 	LC08_L1TP_038033_20200425_20200426_01_RT 	LC80380332020116LGN00 	2020-04-25 18:08:06.916571 	3.24 	L1TP 	38 	33 	37.80464 	-113.83262 	39.94594 	-111.09092 	https://s3-us-west-2.amazonaws.com/landsat-pds...
+1971570 	LC08_L1TP_038033_20200425_20200509_01_T1 	LC80380332020116LGN00 	2020-04-25 18:08:06.916571 	3.24 	L1TP 	38 	33 	37.80464 	-113.83262 	39.94594 	-111.09092 	https://s3-us-west-2.amazonaws.com/landsat-pds...
+947415 	LC08_L1TP_038033_20150428_20170301_01_T1 	LC80380332015118LGN01 	2015-04-28 18:07:52.232930 	2.87 	L1TP 	38 	33 	37.80416 	-113.85367 	39.94543 	-111.11137 	https://s3-us-west-2.amazonaws.com/landsat-pds...
+947414 	LC08_L1TP_038033_20150412_20170228_01_T1 	LC80380332015102LGN02 	2015-04-12 18:07:58.860876 	2.49 	L1TP 	38 	33 	37.80456 	-113.83613 	39.94586 	-111.09092 	https://s3-us-west-2.amazonaws.com/landsat-pds...
+</code></pre></div></div>
+
+<p>Selecting the latest scene that matches our criteria and formatting the download URL</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## Download Directory ##
+</span><span class="nb">dir</span> <span class="o">=</span> <span class="s">'/GDF/TAResearch/TAmap/Landsat_imgs'</span>
+
+<span class="c1"># Select Scene to download #
+</span><span class="n">map_df</span> <span class="o">=</span> <span class="n">clf_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">map_df</span><span class="p">)</span>
+
+<span class="c1"># Scene Download URL
+</span><span class="n">download_url</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">map_df</span><span class="p">[</span><span class="s">'download_url'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="c1"># print download_url
+</span><span class="n">productId</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">map_df</span><span class="p">[</span><span class="s">'productId'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Format list of Images to download #
+</span><span class="n">download_urls</span> <span class="o">=</span> <span class="n">download_url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">'/index.html'</span><span class="p">,</span><span class="s">'/{0}'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">productId</span><span class="p">))</span>
+<span class="n">download_urls</span> <span class="o">=</span> <span class="p">[</span> <span class="s">'{0}_{1}.TIF'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">download_urls</span><span class="p">,</span> <span class="n">band</span><span class="p">)</span> <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">]</span>
+<span class="c1"># print download_urls[0]
+</span></code></pre></div></div>
+<p>Then the <code class="highlighter-rouge">.tif</code> rasters for all 11 spectral bands is retrieved from AWS using <code class="highlighter-rouge">wget()</code></p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Make Image Directory to put pulled images #
+img_dir = dir + '/' + productId
+if not os.path.exists(img_dir):
+    os.makedirs(img_dir)
+
+# Retrieve Images from AWS #
+image_files = []
+print('Saving to {0}'.format(img_dir))
+for d in download_urls:
+    image_file = img_dir + '/' + d.split('/')[-1]
+    image_files.append(image_file)
+#     print(image_file)
+    if not os.path.isfile(img_dir+ '/'+d.split('/')[-1]):
+        print('Retrieving {0}...'.format(d.split('/')[-1]))
+        wget.download(d, out=img_dir)
+    elif os.path.isfile(d.split('/')[-1]): print('{0} already exists...'.format(d.split('/')[-1]))
+
+</code></pre></div></div>
+<p>which retrieves the files for <a href="https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/038/033/LC08_L1TP_038033_20200425_20200426_01_RT/index.html">LC08_L1TP_038033_20200425_20200426_01_RT</a>.</p>
+
+<h2 id="landsat-8-spectral-bands">LandSat 8 Spectral Bands</h2>
 
 <p><strong>Operational Land Imager (OLI)</strong></p>
 
@@ -142,54 +237,64 @@
     <tr>
       <th style="text-align: center">Band</th>
       <th style="text-align: left">Type</th>
-      <th style="text-align: left">Wavelength (λ)</th>
+      <th style="text-align: left">Wavelength, λ [µm]</th>
+      <th style="text-align: left">Resolution [m]</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td style="text-align: center">1</td>
       <td style="text-align: left">Visible</td>
-      <td style="text-align: left">0.43 - 0.45 µm</td>
+      <td style="text-align: left">0.43 - 0.45</td>
+      <td style="text-align: left">30</td>
     </tr>
     <tr>
       <td style="text-align: center">2</td>
       <td style="text-align: left">Visible</td>
-      <td style="text-align: left">0.450 - 0.51 µm</td>
+      <td style="text-align: left">0.450 - 0.51</td>
+      <td style="text-align: left">30</td>
     </tr>
     <tr>
       <td style="text-align: center">3</td>
       <td style="text-align: left">Visible</td>
-      <td style="text-align: left">0.53 - 0.59 µm)</td>
+      <td style="text-align: left">0.53 - 0.59)</td>
+      <td style="text-align: left">30</td>
     </tr>
     <tr>
       <td style="text-align: center">4</td>
       <td style="text-align: left">Red</td>
-      <td style="text-align: left">0.64 - 0.67 µm</td>
+      <td style="text-align: left">0.64 - 0.67</td>
+      <td style="text-align: left">30</td>
     </tr>
     <tr>
       <td style="text-align: center">5</td>
       <td style="text-align: left">Near-Infrared</td>
-      <td style="text-align: left">0.85 - 0.88 µm</td>
+      <td style="text-align: left">0.85 - 0.88</td>
+      <td style="text-align: left">30</td>
     </tr>
     <tr>
       <td style="text-align: center">6</td>
       <td style="text-align: left">SWIR 1</td>
-      <td style="text-align: left">1.57 - 1.65 µm</td>
+      <td style="text-align: left">1.57 - 1.65</td>
+      <td style="text-align: left">30</td>
     </tr>
     <tr>
       <td style="text-align: center">7</td>
       <td style="text-align: left">SWIR 2</td>
-      <td style="text-align: left">2.11 - 2.29 µm</td>
+      <td style="text-align: left">2.11 - 2.29</td>
+      <td style="text-align: left">30</td>
     </tr>
     <tr>
       <td style="text-align: center">8</td>
       <td style="text-align: left">Panchromatic</td>
-      <td style="text-align: left">0.50 - 0.68 µm</td>
+      <td style="text-align: left">0.50 - 0.68</td>
+      <td style="text-align: left">15</td>
     </tr>
     <tr>
       <td style="text-align: center">9</td>
       <td style="text-align: left">Cirrus</td>
-      <td style="text-align: left">1.36 - 1.38 µm</td>
+      <td style="text-align: left">1.36 - 1.38</td>
+      <td style="text-align: left">30</td>
     </tr>
   </tbody>
 </table>
@@ -201,37 +306,423 @@
     <tr>
       <th style="text-align: center">Band</th>
       <th style="text-align: left">Type</th>
-      <th style="text-align: left">Wavelength (λ)</th>
+      <th style="text-align: left">Wavelength, λ [µm]</th>
+      <th style="text-align: left">Resolution [m]</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td style="text-align: center">10</td>
-      <td style="text-align: left">TIRS 1</td>
-      <td style="text-align: left">10.6 - 11.19 µm</td>
+      <td style="text-align: left">TIR 1</td>
+      <td style="text-align: left">10.6 - 11.19</td>
+      <td style="text-align: left">100</td>
     </tr>
     <tr>
       <td style="text-align: center">11</td>
-      <td style="text-align: left">TIRS 2</td>
-      <td style="text-align: left">11.5 - 12.51 µm</td>
+      <td style="text-align: left">TIR 2</td>
+      <td style="text-align: left">11.5 - 12.51</td>
+      <td style="text-align: left">100</td>
     </tr>
   </tbody>
 </table>
 
 <h1 id="creating-a-composite-image-from-the-rgb-layers">Creating a composite image from the RGB layers</h1>
 
-<h1 id="map-information-overlay">Map Information Overlay</h1>
+<p>To create a composite image using the RGB bands (bands 2-4), the bands are loaded using <code class="highlighter-rouge">gdal.Open()</code>, normalized and values converted to floats, and then stacked in an array using Numpy <code class="highlighter-rouge">dstack()</code></p>
 
-<h2 id="haversine-function-and-great-circle-distances">Haversine Function and Great-Circle Distances</h2>
+<pre><code class="language-Python">
+def norm(band):
+    '''
+    Normalize Spectrum Bands for Composite Image
+    '''
+    band_min, band_max = band.min(), band.max()
+    return ((band - band_min)/(band_max - band_min))
+
+# Open Bands Using GDAL #
+b = gdal.Open(image_files[1])
+g = gdal.Open(image_files[2])
+r = gdal.Open(image_files[3])
+
+# call the norm function on each band as array converted to float
+b2 = norm(b.ReadAsArray().astype(np.float))
+b3 = norm(g.ReadAsArray().astype(np.float))
+b4 = norm(r.ReadAsArray().astype(np.float))
+
+# Create RGB Composite #
+rgb = np.dstack((b4,b3,b2))
+
+# Show Composite Image #
+plt.figure(figsize=(16,16))
+plt.imshow(rgb)
+plt.savefig(productId+'.svg')
+plt.savefig(productId+'.png', dpi=300)
+</code></pre>
+<p>Which produces the satellite image</p>
+
+<center>
+<img src="/assets/research/TAmap/LC08_L1TP_038033_20200425_20200426_01_RT.png" alt="Composite satellite image of LandSat 8 scene LC08_L1TP_038033_20200425_20200426_01_RT" style="width:75%" />
+</center>
+<center><p>Composite satellite image of LandSat 8 scene LC08_L1TP_038033_20200425_20200426_01_RT</p></center>
+
+<h1 id="setting-raster-window">Setting Raster Window</h1>
+
+<p>To center the raster on a point of interest, in this case, the CLF, we use define the following function. We determine the downloaded raster size with <code class="highlighter-rouge">raster.RasterXSize</code> and <code class="highlighter-rouge">raster.RasterYSize</code>, then determine where the point of interest is relative to the corners, the number of pixels, and the pixel size (given the band’s resolution). Then the window is set using <code class="highlighter-rouge">rasterio.windows.Window()</code> and the location of the point of interest and the desired window size.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">centerPOI</span><span class="p">(</span><span class="n">max_lat</span><span class="p">,</span>
+    <span class="n">min_lat</span><span class="p">,</span>
+    <span class="n">max_lon</span><span class="p">,</span>
+    <span class="n">min_lon</span><span class="p">,</span>
+    <span class="n">raster</span><span class="p">,</span>
+    <span class="n">poi_lat</span> <span class="o">=</span> <span class="n">ta_df</span><span class="p">[</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Site'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'CLF'</span><span class="p">][</span><span class="s">'Latitude'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">poi_lon</span> <span class="o">=</span> <span class="n">ta_df</span><span class="p">[</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Site'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'CLF'</span><span class="p">][</span><span class="s">'Longitude'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">pixels</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">):</span>
+    <span class="s">'''
+    Create a Window for the Rasters to Center on a Point of Interest (POI) within the Raster with given latitude and longitude of site.
+    poi_lat = POI latitude in Degrees Decimal
+    poi_lon = POI longitude in Degrees Decimal
+    p = width of window in pixels. Each Pixel is 30m in width
+
+    '''</span>
+    <span class="c1"># Raster Longitude and Latitude Width #
+</span>    <span class="n">lon_range</span> <span class="o">=</span> <span class="n">max_lat</span> <span class="o">-</span> <span class="n">min_lat</span>
+    <span class="n">lat_range</span> <span class="o">=</span> <span class="n">max_lon</span> <span class="o">-</span> <span class="n">min_lon</span>
+<span class="c1">#     print(max_lat, min_lat, lon_range)
+#     print(max_lon, min_lon, lat_range)
+</span>
+    <span class="c1"># Relative Position of POI #
+</span>    <span class="n">poi_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">poi_lon</span> <span class="o">-</span> <span class="n">clf_df</span><span class="p">[</span><span class="s">'min_lon'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">lon_range</span>
+    <span class="n">poi_y</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">poi_lat</span> <span class="o">-</span> <span class="n">clf_df</span><span class="p">[</span><span class="s">'min_lat'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">lat_range</span> <span class="c1"># Flipped y axis #
+</span>
+    <span class="c1"># Open Raster and Find Size #
+</span>    <span class="n">raster</span> <span class="o">=</span>  <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">raster</span><span class="p">)</span>
+    <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">RasterXSize</span><span class="p">,</span> <span class="n">raster</span><span class="o">.</span><span class="n">RasterYSize</span>
+
+    <span class="c1"># Find Position of POI in Raster #
+</span>    <span class="n">poi_x</span> <span class="o">=</span> <span class="n">poi_x</span> <span class="o">*</span> <span class="n">dx</span>
+    <span class="n">poi_y</span> <span class="o">=</span> <span class="n">poi_y</span> <span class="o">*</span> <span class="n">dy</span>
+
+    <span class="c1"># Calculate Window for Focus on POI #
+</span>    <span class="c1"># Window Corner #
+</span>    <span class="n">x_o</span><span class="p">,</span> <span class="n">y_o</span> <span class="o">=</span> <span class="n">poi_x</span> <span class="o">-</span> <span class="mf">.5</span> <span class="o">*</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">poi_y</span> <span class="o">-</span> <span class="mf">.5</span> <span class="o">*</span> <span class="n">pixels</span>
+    <span class="c1"># Window Width #
+</span>    <span class="n">d_x</span><span class="p">,</span> <span class="n">d_y</span> <span class="o">=</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">pixels</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">x_o</span><span class="p">,</span> <span class="n">y_o</span><span class="p">,</span> <span class="n">d_x</span><span class="p">,</span> <span class="n">d_y</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">window</span>
+</code></pre></div></div>
+
+<p>Using the <code class="highlighter-rouge">centerPOI()</code> to set a square window ± 30km around the CLF</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Create Window #
+</span><span class="n">window</span> <span class="o">=</span> <span class="n">centerPOI</span><span class="p">(</span><span class="n">poi_lat</span> <span class="o">=</span> <span class="n">ta_df</span><span class="p">[</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Site'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'CLF'</span><span class="p">][</span><span class="s">'Latitude'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">poi_lon</span> <span class="o">=</span> <span class="n">ta_df</span><span class="p">[</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Site'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'CLF'</span><span class="p">][</span><span class="s">'Longitude'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">max_lat</span> <span class="o">=</span> <span class="n">map_df</span><span class="p">[</span><span class="s">'max_lon'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">min_lat</span> <span class="o">=</span> <span class="n">map_df</span><span class="p">[</span><span class="s">'min_lon'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">max_lon</span> <span class="o">=</span> <span class="n">map_df</span><span class="p">[</span><span class="s">'max_lat'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">min_lon</span> <span class="o">=</span> <span class="n">map_df</span><span class="p">[</span><span class="s">'min_lat'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">raster</span> <span class="o">=</span> <span class="n">image_files</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+              <span class="n">pixels</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">)</span>
+
+<span class="c1"># print(window)
+</span>
+<span class="c1"># Load RGB Bands #
+</span><span class="n">r</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">)</span>
+<span class="n">pan</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">)</span>
+
+<span class="c1"># Normalize RGB Bands #
+</span><span class="n">b2</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">float</span><span class="p">))</span>
+<span class="n">b3</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">float</span><span class="p">))</span>
+<span class="n">b4</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">float</span><span class="p">))</span>
+<span class="n">b8</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">pan</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">float</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">b4</span><span class="p">))</span>
+
+<span class="c1"># Create RGB Composite by stacking layers #
+</span><span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">b4</span><span class="p">,</span><span class="n">b3</span><span class="p">,</span><span class="n">b2</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">rgb</span><span class="p">))</span>
+</code></pre></div></div>
+<p>yields the figure</p>
+
+<center>
+<img src="/assets/research/TAmap/ta_array.png" alt="Composite satellite image of the Telescope Array Cosmic Ray Observatory" style="width:75%" />
+</center>
+<center><p>Composite satellite image of the Telescope Array Cosmic Ray Observatory. The Town of Delta and the surrounding fields and smaller town is to the right. The northern portion of the Sevier lakebed is to the bottom left.</p></center>
+
+<p>Zooming in further on the FD sites and the CLF with square windows ± 3 km.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## Create An Image of Each Site Zoomed in ##
+</span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">16</span><span class="p">))</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">ta_df</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Site'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Latitude'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Longitude'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">)</span>
+
+    <span class="c1">## Finding Offset from recorded CLF lat and Long values to Center CLF ##
+</span>    <span class="n">lat_offset</span><span class="p">,</span> <span class="n">lon_offset</span> <span class="o">=</span> <span class="o">-</span><span class="mf">.015</span><span class="p">,</span> <span class="o">-</span><span class="mf">.017</span>
+
+    <span class="c1"># Create Window #
+</span>    <span class="n">window</span> <span class="o">=</span> <span class="n">centerPOI</span><span class="p">(</span><span class="n">poi_lat</span> <span class="o">=</span> <span class="n">lat</span> <span class="o">+</span> <span class="n">lat_offset</span><span class="p">,</span>
+              <span class="n">poi_lon</span> <span class="o">=</span> <span class="n">lon</span> <span class="o">+</span>  <span class="n">lon_offset</span><span class="p">,</span>
+              <span class="n">max_lat</span> <span class="o">=</span> <span class="n">map_df</span><span class="p">[</span><span class="s">'max_lon'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">min_lat</span> <span class="o">=</span> <span class="n">map_df</span><span class="p">[</span><span class="s">'min_lon'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">max_lon</span> <span class="o">=</span> <span class="n">map_df</span><span class="p">[</span><span class="s">'max_lat'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">min_lon</span> <span class="o">=</span> <span class="n">map_df</span><span class="p">[</span><span class="s">'min_lat'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">raster</span> <span class="o">=</span> <span class="n">image_files</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+              <span class="n">pixels</span> <span class="o">=</span> <span class="mi">200</span><span class="p">)</span>
+
+    <span class="c1"># Load Bands #
+</span>    <span class="n">r</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">)</span>
+
+    <span class="c1"># Normalize Bands #
+</span>    <span class="n">b2</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">float</span><span class="p">))</span>
+    <span class="n">b3</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">float</span><span class="p">))</span>
+    <span class="n">b4</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">float</span><span class="p">))</span>
+
+    <span class="c1"># Stack RGB for Composite #
+</span>    <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">b4</span><span class="p">,</span><span class="n">b3</span><span class="p">,</span><span class="n">b2</span><span class="p">))</span>
+
+    <span class="c1"># Plot Site #
+</span>    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rgb</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'{0} Site ({1:.6f}, {2:.6f})'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">site</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s">'TA Sites with LandSat 8 Composite Images (30m Resolution)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">'ta_sites.svg'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">'ta_sites.png'</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+</code></pre></div></div>
+
+<center>
+<img src="/assets/research/TAmap/ta_sites.png" alt="Composite satellite images of the Telescope Array Cosmic Ray Observatory FD sites and the CLF" style="width:75%" />
+</center>
+<center><p>Composite satellite images of the Telescope Array Cosmic Ray Observatory FD sites and the CLF. Upper Left: CLF. Upper Right: Black Rock. Lower Left: Long Ridge. Lower Right: Middle Drum. Middle Drum is most apparent as it is one of the biggest sites.</p></center>
+
+<h1 id="haversine-formula-and-great-circle-distances-to-clf-coordinates">Haversine Formula and Great-Circle Distances to CLF Coordinates</h1>
+
+<p>To determine the position of the SD sites relative to the center of the satellite for adding these positions to the map, I take the measured GPS locations of the SD and use the <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine_formula</a>. I use the Haversine formula to determine the positions of the SDs on the map given the components of the great-circle distance between the SD site and the CLF. Then I have the SDs in CLF coordinates and account of the curvature of the Earth. I defined the <code class="highlighter-rouge">haversine()</code> function to compute the great-circle distance and bearing between two positions given their latitude and longitude. I use this in the <code class="highlighter-rouge">CLF_coord()</code> to determine the x and y position in CLF coordinates.</p>
+
+<pre><code class="language-Python">def haversine(longitude_1, latitude_1, longitude_2, latitude_2):
+    """
+    Calculate the great circle distance between two points p1 and p2
+    on the earth (specified in decimal degrees)
+    """
+
+    # convert decimal degrees to radians #
+    longitude_1, latitude_1, longitude_2, latitude_2 = map(math.radians, [longitude_1, latitude_1, longitude_2, latitude_2])
+
+    # haversine formula #
+    dlongitude = longitude_2 - longitude_1
+    dlatitude = latitude_2 - latitude_1
+    a = math.sin(dlatitude/2)**2 + math.cos(latitude_1) * math.cos(latitude_2) * math.sin(dlongitude/2)**2
+    c = 2 * math.asin(math.sqrt(a))
+
+    # Earth Radius in m from wikipedia #
+    radius = [6378100, 6356800, 6378137, 6356752.3141, 6399593.6259,
+              6371008.7714, 6371007.1810, 6371000.7900, 6378137.0,
+              6356752.3142, 6399593.6258, 6371008.7714, 6371007.1809,
+              6371000.7900, 6378137.0, 6356752.314140, 6335439,
+              6384400, 6352800, 6371230]
+    description = [
+        'nominal \"zero tide\" equatorial',
+        'nominal \"zero tide\" polar ',
+        'equatorial radius',
+        'semiminor axis (b)',
+        'polar radius of curvature (c)',
+        'mean radius (R1)',
+        'radius of sphere of same surface (R2)',
+        'radius of sphere of same volume (R3)',
+        'WGS-84 ellipsoid, semi-major axis (a)',
+        'WGS-84 ellipsoid, semi-minor axis (b)',
+        'WGS-84 ellipsoid, polar radius of curvature (c)',
+        'WGS-84 ellipsoid, Mean radius of semi-axes (R1)',
+        'WGS-84 ellipsoid, Radius of Sphere of Equal Area (R2)',
+        'WGS-84 ellipsoid, Radius of Sphere of Equal Volume (R3)',
+        'GRS 80 semi-major axis (a)',
+        'GRS 80 semi-minor axis (b)',
+        'meridional radius of curvature at the equator',
+        'Maximum (the summit of Chimborazo)',
+        'Minimum (the floor of the Arctic Ocean)',
+        'Average distance from center to surface'
+    ]
+
+    R_Earth = {'r': radius, 'description': description}
+    R_Earth = pd.DataFrame(R_Earth)
+
+    # Radius of the Earth in km #
+    r = (R_Earth['r'][3] + ta_df['Altitude'][0])/ 1000
+    #r = R_Earth['r'][3]/ 1000
+
+    # Bearing Angle CW from North
+    bearing = math.atan2(math.sin(longitude_2-longitude_1)*math.cos(latitude_2), math.cos(latitude_1)*math.sin(latitude_2)-math.sin(latitude_1)*math.cos(latitude_2)*math.cos(longitude_2-longitude_1))
+
+    # Great Circle Distance #
+    d = c * r
+
+    # Convert Bearing Angle to degrees #
+    # bearing = bearing * 180 / pi
+
+    return d, bearing
+
+def CLF_coord(longitude, latitude):
+    '''
+    Calculates the x and y components of distance between a a point with decimal degree longitude, latitude.
+    CLF Coordinates :
+    +x : East [m]
+    +y : North [m]
+    '''
+    clf_longitude, clf_latitude = ta_df['Longitude'][0], ta_df['Latitude'][0]
+
+    d, bearing = haversine(clf_longitude, clf_latitude, longitude, latitude)
+
+    # Find the x and y component of the Distance #
+    x = d * math.sin(bearing)
+    y = d * math.cos(bearing)
+
+    return x, y
+</code></pre>
 
 <h1 id="ta-satellite-map">TA Satellite Map</h1>
 
+<p>Last step is loading the raster with the desired window and overlaying sites and information after calculating their positions relative to the center.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## Finding Offset from recorded CLF lat and Long values to Center CLF ##
+</span><span class="n">lat_offset</span><span class="p">,</span> <span class="n">lon_offset</span> <span class="o">=</span> <span class="o">-</span><span class="mf">.019</span><span class="p">,</span> <span class="o">-</span><span class="mf">.02</span>
+
+<span class="c1"># Create Window #
+</span><span class="n">window</span> <span class="o">=</span> <span class="n">centerPOI</span><span class="p">(</span><span class="n">poi_lat</span> <span class="o">=</span> <span class="n">ta_df</span><span class="p">[</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Site'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'CLF'</span><span class="p">][</span><span class="s">'Latitude'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">lat_offset</span><span class="p">,</span>
+              <span class="n">poi_lon</span> <span class="o">=</span> <span class="n">ta_df</span><span class="p">[</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Site'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'CLF'</span><span class="p">][</span><span class="s">'Longitude'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">lon_offset</span><span class="p">,</span>
+              <span class="n">max_lat</span> <span class="o">=</span> <span class="n">map_df</span><span class="p">[</span><span class="s">'max_lon'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">min_lat</span> <span class="o">=</span> <span class="n">map_df</span><span class="p">[</span><span class="s">'min_lon'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">max_lon</span> <span class="o">=</span> <span class="n">map_df</span><span class="p">[</span><span class="s">'max_lat'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">min_lon</span> <span class="o">=</span> <span class="n">map_df</span><span class="p">[</span><span class="s">'min_lat'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">raster</span> <span class="o">=</span> <span class="n">image_files</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+              <span class="n">pixels</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">)</span>
+
+<span class="c1"># Load Bands #
+</span><span class="n">r</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">)</span>
+
+<span class="c1"># Normalize Bands #
+</span><span class="n">b2</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">float</span><span class="p">))</span>
+<span class="n">b3</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">float</span><span class="p">))</span>
+<span class="n">b4</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">float</span><span class="p">))</span>
+
+<span class="c1"># Create RGB Composite #
+</span><span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">b4</span><span class="p">,</span><span class="n">b3</span><span class="p">,</span><span class="n">b2</span><span class="p">))</span>
+
+<span class="c1"># FOV Rings #
+</span><span class="n">FOV_x</span><span class="p">,</span> <span class="n">FOV_y</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="n">FOV_c</span> <span class="o">=</span> <span class="p">[]</span>   
+<span class="k">for</span> <span class="p">(</span><span class="n">ang_i</span><span class="p">,</span> <span class="n">ang_f</span><span class="p">,</span> <span class="n">xo</span><span class="p">,</span> <span class="n">yo</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'FOVi'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'FOVf'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'X'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Y'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Color'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">FOV_arc</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ang_i</span><span class="p">,</span> <span class="n">ang_f</span><span class="p">,</span> <span class="n">xo</span><span class="p">,</span> <span class="n">yo</span><span class="p">)</span>
+    <span class="n">FOV_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">FOV_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">FOV_c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+
+<span class="c1">## Composite Array Plot ##
+</span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">16</span><span class="p">))</span>
+
+<span class="c1"># Satellite Background #
+</span><span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rgb</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s">'equal'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+
+<span class="c1"># FD Site Back Grounds #
+</span><span class="n">clr_clf</span> <span class="o">=</span> <span class="s">'red'</span>
+<span class="n">clr_fd</span> <span class="o">=</span> <span class="s">'#065398'</span>
+<span class="n">clr_sd</span> <span class="o">=</span> <span class="s">'white'</span>
+
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">frame_on</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="c1"># Plot FOV #
+</span><span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">c</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">FOV_x</span><span class="p">,</span> <span class="n">FOV_y</span><span class="p">,</span> <span class="n">FOV_c</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">:</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="mf">.2</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">clr_fd</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+
+<span class="c1"># FD Sites #
+# for (lat,lon,color,label) in zip(ta_df['Latitude DD'],ta_df['Longitude DD'],ta_df['Color'],ta_df['Site']):
+#     x, y = CLF_coord(lon,lat)
+</span><span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">label</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'X'</span><span class="p">],</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Y'</span><span class="p">],</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Site'</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="s">'CLF'</span> <span class="p">:</span> <span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s">'h'</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">clr_clf</span><span class="p">)</span>
+    <span class="k">else</span> <span class="p">:</span> <span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s">'^'</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">clr_fd</span><span class="p">)</span>
+<span class="c1"># SD Sites #
+</span><span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sd_df</span><span class="p">[</span><span class="s">'X'</span><span class="p">],</span><span class="n">sd_df</span><span class="p">[</span><span class="s">'Y'</span><span class="p">]):</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s">'.'</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">clr_sd</span><span class="p">)</span>
+<span class="c1"># Label Sites #
+</span><span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">text</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'X'</span><span class="p">],</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Y'</span><span class="p">],</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Site'</span><span class="p">]):</span>
+    <span class="c1">#print (x,y,color,label)
+</span>    <span class="k">if</span> <span class="n">text</span> <span class="o">!=</span> <span class="s">'CLF'</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">text</span> <span class="o">==</span> <span class="s">'MD'</span><span class="p">:</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">+</span> <span class="mf">1.25</span><span class="p">,</span><span class="n">text</span><span class="p">,</span> <span class="n">verticalalignment</span><span class="o">=</span><span class="s">'center'</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s">'center'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">'white'</span><span class="p">)</span>
+        <span class="k">else</span> <span class="p">:</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">-</span> <span class="mf">1.25</span><span class="p">,</span><span class="n">text</span><span class="p">,</span> <span class="n">verticalalignment</span><span class="o">=</span><span class="s">'center'</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s">'center'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">'white'</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">])</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">])</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+
+<span class="c1"># Stuff for Legend #
+</span><span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s">'^'</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">clr_fd</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'FD Site'</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s">'h'</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">clr_clf</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'CLF Site'</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s">'.'</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">clr_sd</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'SD Site'</span><span class="p">)</span>
+
+<span class="c1"># Scale #
+</span><span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span><span class="p">],[</span><span class="mi">27</span><span class="p">,</span><span class="mi">27</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s">'white'</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="s">'10 km'</span><span class="p">,</span> <span class="n">verticalalignment</span><span class="o">=</span><span class="s">'center'</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s">'center'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">'white'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+
+<span class="c1"># North Compass #
+</span><span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="o">-</span><span class="mi">25</span><span class="p">,</span><span class="o">-</span><span class="mi">25</span><span class="p">],[</span><span class="mi">22</span><span class="p">,</span><span class="mi">27</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s">'white'</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">-</span><span class="mi">25</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="s">'North'</span><span class="p">,</span> <span class="n">verticalalignment</span><span class="o">=</span><span class="s">'center'</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s">'center'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">'white'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">fill</span><span class="p">([</span><span class="o">-</span><span class="mi">25</span><span class="p">,</span><span class="o">-</span><span class="mf">25.5</span><span class="p">,</span><span class="o">-</span><span class="mf">24.5</span><span class="p">],[</span><span class="mi">27</span><span class="p">,</span><span class="mi">26</span><span class="p">,</span><span class="mi">26</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s">'white'</span><span class="p">)</span>
+
+<span class="c1">## Attribution ##
+</span><span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.98</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="s">'Greg Furlich</span><span class="se">\n</span><span class="s"> USGS Landsat 8</span><span class="se">\n</span><span class="s"> Telescope Array Cosmic Ray Observatory Satellite Map'</span><span class="p">,</span>
+        <span class="n">verticalalignment</span><span class="o">=</span><span class="s">'bottom'</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s">'right'</span><span class="p">,</span>
+        <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+        <span class="n">weight</span><span class="o">=</span><span class="s">'medium'</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s">'white'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+
+<span class="c1"># Plot Info #
+# plt.title('Telescope Array Cosmic Ray Observatory')
+# plt.xlabel('East [km]')
+# plt.ylabel('North [km]')
+</span>
+<span class="n">leg</span> <span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s">'upper right'</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.98</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">),</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s">'size'</span><span class="p">:</span><span class="mi">16</span><span class="p">},</span> <span class="n">markerscale</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">framealpha</span> <span class="o">=</span> <span class="mf">.2</span><span class="p">)</span>
+<span class="n">frame</span> <span class="o">=</span> <span class="n">leg</span><span class="o">.</span><span class="n">get_frame</span><span class="p">()</span>
+<span class="n">frame</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s">'white'</span><span class="p">)</span>
+<span class="n">frame</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">leg</span><span class="o">.</span><span class="n">get_texts</span><span class="p">():</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s">'w'</span><span class="p">)</span>
+
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s">'equal'</span><span class="p">)</span>
+
+<span class="c1"># plt.show()
+</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">'ta_map.svg'</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s">'tight'</span><span class="p">,</span> <span class="n">pad_inches</span><span class="o">=-</span><span class="mf">.1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">'ta_map.png'</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s">'tight'</span><span class="p">,</span> <span class="n">pad_inches</span><span class="o">=-</span><span class="mf">.1</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The final result is the composite satellite map to show the Telescope Array Cosmic Ray Observatory.</p>
+
 <center>
-<img src="/assets/coding/ta_map.png" alt="Satellite Map of the Telescope Array Cosmic Observatory Using LandSat 8" style="width:50vw" />
+<img src="/assets/research/TAmap/ta_map.png" alt="Satellite Map of the Telescope Array Cosmic Observatory Using LandSat 8" style="width:50vw" />
 </center>
 <center><p>Satellite map of TA using Landsat 8 data.</p></center>
 
 <div style="height: 5vh"></div>
+
+<h1 id="resources">Resources</h1>
+
+<p><a href="https://colekrehbiel.wordpress.com/2017/10/01/creating-natural-color-rgb-composites-from-landsat-8-data-in-python/">RGB Stacked Satellite Images in Python</a></p>
+
+<p><a href="https://www.earthdatascience.org/courses/use-data-open-source-python/multispectral-remote-sensing/landsat-in-Python/">Work with Landsat Remote Sensing Data in Python</a></p>
+
+<p><a href="https://geohackweek.github.io/raster/04-workingwithrasters/">Working with Raster Datasets in Python</a></p>
 
   </div><top id="go-to-top" title="Go to top"><a href="#" >&#9650;<br>Back to Top</a></top>
   <a class="u-url" href="/posts/telescope-array-satellite-map.html" hidden></a>
