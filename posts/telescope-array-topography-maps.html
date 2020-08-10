@@ -3,9 +3,9 @@
 <head>
     <title>
         
-        Telescope Array Topography Maps using STRM Data
+        Telescope Array Topographic Maps using Shuttle Radar Topography Mission Data (Post Under Construction)
     </title>
-    <meta itemprop="description" name="description" content="Created a topographic map and shaded relief map of the Telescope Array Cosmic Ray Observatory located in the Sevier Desert of Millard County Utah using STRM data. STRM data was cropped to TA's location and an informational overlay was added. The curvature of the earth was taken into account using the Haversine formula." />
+    <meta itemprop="description" name="description" content="A topographic map and shaded relief map of the Telescope Array (TA) Cosmic Ray Observatory located in the Sevier Desert of Millard County Utah were created using Shuttle Radar Topography Mission (STRM) data in Python. The STRM data was loaded into python using  STRM data was cropped to TA's location to create and an informational overlay was added." />
     <meta name="author" content="Greg Furlich">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -66,7 +66,7 @@
 
   <div style="height: 10vh"></div>
   <header class="post-header">
-    <h4 style="font-size:1.8em">Telescope Array Topography Maps using STRM Data</h4>
+    <h4 style="font-size:1.8em">Telescope Array Topographic Maps using Shuttle Radar Topography Mission Data (Post Under Construction)</h4>
     <div style="height: 1vh"></div>
     <p class="post-meta" style="font-size: 1.2em">
 
@@ -77,17 +77,19 @@
 
     <p style="color=$blue"><i class="fas fa-tags"></i>
         
-            Telescope Array,
+            GIS,
         
-            Research,
-        
-            Remote Sensing,
+            GDAL,
         
             Python,
         
             STRM,
         
-            GDAL,
+            NumPy,
+        
+            Telescope Array,
+        
+            Remote Sensing,
         
     </p>
 
@@ -96,45 +98,35 @@
   <!-- <div class="post-content e-content" itemprop="articleBody"> -->
   <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
   text-justify: inter-word;">
-    <p>Both of the maps below were created using this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/TA_topo.ipynb">Jupyter python notebook</a>. Python <a href="https://pypi.org/project/GDAL/">GDAL</a> module was used to import the raster. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the curvature of the earth.</p>
+    <p><b> This post is under construction<b></b></b></p>
+
+<p>Both of the maps below were created using this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/TA_topo.ipynb">Jupyter python notebook</a>. Python <a href="https://pypi.org/project/GDAL/">GDAL</a> module was used to import the raster. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the curvature of the earth.</p>
 
 <div style="height: 5vh"></div>
 <ul id="markdown-toc">
-  <li><a href="#strm-data" id="markdown-toc-strm-data">STRM Data</a></li>
+  <li><a href="#shuttle-radar-topography-mission-data" id="markdown-toc-shuttle-radar-topography-mission-data">Shuttle Radar Topography Mission Data</a></li>
   <li><a href="#ta-topographic-map" id="markdown-toc-ta-topographic-map">TA Topographic Map</a></li>
   <li><a href="#ta-shaded-relief-map" id="markdown-toc-ta-shaded-relief-map">TA Shaded Relief Map</a></li>
 </ul>
 <div style="height: 5vh"></div>
 
-<h1 id="strm-data">STRM Data</h1>
+<h1 id="shuttle-radar-topography-mission-data">Shuttle Radar Topography Mission Data</h1>
 
-<div style="height: 5vh"></div>
-
-<p>STRM stands for the <a href="https://www2.jpl.nasa.gov/srtm/">Shuttle Radar Topography Mission</a>. Data was accessed form <a href="https://www.usgs.gov/centers/eros">Earth Resources Observation and Science (EROS) Center</a>. The data was cropped to the Center Laser Facility (CLF) of the array. Data can also be found <a href="http://srtm.csi.cgiar.org/wp-content/uploads/files/srtm_5x5/TIFF/srtm_14_05.zip">here</a> which has a beautiful view of the grand canyon and the green and Colorado River through the Colorado Plateau in Utah.</p>
-
-<div style="height: 5vh"></div>
+<p>The <a href="https://www2.jpl.nasa.gov/srtm/">Shuttle Radar Topography Mission (STRM)</a>. Data was accessed form <a href="https://www.usgs.gov/centers/eros">Earth Resources Observation and Science (EROS) Center</a>. The data was cropped to the Center Laser Facility (CLF) of the array. Data can also be found <a href="http://srtm.csi.cgiar.org/wp-content/uploads/files/srtm_5x5/TIFF/srtm_14_05.zip">here</a> which has a beautiful view of the grand canyon and the green and Colorado River through the Colorado Plateau in Utah.</p>
 
 <h1 id="ta-topographic-map">TA Topographic Map</h1>
-
-<div style="height: 5vh"></div>
 
 <center>
 <img src="/assets/research/TAmap/ta_topo.png" alt="Telescope Array Cosmic Ray Observatory Topographic Map" style="width:50vw" />
 </center>
 <center><p>Topographical map of TA using STRM data. TA is about 1400 meters above sea level surround by mountains as a part the great basin and range region of the USA. The FD with a arc 30 km arc of the field of view as blue triangles, SD sites as purple circles, and the CLF as an orange hexagon.</p></center>
 
-<div style="height: 5vh"></div>
-
 <h1 id="ta-shaded-relief-map">TA Shaded Relief Map</h1>
-
-<div style="height: 5vh"></div>
 
 <center>
 <img src="/assets/research/TAmap/ta_relief.png" alt="Telescope Array Cosmic Ray Observatory Topographic Relief Map" style="width:50vw" />
 </center>
 <center><p>Shaded relief map of TA using STRM data. The geographical feature of Longridge, Black Rock Mesa, and the Drum Mountains which the FD sites are named for are apparent.</p></center>
-
-<div style="height: 5vh"></div>
 
   </div><top id="go-to-top" title="Go to top"><a href="#" >&#9650;<br>Back to Top</a></top>
   <a class="u-url" href="/posts/telescope-array-topography-maps.html" hidden></a>
