@@ -5,7 +5,7 @@
         
         Telescope Array Topographic Maps using Shuttle Radar Topography Mission Data (Post Under Construction)
     </title>
-    <meta itemprop="description" name="description" content="A topographic map and shaded relief map of the Telescope Array (TA) Cosmic Ray Observatory located in the Sevier Desert of Millard County Utah were created using Shuttle Radar Topography Mission (STRM) data in Python. The STRM data was loaded into python using  STRM data was cropped to TA's location to create and an informational overlay was added." />
+    <meta itemprop="description" name="description" content="A topographic map and shaded relief map of the Telescope Array (TA) Cosmic Ray Observatory located in the Sevier Desert of Millard County Utah were created using Shuttle Radar Topography Mission (SRTM) data in Python. The SRTM data was loaded into python using python GDAL and the raster window was cropped to TA's location using rasterio. A topographic altitude map and a shaded relief map were created and an informational overlay was added to both." />
     <meta name="author" content="Greg Furlich">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -83,7 +83,7 @@
         
             Python,
         
-            STRM,
+            SRTM,
         
             NumPy,
         
@@ -100,19 +100,50 @@
   text-justify: inter-word;">
     <p><b> This post is under construction<b></b></b></p>
 
-<p>Both of the maps below were created using this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/TA_topo.ipynb">Jupyter python notebook</a>. Python <a href="https://pypi.org/project/GDAL/">GDAL</a> module was used to import the raster. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the curvature of the earth.</p>
+<p>The <a href="http://www.telescopearray.org/">Telescope Array Cosmic Ray Observatory (TA)</a> is the largest cosmic ray detector in the northern hemisphere. To better illustrate the observatory’s layout in the Basin and Range and size for presentations and papers, I created my topographic map and a shaded relief map. The python <a href="https://pypi.org/project/GDAL/">GDAL module</a> was used to import the rasters of the SRTM data, <a href="https://rasterio.readthedocs.io/en/latest/index.html">rasterio module</a> was used to set the window on the raster, and matplotlib was used to add a light source for a shaded relief map. Thes topographic maps were centered on the central laser facility (CLF) at the observatory. Both of the topographic maps below were created using this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/TA_topo.ipynb">Jupyter python notebook</a>.</p>
 
 <div style="height: 5vh"></div>
 <ul id="markdown-toc">
-  <li><a href="#shuttle-radar-topography-mission-data" id="markdown-toc-shuttle-radar-topography-mission-data">Shuttle Radar Topography Mission Data</a></li>
+  <li><a href="#python-and-gis" id="markdown-toc-python-and-gis">Python and GIS</a></li>
+  <li><a href="#retrieving-shuttle-radar-topography-mission-data" id="markdown-toc-retrieving-shuttle-radar-topography-mission-data">Retrieving Shuttle Radar Topography Mission Data</a></li>
   <li><a href="#ta-topographic-map" id="markdown-toc-ta-topographic-map">TA Topographic Map</a></li>
   <li><a href="#ta-shaded-relief-map" id="markdown-toc-ta-shaded-relief-map">TA Shaded Relief Map</a></li>
 </ul>
 <div style="height: 5vh"></div>
 
-<h1 id="shuttle-radar-topography-mission-data">Shuttle Radar Topography Mission Data</h1>
+<h1 id="python-and-gis">Python and GIS</h1>
 
-<p>The <a href="https://www2.jpl.nasa.gov/srtm/">Shuttle Radar Topography Mission (STRM)</a>. Data was accessed form <a href="https://www.usgs.gov/centers/eros">Earth Resources Observation and Science (EROS) Center</a>. The data was cropped to the Center Laser Facility (CLF) of the array. Data can also be found <a href="http://srtm.csi.cgiar.org/wp-content/uploads/files/srtm_5x5/TIFF/srtm_14_05.zip">here</a> which has a beautiful view of the grand canyon and the green and Colorado River through the Colorado Plateau in Utah.</p>
+<p>I discuss python and Geographic Information Services (GIS) in my <a href="">composite satellite map post</a>.</p>
+
+<p>To import GDAL and rasterio in python (and other modules I use in my example):</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="n">cm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.mlab</span> <span class="k">as</span> <span class="n">mlab</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1.inset_locator</span> <span class="kn">import</span> <span class="n">inset_axes</span>
+</code></pre></div></div>
+<p>The python module versions I used in my example are:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Python 3.6.9
+Pandas: 0.24.1
+Numpy: 1.16.0
+Matplotlib: 3.0.2
+GDAL: 2.4.2
+Rasterio: 1.1.5
+</code></pre></div></div>
+
+<h1 id="retrieving-shuttle-radar-topography-mission-data">Retrieving Shuttle Radar Topography Mission Data</h1>
+
+<p>The <a href="https://www2.jpl.nasa.gov/srtm/">Shuttle Radar Topography Mission (SRTM)</a> was topographic data collected by radar on the STS-99 with Space Shuttle Endeavour. SRTM data raster which TA is located in can also be found <a href="http://srtm.csi.cgiar.org/wp-content/uploads/files/srtm_5x5/TIFF/srtm_14_05.zip">here</a> which has a beautiful view of the grand canyon and the green and Colorado River through the Colorado Plateau in Utah.</p>
+
+<center>
+<img src="/assets/research/TAmap/srtm_14_05.png" alt="SRTM 14 05 Topographic Map" style="width:50vw" />
+</center>
 
 <h1 id="ta-topographic-map">TA Topographic Map</h1>
 

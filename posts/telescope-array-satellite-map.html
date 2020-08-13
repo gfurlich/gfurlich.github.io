@@ -91,8 +91,6 @@
         
             Telescope Array,
         
-            Research,
-        
             Remote Sensing,
         
             Python,
@@ -104,7 +102,7 @@
   <!-- <div class="post-content e-content" itemprop="articleBody"> -->
   <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
   text-justify: inter-word;">
-    <p>The <a href="http://www.telescopearray.org/">Telescope Array Cosmic Ray Observatory (TA)</a> is the largest cosmic ray detector in the northern hemisphere. To better illustrate the observatory’s location and size for presentations and papers, I created my own composite satellite map. The python <a href="https://pypi.org/project/GDAL/">GDAL module</a> was used to import the rasters of the different bands, <a href="https://rasterio.readthedocs.io/en/latest/index.html">rasterio module</a> was used to set the window on the raster, and NumPy (Numerical Python) was used to create a composite color image using the RGB bands. The satellite image was centered on the central laser facility (CLF) at the observatory. The <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> was used to account for the relative great-circle distance between sites from the center given curvature of the earth. The satellite image below was created in this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/Ta_satellite_map.ipynb">Jupyter python notebook</a> on my github profile.</p>
+    <p>The <a href="http://www.telescopearray.org/">Telescope Array Cosmic Ray Observatory (TA)</a> is the largest cosmic ray detector in the northern hemisphere. To better illustrate the observatory’s location and size for presentations and papers, I created my own composite satellite map. The python <a href="https://pypi.org/project/GDAL/">GDAL module</a> was used to import the rasters of the different bands, <a href="https://rasterio.readthedocs.io/en/latest/index.html">rasterio module</a> was used to set the window on the raster, and NumPy (Numerical Python) was used to create a composite color image using the RGB bands. The satellite image was centered on the central laser facility (CLF) at the observatory. The satellite image below was created in this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/Ta_satellite_map.ipynb">Jupyter python notebook</a> on my github profile.</p>
 
 <div style="height: 5vh"></div>
 <ul id="markdown-toc">
@@ -135,6 +133,16 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">re</span>
+</code></pre></div></div>
+<p>The python module versions I used in my example are:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Python 3.6.9
+Pandas: 0.24.1
+Numpy: 1.16.0
+Matplotlib: 3.0.2
+re: 2.2.1
+wget: 3.2
+GDAL: 2.4.2
+Rasterio: 1.1.5
 </code></pre></div></div>
 
 <h1 id="retrieving-landsat-8-data-off-aws">Retrieving LandSat 8 Data off AWS</h1>

@@ -122,6 +122,10 @@
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">chi2</span>
 <span class="kn">from</span> <span class="nn">ROOT</span> <span class="kn">import</span> <span class="n">TCanvas</span><span class="p">,</span> <span class="n">TGraph</span><span class="p">,</span> <span class="n">TH1F</span><span class="p">,</span> <span class="n">TF1</span><span class="p">,</span> <span class="n">gStyle</span><span class="p">,</span> <span class="n">TH1D</span>
 </code></pre></div></div>
+<p>The versions I used in my example are:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Scipy v1.1.0 Numpy v1.15.0
+ROOT Version: 6.18/04
+</code></pre></div></div>
 
 <h1 id="creating-a-scipy-histogram">Creating a SciPy Histogram</h1>
 
@@ -173,15 +177,15 @@
 <span class="k">print</span><span class="p">(</span><span class="n">chi2</span><span class="o">/</span><span class="n">ndf</span><span class="p">,</span><span class="n">prob</span><span class="p">)</span>
 </code></pre></div></div>
 <p>which outputs the fit statistics</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>58.37181407094924 51
-1.1445453739401812 0.2228036056936944
- FCN=58.3718 FROM MIGRAD    STATUS=CONVERGED      69 CALLS          70 TOTAL
-                     EDM=4.20661e-08    STRATEGY= 1      ERROR MATRIX ACCURATE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>49.08659294755991 48
+1.0226373530741648 0.4293397390693532
+ FCN=49.0866 FROM MIGRAD    STATUS=CONVERGED      68 CALLS          69 TOTAL
+                     EDM=8.44808e-08    STRATEGY= 1      ERROR MATRIX ACCURATE
   EXT PARAMETER                                   STEP         FIRST   
   NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE
-   1  Constant     1.79434e+01   1.11897e+00   3.21220e-03   1.42885e-04
-   2  Mean         1.00502e+00   4.93062e-03   1.85536e-05  -6.22954e-03
-   3  Sigma        9.94897e-02   4.34689e-03   4.13976e-05   2.53013e-02
+   1  Constant     1.82687e+01   1.13856e+00   2.97321e-03   2.68351e-05
+   2  Mean         1.00457e+00   5.02995e-03   1.73624e-05  -8.12271e-02
+   3  Sigma        1.00541e-01   4.61612e-03   4.01582e-05   5.02345e-03
 </code></pre></div></div>
 <h1 id="plot-fitted-histogram-in-pyroot">Plot Fitted Histogram in PyRoot</h1>
 
@@ -191,6 +195,10 @@
 <span class="n">c1</span><span class="o">.</span><span class="n">Draw</span><span class="p">()</span>
 <span class="n">c1</span><span class="o">.</span><span class="n">SaveAs</span><span class="p">(</span><span class="s">'root_fit.png'</span><span class="p">)</span>
 </code></pre></div></div>
+<center>
+<img src="/assets/coding/root_fit.png" alt="ROOT fit to the histogram" style="width:50vw" />
+</center>
+<center><p>PyRoot fit in red to the gaussian sampled distribution. The fit statistics from ROOT are in the upper right.</p></center>
 
 <h1 id="scipy-fit">SciPy Fit</h1>
 
@@ -235,12 +243,12 @@
 </code></pre></div></div>
 <p>which outputs</p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Hist	Calc Package	Chi Sq	 Chi2/dof	prob
-Root	Root	58.37181407094924	1.1445453739401812	0.2228036056936944
-Root	Python	58.371814070949235	1.144545373940181	0.22280360569369198
-Scipy	Python	67.94656316821437	1.332285552317929	0.05638278965588679
-Degrees of Freedom =	51
+Root	Root	49.08659294755991	1.0226373530741648	0.4293397390693532
+Root	Python	49.08659294755992	1.022637353074165	0.42933973906935374
+Scipy	Python	54.44279541875839	1.1342249045574664	0.24270327085696833
+Degrees of Freedom =	48
 </code></pre></div></div>
-<p>PyRoot achieves a better Χ<sup>2</sup>/ndf and thus a better fit. SciPy has more examples online with how to use but this example will hopefully allow you to use <code class="highlighter-rouge">PyRoot</code> instead.</p>
+<p>PyRoot achieves a better Χ<sup>2</sup>/ndf and thus a better fit. I hypothesis difference in fits stats from the same data is due the minimization methods of the two modules. SciPy has more examples online with how to use but this example will hopefully allow you to use <code class="highlighter-rouge">PyRoot</code> instead as it is more robust.</p>
 <center>
 <img src="/assets/coding/python_fit.png" alt="PyRoot vs SciPy" style="width:50vw" />
 </center>
