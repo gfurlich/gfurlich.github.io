@@ -102,7 +102,7 @@
   <!-- <div class="post-content e-content" itemprop="articleBody"> -->
   <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
   text-justify: inter-word;">
-    <p>The <a href="http://www.telescopearray.org/">Telescope Array Cosmic Ray Observatory (TA)</a> is the largest cosmic ray detector in the northern hemisphere. To better illustrate the observatory’s location and size for presentations and papers, I created my own composite satellite map. The python <a href="https://pypi.org/project/GDAL/">GDAL module</a> was used to import the rasters of the different bands, <a href="https://rasterio.readthedocs.io/en/latest/index.html">rasterio module</a> was used to set the window on the raster, and NumPy (Numerical Python) was used to create a composite color image using the RGB bands. The satellite image was centered on the central laser facility (CLF) at the observatory. The satellite image below was created in this <a href="https://github.com/gfurlich/Research/blob/master/TAMap/Ta_satellite_map.ipynb">Jupyter python notebook</a> on my github profile.</p>
+    <p>The <a href="http://www.telescopearray.org/">Telescope Array Cosmic Ray Observatory (TA)</a> is the largest cosmic ray detector in the northern hemisphere. To better illustrate the observatory’s location and size for presentations and papers, I created my own composite satellite map. The python <a href="https://pypi.org/project/GDAL/">GDAL module</a> was used to import the rasters of the different bands, <a href="https://rasterio.readthedocs.io/en/latest/index.html">rasterio module</a> was used to set the window on the raster, and NumPy (Numerical Python) was used to create a composite color image using the RGB bands. The satellite image was centered on the central laser facility (CLF) at the observatory. The satellite image below was created in this <a href="https://github.com/gfurlich/Research/blob/master/TAmap/TA_satellite_map.ipynb">Jupyter python notebook</a> on my Github profile.</p>
 
 <div style="height: 5vh"></div>
 <ul id="markdown-toc">
@@ -112,7 +112,7 @@
     </ul>
   </li>
   <li><a href="#creating-a-composite-image-from-the-rgb-layers" id="markdown-toc-creating-a-composite-image-from-the-rgb-layers">Creating a composite image from the RGB layers</a></li>
-  <li><a href="#setting-raster-window" id="markdown-toc-setting-raster-window">Setting Raster Window</a></li>
+  <li><a href="#setting-the-raster-window" id="markdown-toc-setting-the-raster-window">Setting the Raster Window</a></li>
   <li><a href="#haversine-formula-and-great-circle-distances-to-clf-coordinates" id="markdown-toc-haversine-formula-and-great-circle-distances-to-clf-coordinates">Haversine Formula and Great-Circle Distances to CLF Coordinates</a></li>
   <li><a href="#ta-satellite-map" id="markdown-toc-ta-satellite-map">TA Satellite Map</a></li>
   <li><a href="#resources" id="markdown-toc-resources">Resources</a></li>
@@ -372,7 +372,7 @@ plt.savefig(productId+'.png', dpi=300)
 </center>
 <center><p>Composite satellite image of LandSat 8 scene LC08_L1TP_038033_20200425_20200426_01_RT</p></center>
 
-<h1 id="setting-raster-window">Setting Raster Window</h1>
+<h1 id="setting-the-raster-window">Setting the Raster Window</h1>
 
 <p>To center the raster on a point of interest, in this case, the CLF, we use define the following function. We determine the downloaded raster size with <code class="highlighter-rouge">raster.RasterXSize</code> and <code class="highlighter-rouge">raster.RasterYSize</code>, then determine where the point of interest is relative to the corners, the number of pixels, and the pixel size (given the band’s resolution). Then the window is set using <code class="highlighter-rouge">rasterio.windows.Window()</code> and the location of the point of interest and the desired window size.</p>
 
