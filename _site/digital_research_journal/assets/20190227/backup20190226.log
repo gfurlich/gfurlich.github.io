@@ -1,0 +1,9 @@
+# Mapfile. Created by GNU ddrescue version 1.20
+# Command line: ddrescue -f /dev/sda /dev/sdb backup20190226.log
+# Start time:   2019-02-26 23:30:26
+# Current time: 2019-02-27 10:42:45
+# Finished
+# current_pos  current_status
+0x3A3813C0000     +
+#      pos        size  status
+0x00000000  0x3A3813CDE00  +

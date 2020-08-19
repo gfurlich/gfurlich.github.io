@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.0 -->
+<title>TAResearch 2019-03-15 | Greg Furlich Telescope Array Digital Research Journal</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="TAResearch 2019-03-15" />
+<meta name="author" content="Greg Furlich" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Digital Research Journal of Greg Furlich" />
+<meta property="og:description" content="Digital Research Journal of Greg Furlich" />
+<link rel="canonical" href="https://gregfurlich.com/digital_research_journal/weather/machine%20learning/pandas/numpy/2019/03/15/taresearch-20190315.html" />
+<meta property="og:url" content="https://gregfurlich.com/digital_research_journal/weather/machine%20learning/pandas/numpy/2019/03/15/taresearch-20190315.html" />
+<meta property="og:site_name" content="Greg Furlich Telescope Array Digital Research Journal" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-03-15T09:31:06-06:00" />
+<script type="application/ld+json">
+{"datePublished":"2019-03-15T09:31:06-06:00","dateModified":"2019-03-15T09:31:06-06:00","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://gregfurlich.com/digital_research_journal/weather/machine%20learning/pandas/numpy/2019/03/15/taresearch-20190315.html"},"url":"https://gregfurlich.com/digital_research_journal/weather/machine%20learning/pandas/numpy/2019/03/15/taresearch-20190315.html","author":{"@type":"Person","name":"Greg Furlich"},"description":"Digital Research Journal of Greg Furlich","headline":"TAResearch 2019-03-15","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/digital_research_journal/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://gregfurlich.com/digital_research_journal/feed.xml" title="Greg Furlich Telescope Array Digital Research Journal" /></head>
+<body>
+
+    <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' /><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/digital_research_journal/">Greg Furlich Telescope Array Digital Research Journal</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/digital_research_journal/about/">About</a><a class="page-link" href="/digital_research_journal/categories/">Categories</a><a class="page-link" href="/digital_research_journal/stats/">Journal Stats</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">TAResearch 2019-03-15</h1>
+    <p class="post-meta">
+      <i class="far fa-clock"></i> <time class="dt-published" datetime="2019-03-15T09:31:06-06:00" itemprop="datePublished">Mar 15, 2019
+      </time>• <i class="far fa-user-circle"></i> <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Greg Furlich</span></span></p>
+
+
+  <h3>   <i class="fas fa-tags"></i>  Categories :
+    
+        <a href="/categories/#Weather" style="text-decoration: none;">Weather</a>,
+    
+        <a href="/categories/#Machine Learning" style="text-decoration: none;">Machine Learning</a>,
+    
+        <a href="/categories/#Pandas" style="text-decoration: none;">Pandas</a>,
+    
+        <a href="/categories/#Numpy" style="text-decoration: none;">Numpy</a>,
+    
+    </h3>
+    <p />
+
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul id="markdown-toc">
+  <li><a href="#checking-weather-classification-data" id="markdown-toc-checking-weather-classification-data">Checking Weather Classification Data</a>    <ul>
+      <li><a href="#y2016m07d15s1" id="markdown-toc-y2016m07d15s1">y2016m07d15s1</a>        <ul>
+          <li><a href="#fd_ped_h5" id="markdown-toc-fd_ped_h5">fd_ped_h5</a></li>
+        </ul>
+      </li>
+      <li><a href="#y2007m11d07-first-training-night" id="markdown-toc-y2007m11d07-first-training-night">y2007m11d07 (First Training Night)</a>        <ul>
+          <li><a href="#night-animation" id="markdown-toc-night-animation">Night Animation</a></li>
+          <li><a href="#fd_ped_h5-1" id="markdown-toc-fd_ped_h5-1">fd_ped_h5</a></li>
+          <li><a href="#fd_ped_vect_nonpadded" id="markdown-toc-fd_ped_vect_nonpadded">fd_ped_vect_nonpadded</a></li>
+          <li><a href="#fd_ped_vect" id="markdown-toc-fd_ped_vect">fd_ped_vect</a></li>
+        </ul>
+      </li>
+      <li><a href="#y2017m11d28s0-non-training-data" id="markdown-toc-y2017m11d28s0-non-training-data">y2017m11d28s0 non training data</a>        <ul>
+          <li><a href="#fd_ped_vect_nonpadded-1" id="markdown-toc-fd_ped_vect_nonpadded-1">fd_ped_vect_nonpadded</a></li>
+        </ul>
+      </li>
+      <li><a href="#master-fd-ped-part-database" id="markdown-toc-master-fd-ped-part-database">Master fd ped part database</a>        <ul>
+          <li><a href="#max-night-" id="markdown-toc-max-night-">Max Night :</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#re-vectorize-data-from-each-night-pedestal-dataframes-in-fd_ped_h5-data" id="markdown-toc-re-vectorize-data-from-each-night-pedestal-dataframes-in-fd_ped_h5-data">Re-vectorize data from each night pedestal dataframes in fd_ped_h5 data</a>    <ul>
+      <li><a href="#re-transfer-data-back-to-chpc" id="markdown-toc-re-transfer-data-back-to-chpc">Re-transfer data back to CHPC</a></li>
+      <li><a href="#edit-fd_pedestal_data_vectorizationpy" id="markdown-toc-edit-fd_pedestal_data_vectorizationpy">Edit fd_pedestal_data_vectorization.py</a></li>
+      <li><a href="#proof-that-past-vectorization-was-wrong" id="markdown-toc-proof-that-past-vectorization-was-wrong">Proof that past vectorization was wrong</a></li>
+      <li><a href="#submit-to-chpc-and-vectorize-data" id="markdown-toc-submit-to-chpc-and-vectorize-data">Submit to CHPC and vectorize data</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="checking-weather-classification-data">Checking Weather Classification Data</h1>
+
+<p>Looking at the data saved in <code class="highlighter-rouge">fd_ped_h5</code> vs. <code class="highlighter-rouge">fd_ped_vect</code> vs. <code class="highlighter-rouge">fd_ped_vect_nonpadded</code> to see how far the discrepancies go from yesterday.</p>
+
+<h2 id="y2016m07d15s1">y2016m07d15s1</h2>
+
+<h3 id="fd_ped_h5">fd_ped_h5</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">store</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="s">'y2016m07d15s1_ped_fluct.h5'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">store</span>
+<span class="o">&lt;</span><span class="k">class</span> <span class="err">'</span><span class="nc">pandas</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">pytables</span><span class="o">.</span><span class="n">HDFStore</span><span class="s">'&gt;</span><span class="err">
+</span><span class="s">File path: y2016m07d15s1_ped_fluct.h5</span><span class="err">
+
+</span><span class="s">&gt;&gt;&gt; store.info</span><span class="err">
+</span><span class="s">&lt;bound method HDFStore.info of &lt;class '</span><span class="n">pandas</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">pytables</span><span class="o">.</span><span class="n">HDFStore</span><span class="s">'&gt;</span><span class="err">
+</span><span class="s">File path: y2016m07d15s1_ped_fluct.h5</span><span class="err">
+</span><span class="s">&gt;</span><span class="err">
+</span><span class="s">&gt;&gt;&gt; store.info()</span><span class="err">
+</span><span class="s">u"&lt;class '</span><span class="n">pandas</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">pytables</span><span class="o">.</span><span class="n">HDFStore</span><span class="s">'&gt;</span><span class="se">\n</span><span class="s">File path: y2016m07d15s1_ped_fluct.h5</span><span class="se">\n</span><span class="s">Empty"</span><span class="err">
+</span></code></pre></div></div>
+<p>Looks empty. Try reprocessing? This is a LR night so wait for later.</p>
+
+<h2 id="y2007m11d07-first-training-night">y2007m11d07 (First Training Night)</h2>
+
+<h3 id="night-animation">Night Animation</h3>
+<center><img src="/assets/20190315/y2007m11d07s0_dh.gif" width="600" align="middle" /></center>
+
+<p>As the animation created from the dataframe below shows, there is 4-30 parts.</p>
+
+<p><strong>First Frame :</strong></p>
+<center><img src="/assets/20190315/frame_p04_min00.jpg" width="600" align="middle" /></center>
+
+<p><strong>Last Frame :</strong></p>
+<center><img src="/assets/20190315/frame_p30_min40.jpg" width="600" align="middle" /></center>
+
+<h3 id="fd_ped_h5-1">fd_ped_h5</h3>
+
+<p>Load HDF5 file with Pandas</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">store</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="s">'y2007m11d07s0_ped_fluct.h5'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">store</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+<span class="s">u"&lt;class 'pandas.io.pytables.HDFStore'&gt;</span><span class="se">\n</span><span class="s">File path: y2007m11d07s0_ped_fluct.h5</span><span class="se">\n</span><span class="s">/frame_info_df                frame        (shape-&gt;[401,7])   </span><span class="se">\n</span><span class="s">/ped_fluct_df                 frame        (shape-&gt;[401,3072])</span><span class="se">\n</span><span class="s">/ped_fluct_norm_df            frame        (shape-&gt;[401,3072])"</span>
+</code></pre></div></div>
+<p>Load <code class="highlighter-rouge">frame_info_df</code> :</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">df</span> <span class="o">=</span>  <span class="n">store</span><span class="p">[</span><span class="s">'frame_info_df'</span><span class="p">]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+   <span class="n">frame_max</span>              <span class="o">...</span>                                 <span class="n">frame_time</span>
+<span class="mi">0</span>      <span class="mf">120.0</span>              <span class="o">...</span>              <span class="mi">2007</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">07</span> <span class="mi">02</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mf">38.182826622</span>
+<span class="mi">1</span>      <span class="mf">311.0</span>              <span class="o">...</span>              <span class="mi">2007</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">07</span> <span class="mi">02</span><span class="p">:</span><span class="mi">46</span><span class="p">:</span><span class="mf">38.182826622</span>
+<span class="mi">2</span>      <span class="mf">402.0</span>              <span class="o">...</span>              <span class="mi">2007</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">07</span> <span class="mi">02</span><span class="p">:</span><span class="mi">47</span><span class="p">:</span><span class="mf">38.182826622</span>
+<span class="mi">3</span>      <span class="mf">260.0</span>              <span class="o">...</span>              <span class="mi">2007</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">07</span> <span class="mi">02</span><span class="p">:</span><span class="mi">48</span><span class="p">:</span><span class="mf">38.182826622</span>
+<span class="mi">4</span>       <span class="mf">84.0</span>              <span class="o">...</span>              <span class="mi">2007</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">07</span> <span class="mi">02</span><span class="p">:</span><span class="mi">49</span><span class="p">:</span><span class="mf">38.182826622</span>
+
+<span class="p">[</span><span class="mi">5</span> <span class="n">rows</span> <span class="n">x</span> <span class="mi">7</span> <span class="n">columns</span><span class="p">]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+<span class="n">Index</span><span class="p">([</span><span class="s">u'frame_max'</span><span class="p">,</span> <span class="s">u'frame_mean'</span><span class="p">,</span> <span class="s">u'frame_min'</span><span class="p">,</span> <span class="s">u'frame_minute'</span><span class="p">,</span>
+       <span class="s">u'frame_part'</span><span class="p">,</span> <span class="s">u'frame_sigma'</span><span class="p">,</span> <span class="s">u'frame_time'</span><span class="p">],</span>
+      <span class="n">dtype</span><span class="o">=</span><span class="s">'object'</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Load <code class="highlighter-rouge">ped_fluct_df</code> :</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">df</span> <span class="o">=</span>  <span class="n">store</span><span class="p">[</span><span class="s">'ped_fluct_df'</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+<span class="n">Int64Index</span><span class="p">([</span>   <span class="mi">0</span><span class="p">,</span>    <span class="mi">1</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span>    <span class="mi">3</span><span class="p">,</span>    <span class="mi">4</span><span class="p">,</span>    <span class="mi">5</span><span class="p">,</span>    <span class="mi">6</span><span class="p">,</span>    <span class="mi">7</span><span class="p">,</span>    <span class="mi">8</span><span class="p">,</span>    <span class="mi">9</span><span class="p">,</span>
+            <span class="o">...</span>
+            <span class="mi">3062</span><span class="p">,</span> <span class="mi">3063</span><span class="p">,</span> <span class="mi">3064</span><span class="p">,</span> <span class="mi">3065</span><span class="p">,</span> <span class="mi">3066</span><span class="p">,</span> <span class="mi">3067</span><span class="p">,</span> <span class="mi">3068</span><span class="p">,</span> <span class="mi">3069</span><span class="p">,</span> <span class="mi">3070</span><span class="p">,</span> <span class="mi">3071</span><span class="p">],</span>
+           <span class="n">dtype</span><span class="o">=</span><span class="s">'int64'</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3072</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+   <span class="mi">0</span>     <span class="mi">1</span>     <span class="mi">2</span>     <span class="mi">3</span>     <span class="mi">4</span>     <span class="mi">5</span>     <span class="mi">6</span>     <span class="o">...</span>   <span class="mi">3065</span>  <span class="mi">3066</span>  <span class="mi">3067</span>  <span class="mi">3068</span>  <span class="mi">3069</span>  <span class="mi">3070</span>  <span class="mi">3071</span>
+<span class="mi">0</span>     <span class="mi">3</span>     <span class="mi">1</span>     <span class="mi">4</span>     <span class="mi">8</span>     <span class="mi">2</span>     <span class="mi">8</span>     <span class="mi">2</span>  <span class="o">...</span>      <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">2</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>
+<span class="mi">1</span>     <span class="mi">2</span>     <span class="mi">1</span>     <span class="mi">3</span>     <span class="mi">4</span>     <span class="mi">2</span>     <span class="mi">6</span>     <span class="mi">2</span>  <span class="o">...</span>      <span class="mi">3</span>     <span class="mi">2</span>     <span class="mi">2</span>     <span class="mi">1</span>     <span class="mi">2</span>     <span class="mi">1</span>     <span class="mi">1</span>
+<span class="mi">2</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">3</span>     <span class="mi">1</span>     <span class="mi">4</span>     <span class="mi">1</span>     <span class="mi">2</span>  <span class="o">...</span>      <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>
+<span class="mi">3</span>     <span class="mi">4</span>     <span class="mi">1</span>     <span class="mi">2</span>     <span class="mi">3</span>     <span class="mi">5</span>     <span class="mi">4</span>     <span class="mi">1</span>  <span class="o">...</span>      <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>
+<span class="mi">4</span>     <span class="mi">1</span>     <span class="mi">2</span>     <span class="mi">1</span>     <span class="mi">5</span>     <span class="mi">6</span>     <span class="mi">3</span>     <span class="mi">7</span>  <span class="o">...</span>      <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>     <span class="mi">1</span>
+</code></pre></div></div>
+<p>Load <code class="highlighter-rouge">ped_fluct_norm_df</code> :</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">df</span> <span class="o">=</span>  <span class="n">store</span><span class="p">[</span><span class="s">'ped_fluct_norm_df'</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+<span class="n">Int64Index</span><span class="p">([</span>   <span class="mi">0</span><span class="p">,</span>    <span class="mi">1</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span>    <span class="mi">3</span><span class="p">,</span>    <span class="mi">4</span><span class="p">,</span>    <span class="mi">5</span><span class="p">,</span>    <span class="mi">6</span><span class="p">,</span>    <span class="mi">7</span><span class="p">,</span>    <span class="mi">8</span><span class="p">,</span>    <span class="mi">9</span><span class="p">,</span>
+            <span class="o">...</span>
+            <span class="mi">3062</span><span class="p">,</span> <span class="mi">3063</span><span class="p">,</span> <span class="mi">3064</span><span class="p">,</span> <span class="mi">3065</span><span class="p">,</span> <span class="mi">3066</span><span class="p">,</span> <span class="mi">3067</span><span class="p">,</span> <span class="mi">3068</span><span class="p">,</span> <span class="mi">3069</span><span class="p">,</span> <span class="mi">3070</span><span class="p">,</span> <span class="mi">3071</span><span class="p">],</span>
+           <span class="n">dtype</span><span class="o">=</span><span class="s">'int64'</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3072</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+       <span class="mi">0</span>         <span class="mi">1</span>         <span class="mi">2</span>         <span class="mi">3</span>       <span class="o">...</span>         <span class="mi">3068</span>      <span class="mi">3069</span>      <span class="mi">3070</span>      <span class="mi">3071</span>
+<span class="mi">0</span>  <span class="mf">0.479712</span>  <span class="mf">0.324762</span>  <span class="mf">0.520288</span>  <span class="mf">0.618051</span>    <span class="o">...</span>     <span class="mf">0.422525</span>  <span class="mf">0.324762</span>  <span class="mf">0.324762</span>  <span class="mf">0.324762</span>
+<span class="mi">1</span>  <span class="mf">0.372493</span>  <span class="mf">0.286307</span>  <span class="mf">0.422909</span>  <span class="mf">0.458680</span>    <span class="o">...</span>     <span class="mf">0.286307</span>  <span class="mf">0.372493</span>  <span class="mf">0.286307</span>  <span class="mf">0.286307</span>
+<span class="mi">2</span>  <span class="mf">0.277452</span>  <span class="mf">0.277452</span>  <span class="mf">0.409830</span>  <span class="mf">0.277452</span>    <span class="o">...</span>     <span class="mf">0.277452</span>  <span class="mf">0.277452</span>  <span class="mf">0.277452</span>  <span class="mf">0.277452</span>
+<span class="mi">3</span>  <span class="mf">0.469128</span>  <span class="mf">0.292828</span>  <span class="mf">0.380978</span>  <span class="mf">0.432543</span>    <span class="o">...</span>     <span class="mf">0.292828</span>  <span class="mf">0.292828</span>  <span class="mf">0.292828</span>  <span class="mf">0.292828</span>
+<span class="mi">4</span>  <span class="mf">0.341965</span>  <span class="mf">0.444906</span>  <span class="mf">0.341965</span>  <span class="mf">0.580988</span>    <span class="o">...</span>     <span class="mf">0.341965</span>  <span class="mf">0.341965</span>  <span class="mf">0.341965</span>  <span class="mf">0.341965</span>
+
+<span class="p">[</span><span class="mi">5</span> <span class="n">rows</span> <span class="n">x</span> <span class="mi">3072</span> <span class="n">columns</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h3 id="fd_ped_vect_nonpadded">fd_ped_vect_nonpadded</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">-rw-r--r--</span> 1 gfurlich gfurlich     128 Dec  4 10:37 y2007m11d07s0_ped_fluct_vectorized.npy
+</code></pre></div></div>
+<p>Looks empty… Any Training data is empty… hmm… Not good</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">-rw-r--r--</span> 1 gfurlich gfurlich     128 Dec  4 13:04 y2017m09d13s0_ped_fluct_vectorized.npy
+<span class="nt">-rw-r--r--</span> 1 gfurlich gfurlich  245888 Dec  4 13:04 y2017m09d14s0_ped_fluct_vectorized.npy
+<span class="nt">-rw-r--r--</span> 1 gfurlich gfurlich     128 Dec  4 13:04 y2017m09d16s0_ped_fluct_vectorized.npy
+</code></pre></div></div>
+
+<p>Looking at it with <code class="highlighter-rouge">Numpy</code></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">'y2007m11d07s0_ped_fluct_vectorized.npy'</span><span class="p">)</span>
+<span class="n">array</span><span class="p">([],</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">96</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float64</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Looks empty. Look at another</p>
+
+<h3 id="fd_ped_vect">fd_ped_vect</h3>
+
+<h2 id="y2017m11d28s0-non-training-data">y2017m11d28s0 non training data</h2>
+
+<h3 id="fd_ped_vect_nonpadded-1">fd_ped_vect_nonpadded</h3>
+
+<p>File :</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">-rw-r--r--</span> 1 gfurlich gfurlich 1106048 Dec  4 13:08 y2017m11d28s0_ped_fluct_vectorized.npy
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">'y2017m11d28s0_ped_fluct_vectorized.npy'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+<span class="p">(</span><span class="mi">45</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">96</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">array</span><span class="p">([[</span><span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span>
+        <span class="mf">0.34257391</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span>
+        <span class="mf">0.34257391</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.44569893</span><span class="p">,</span>
+        <span class="mf">0.34257391</span><span class="p">],</span>
+       <span class="o">...</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span>
+        <span class="mf">0.34257391</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span>
+        <span class="mf">0.34257391</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span> <span class="mf">0.34257391</span><span class="p">,</span>
+        <span class="mf">0.44569893</span><span class="p">]])</span>
+</code></pre></div></div>
+
+<p>Quick plot :</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'inferno'</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">.1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="nb">max</span><span class="p">())</span>
+<span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">AxesImage</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f17fc2e4710</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<center><img src="/assets/20190315/y2017m11d28_test.png" width="600" align="middle" /></center>
+
+<p>Looks right. Check shape against master db.</p>
+
+<h2 id="master-fd-ped-part-database">Master fd ped part database</h2>
+
+<p>Files :</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>2019-03-15 10:21:59] <span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-lrt</span> <span class="k">*</span>.h5
+<span class="nt">-rw-r--r--</span> 1 gfurlich gfurlich  3274744 Oct  1 10:58 fd_pedestal_nights_db.h5
+<span class="nt">-rw-r--r--</span> 1 gfurlich gfurlich   150787 Oct  1 10:58 pmt_positions.h5
+<span class="nt">-rw-r--r--</span> 1 gfurlich gfurlich 16793758 Oct  1 10:58 master_fd_ped_db_by_part.h5
+<span class="nt">-rw-r--r--</span> 1 gfurlich gfurlich  2370620 Oct 10 15:09 fd_dark_time_db.h5
+
+<span class="o">[</span>2019-03-15 10:22:13] <span class="nv">$ </span><span class="nb">du</span> <span class="nt">-sh</span> master_fd_ped_db_by_part.h5
+17M	master_fd_ped_db_by_part.h5
+
+</code></pre></div></div>
+<p>Load <code class="highlighter-rouge">master_fd_ped_db_by_part.h5</code></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">store</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="s">'master_fd_ped_db_by_part.h5'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">store</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+<span class="s">u"&lt;class 'pandas.io.pytables.HDFStore'&gt;</span><span class="se">\n</span><span class="s">File path: master_fd_ped_db_by_part.h5</span><span class="se">\n</span><span class="s">/master_br_fd_ped_db_by_part            frame        (shape-&gt;[19759,6])</span><span class="se">\n</span><span class="s">/master_lr_fd_ped_db_by_part            frame        (shape-&gt;[16493,6])"</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">df</span> <span class="o">=</span> <span class="n">store</span><span class="p">[</span><span class="s">'master_br_fd_ped_db_by_part'</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+<span class="n">Index</span><span class="p">([</span><span class="s">u'part'</span><span class="p">,</span> <span class="s">u'part_duration'</span><span class="p">,</span> <span class="s">u'part_start'</span><span class="p">,</span> <span class="s">u'part_stop'</span><span class="p">,</span>
+       <span class="s">u'part_weather_status'</span><span class="p">,</span> <span class="s">u'run_night'</span><span class="p">],</span>
+      <span class="n">dtype</span><span class="o">=</span><span class="s">'object'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Find the last night y2017m11d28 and print info :</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s">'run_night'</span><span class="p">]</span> <span class="o">==</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s">'2017-11-28'</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()]</span>
+   <span class="n">part</span>   <span class="n">part_duration</span>    <span class="o">...</span>     <span class="n">part_weather_status</span>  <span class="n">run_night</span>
+<span class="mi">0</span>     <span class="mi">5</span> <span class="mi">00</span><span class="p">:</span><span class="mi">22</span><span class="p">:</span><span class="mf">21.008656</span>    <span class="o">...</span>                       <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">1</span>     <span class="mi">6</span> <span class="mi">00</span><span class="p">:</span><span class="mi">43</span><span class="p">:</span><span class="mf">02.009053</span>    <span class="o">...</span>                       <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">2</span>    <span class="mi">10</span> <span class="mi">00</span><span class="p">:</span><span class="mi">25</span><span class="p">:</span><span class="mf">47.215286</span>    <span class="o">...</span>                       <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">3</span>    <span class="mi">11</span> <span class="mi">00</span><span class="p">:</span><span class="mi">37</span><span class="p">:</span><span class="mf">24.218904</span>    <span class="o">...</span>                       <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">4</span>    <span class="mi">15</span> <span class="mi">00</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">41.500328</span>    <span class="o">...</span>                       <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">6</span>    <span class="mi">20</span> <span class="mi">00</span><span class="p">:</span><span class="mi">23</span><span class="p">:</span><span class="mf">18.214296</span>    <span class="o">...</span>                       <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">7</span>    <span class="mi">21</span> <span class="mi">00</span><span class="p">:</span><span class="mi">08</span><span class="p">:</span><span class="mf">32.148072</span>    <span class="o">...</span>                       <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">5</span>    <span class="mi">16</span> <span class="mi">00</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mf">02.840683</span>    <span class="o">...</span>                       <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s">'run_night'</span><span class="p">]</span> <span class="o">==</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s">'2017-11-28'</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()]</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
+<span class="n">part</span>   <span class="n">part_duration</span>                    <span class="n">part_start</span>                     <span class="n">part_stop</span>  <span class="n">part_weather_status</span>  <span class="n">run_night</span>
+<span class="mi">0</span>     <span class="mi">5</span> <span class="mi">00</span><span class="p">:</span><span class="mi">22</span><span class="p">:</span><span class="mf">21.008656</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">08</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mf">34.818238216</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">09</span><span class="p">:</span><span class="mi">07</span><span class="p">:</span><span class="mf">55.826895139</span>                    <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">1</span>     <span class="mi">6</span> <span class="mi">00</span><span class="p">:</span><span class="mi">43</span><span class="p">:</span><span class="mf">02.009053</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">09</span><span class="p">:</span><span class="mi">08</span><span class="p">:</span><span class="mf">23.289856964</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">09</span><span class="p">:</span><span class="mi">51</span><span class="p">:</span><span class="mf">25.298910500</span>                    <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">2</span>    <span class="mi">10</span> <span class="mi">00</span><span class="p">:</span><span class="mi">25</span><span class="p">:</span><span class="mf">47.215286</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">09</span><span class="p">:</span><span class="mi">53</span><span class="p">:</span><span class="mf">48.009802586</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">10</span><span class="p">:</span><span class="mi">19</span><span class="p">:</span><span class="mf">35.225089529</span>                    <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">3</span>    <span class="mi">11</span> <span class="mi">00</span><span class="p">:</span><span class="mi">37</span><span class="p">:</span><span class="mf">24.218904</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">:</span><span class="mf">02.569907793</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">10</span><span class="p">:</span><span class="mi">57</span><span class="p">:</span><span class="mf">26.788812717</span>                    <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">4</span>    <span class="mi">15</span> <span class="mi">00</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">41.500328</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">10</span><span class="p">:</span><span class="mi">59</span><span class="p">:</span><span class="mf">49.881877531</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">11</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">31.382205713</span>                    <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">6</span>    <span class="mi">20</span> <span class="mi">00</span><span class="p">:</span><span class="mi">23</span><span class="p">:</span><span class="mf">18.214296</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">12</span><span class="p">:</span><span class="mi">12</span><span class="p">:</span><span class="mf">24.851270744</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">12</span><span class="p">:</span><span class="mi">35</span><span class="p">:</span><span class="mf">43.065567492</span>                    <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">7</span>    <span class="mi">21</span> <span class="mi">00</span><span class="p">:</span><span class="mi">08</span><span class="p">:</span><span class="mf">32.148072</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">12</span><span class="p">:</span><span class="mi">36</span><span class="p">:</span><span class="mf">10.301215743</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">12</span><span class="p">:</span><span class="mi">44</span><span class="p">:</span><span class="mf">42.449288199</span>                    <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+<span class="mi">5</span>    <span class="mi">16</span> <span class="mi">00</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mf">02.840683</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">11</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">58.684055964</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span> <span class="mi">12</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mf">01.524739755</span>                    <span class="mi">0</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">28</span>
+</code></pre></div></div>
+
+<p>Realize I don’t have frame numbers for each part but I can infer from the minutes in a part in ceil(part_duration) - 1 since I take the minute diff.</p>
+
+<p>Looking at other dataframe for part info</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">store2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="s">'fd_pedestal_nights_db.h5'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="n">store2</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="k">class</span> <span class="err">'</span><span class="nc">pandas</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">pytables</span><span class="o">.</span><span class="n">HDFStore</span><span class="s">'&gt;</span><span class="err">
+</span><span class="s">File path: fd_pedestal_nights_db.h5</span><span class="err">
+</span><span class="s">/br_df            frame        (shape-&gt;[1808,2])</span><span class="err">
+</span><span class="s">/lr_df            frame        (shape-&gt;[1640,2])</span><span class="err">
+
+</span><span class="s">&gt;&gt;&gt; df2 = store2['</span><span class="n">br_df</span><span class="s">']</span><span class="err">
+</span><span class="s">&gt;&gt;&gt; df2.columns</span><span class="err">
+</span><span class="s">Index([u'</span><span class="n">ped_status</span><span class="s">', u'</span><span class="n">run_night</span><span class="s">'], dtype='</span><span class="nb">object</span><span class="s">')</span><span class="err">
+
+</span></code></pre></div></div>
+
+<p>Nothing important there…</p>
+
+<h3 id="max-night-">Max Night :</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">df</span><span class="p">[</span><span class="s">'part_duration'</span><span class="p">]</span><span class="o">.</span><span class="nb">max</span><span class="p">()</span>
+<span class="n">Timedelta</span><span class="p">(</span><span class="s">'0 days 03:36:42.021044'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>3 x 60 + 36 = 216 as max frames in a part. Matches what I had earlier for padding vectorized data.</p>
+
+<h1 id="re-vectorize-data-from-each-night-pedestal-dataframes-in-fd_ped_h5-data">Re-vectorize data from each night pedestal dataframes in fd_ped_h5 data</h1>
+
+<h2 id="re-transfer-data-back-to-chpc">Re-transfer data back to CHPC</h2>
+
+<p>Deleted wrong aggregated vectorized data arrays on <code class="highlighter-rouge">kingspeak</code> under <code class="highlighter-rouge">Vectorized_Data</code>.</p>
+
+<p>transferred the data over:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>2019-03-15 11:31:00] <span class="nv">$ </span>rsync <span class="nt">-av</span> fd_ped_h5 kingspeak:~/weat_ml/Data/
+
+fd_ped_h5/y2018m08d12s1_ped_fluct.h5
+
+sent 16,619,429,753 bytes  received 65,437 bytes  98,632,018.93 bytes/sec
+total size is 16,615,108,644  speedup is 1.00
+
+<span class="nv">$ </span><span class="nb">du</span> <span class="nt">-sh</span> <span class="k">*</span>
+16G	fd_ped_h5
+</code></pre></div></div>
+
+<p>transfer looks good.</p>
+
+<h2 id="edit-fd_pedestal_data_vectorizationpy">Edit fd_pedestal_data_vectorization.py</h2>
+
+<p>renamed <code class="highlighter-rouge">fd_pedestal_rnn_data_vectorization_v_chpc.py</code> to <code class="highlighter-rouge">fd_pedestal_data_vectorization.py</code>.</p>
+
+<p>[x] Update to save each part into it’s own numpy array
+[ ] make sure the frames look correct
+[ ] make sure each is correctly padded
+[x] ~update master datebase to include pedestal frame info?~ Print Frame length to out file of processing on CHPC</p>
+
+<p>Transferred new vect script to <code class="highlighter-rouge">kingspeak</code>.</p>
+
+<h2 id="proof-that-past-vectorization-was-wrong">Proof that past vectorization was wrong</h2>
+
+<p>Looking back at the old log file <code class="highlighter-rouge">fd_pedestal_rnn_vectorization.out</code> on my CHPC account.</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Saving Vectorized and Padded FD Pedestal Data as Numpy Arrays to /scratch/local/u0949991/Data/fd_ped_vect/y2017m11d28s0_ped_fluct_vectorized_padded.npy...
+Saving Vectorized and Padded FD Pedestal Data as Numpy Arrays to /scratch/local/u0949991/Data/fd_ped_vect/y2017m11d28s0_ped_fluct_vectorized_padded.npy...
+Saving Vectorized and Padded FD Pedestal Data as Numpy Arrays to /scratch/local/u0949991/Data/fd_ped_vect/y2017m11d28s0_ped_fluct_vectorized_padded.npy...
+Saving Vectorized and Padded FD Pedestal Data as Numpy Arrays to /scratch/local/u0949991/Data/fd_ped_vect/y2017m11d28s0_ped_fluct_vectorized_padded.npy...
+Saving Vectorized and Padded FD Pedestal Data as Numpy Arrays to /scratch/local/u0949991/Data/fd_ped_vect/y2017m11d28s0_ped_fluct_vectorized_padded.npy...
+</code></pre></div></div>
+<p>Parts in the same night were not being saved to different file.</p>
+
+<h2 id="submit-to-chpc-and-vectorize-data">Submit to CHPC and vectorize data</h2>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>sbatch fd_pedestal_data_vectorization.slm
+Submitted batch job 6856344
+
+<span class="nv">$ </span>squeue <span class="nt">-u</span> u0949991
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST<span class="o">(</span>REASON<span class="o">)</span>
+           6856344 kingspeak vect_rnn u0949991 PD       0:00      1 <span class="o">(</span>Priority<span class="o">)</span>
+</code></pre></div></div>
+
+  </div><a class="u-url" href="/digital_research_journal/weather/machine%20learning/pandas/numpy/2019/03/15/taresearch-20190315.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/digital_research_journal/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Greg Furlich Telescope Array Digital Research Journal</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Greg Furlich Telescope Array Digital Research Journal</li><li><a class="u-email" href="mailto:greg.furlich@cosmic.utah.com">greg.furlich@cosmic.utah.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Digital Research Journal of Greg Furlich</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

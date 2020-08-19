@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.0 -->
+<title>TAResearch 2019-03-19 | Greg Furlich Telescope Array Digital Research Journal</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="TAResearch 2019-03-19" />
+<meta name="author" content="Greg Furlich" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Digital Research Journal of Greg Furlich" />
+<meta property="og:description" content="Digital Research Journal of Greg Furlich" />
+<link rel="canonical" href="https://gregfurlich.com/digital_research_journal/chpc/weather/ml%20data%20preprocessing/keras/2019/03/19/taresearch-20190319.html" />
+<meta property="og:url" content="https://gregfurlich.com/digital_research_journal/chpc/weather/ml%20data%20preprocessing/keras/2019/03/19/taresearch-20190319.html" />
+<meta property="og:site_name" content="Greg Furlich Telescope Array Digital Research Journal" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-03-19T09:30:08-06:00" />
+<script type="application/ld+json">
+{"datePublished":"2019-03-19T09:30:08-06:00","dateModified":"2019-03-19T09:30:08-06:00","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://gregfurlich.com/digital_research_journal/chpc/weather/ml%20data%20preprocessing/keras/2019/03/19/taresearch-20190319.html"},"url":"https://gregfurlich.com/digital_research_journal/chpc/weather/ml%20data%20preprocessing/keras/2019/03/19/taresearch-20190319.html","author":{"@type":"Person","name":"Greg Furlich"},"description":"Digital Research Journal of Greg Furlich","headline":"TAResearch 2019-03-19","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/digital_research_journal/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://gregfurlich.com/digital_research_journal/feed.xml" title="Greg Furlich Telescope Array Digital Research Journal" /></head>
+<body>
+
+    <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' /><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/digital_research_journal/">Greg Furlich Telescope Array Digital Research Journal</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/digital_research_journal/about/">About</a><a class="page-link" href="/digital_research_journal/categories/">Categories</a><a class="page-link" href="/digital_research_journal/stats/">Journal Stats</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">TAResearch 2019-03-19</h1>
+    <p class="post-meta">
+      <i class="far fa-clock"></i> <time class="dt-published" datetime="2019-03-19T09:30:08-06:00" itemprop="datePublished">Mar 19, 2019
+      </time>• <i class="far fa-user-circle"></i> <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Greg Furlich</span></span></p>
+
+
+  <h3>   <i class="fas fa-tags"></i>  Categories :
+    
+        <a href="/categories/#CHPC" style="text-decoration: none;">CHPC</a>,
+    
+        <a href="/categories/#Weather" style="text-decoration: none;">Weather</a>,
+    
+        <a href="/categories/#ML Data Preprocessing" style="text-decoration: none;">ML Data Preprocessing</a>,
+    
+        <a href="/categories/#Keras" style="text-decoration: none;">Keras</a>,
+    
+    </h3>
+    <p />
+
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul id="markdown-toc">
+  <li><a href="#re-vectorize-data-on-chpc" id="markdown-toc-re-vectorize-data-on-chpc">Re-vectorize data on CHPC</a>    <ul>
+      <li><a href="#looking-at-last-nights-submission-to-chpc" id="markdown-toc-looking-at-last-nights-submission-to-chpc">Looking at last night’s submission to CHPC</a></li>
+      <li><a href="#looking-at-last-nights-data-outputs" id="markdown-toc-looking-at-last-nights-data-outputs">Looking at last night’s data outputs</a>        <ul>
+          <li><a href="#size-and-amount-of-br-vectorized-data" id="markdown-toc-size-and-amount-of-br-vectorized-data">Size and amount of BR vectorized data</a></li>
+          <li><a href="#looking-at-data-with-numpy" id="markdown-toc-looking-at-data-with-numpy">Looking at Data with Numpy</a></li>
+          <li><a href="#backup-to-gf-ultra" id="markdown-toc-backup-to-gf-ultra">Backup to GF-Ultra</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#loading-files-into-keras-in-batch" id="markdown-toc-loading-files-into-keras-in-batch">Loading Files into Keras in Batch</a></li>
+</ul>
+
+<h1 id="re-vectorize-data-on-chpc">Re-vectorize data on CHPC</h1>
+
+<h2 id="looking-at-last-nights-submission-to-chpc">Looking at last night’s submission to CHPC</h2>
+
+<p>Got an error in <code class="highlighter-rouge">fd_pedestal_data_vectorization.err</code> :</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s">"fd_pedestal_data_vectorization.py"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">286</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="n">main</span><span class="p">()</span>
+  <span class="n">File</span> <span class="s">"fd_pedestal_data_vectorization.py"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">151</span><span class="p">,</span> <span class="ow">in</span> <span class="n">main</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">part_status</span> <span class="o">=</span> <span class="n">_vectorize_pedestal_data_df</span><span class="p">(</span><span class="n">ymds</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
+  <span class="n">File</span> <span class="s">"fd_pedestal_data_vectorization.py"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">205</span><span class="p">,</span> <span class="ow">in</span> <span class="n">_vectorize_pedestal_data_df</span>
+    <span class="n">X</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ped_fluct</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<span class="nb">IndexError</span><span class="p">:</span> <span class="n">index</span> <span class="mi">3072</span> <span class="ow">is</span> <span class="n">out</span> <span class="n">of</span> <span class="n">bounds</span> <span class="k">for</span> <span class="n">axis</span> <span class="mi">0</span> <span class="k">with</span> <span class="n">size</span> <span class="mi">3072</span>
+</code></pre></div></div>
+
+<p>Script made it to LR and then ran into an error. Might have been that I was using BR max frames for LR which I should not being doing. I edited out LR out of the script.</p>
+
+<p>Looking at the shell out log:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat </span>out/fd_pedestal_data_vectorization.out
+Beginning job on kp007 on Mon Mar 18 16:50:36 MDT 2019
+...
+Found 19 Frames <span class="k">for </span>y2009m05d28s1 part 12
+Saving Vectorized FD Pedestal Data as Numpy Arrays with shape <span class="o">(</span>19, 32, 96<span class="o">)</span> to /scratch/local/u0949991/Data/fd_ped_vect/y2009m05d28s1p12_ped_fluct_vectorized_padded.npy...
+Saving Padded Vectorized FD Pedestal Data as Numpy Arrays with shape <span class="o">(</span>19, 32, 96<span class="o">)</span> to /scratch/local/u0949991/Data/fd_ped_vect/y2009m05d28s1p12_ped_fluct_vectorized_padded.npy...
+Found 29 Frames <span class="k">for </span>y2009m05d28s1 part 4
+Saving Vectorized FD Pedestal Data as Numpy Arrays with shape <span class="o">(</span>29, 32, 96<span class="o">)</span> to /scratch/local/u0949991/Data/fd_ped_vect/y2009m05d28s1p4_ped_fluct_vectorized_padded.npy...
+Saving Padded Vectorized FD Pedestal Data as Numpy Arrays with shape <span class="o">(</span>29, 32, 96<span class="o">)</span> to /scratch/local/u0949991/Data/fd_ped_vect/y2009m05d28s1p4_ped_fluct_vectorized_padded.npy...
+Found 32 Frames <span class="k">for </span>y2009m05d29s1 part 8
+Finished Data Vectorization
+Copying Outputs from Local Scratch
+...
+Cleaning Up Local Scratch
+Job completed on Mon Mar 18 21:40:45 MDT 2019
+</code></pre></div></div>
+<p>Ran for about 5 hours. I noticed and error in printing out the shape of the padded array. Fixed that in vectorization scripts.</p>
+
+<h2 id="looking-at-last-nights-data-outputs">Looking at last night’s data outputs</h2>
+
+<h3 id="size-and-amount-of-br-vectorized-data">Size and amount of BR vectorized data</h3>
+
+<p>Padded and Nonpadded Data Files :</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">ls</span> /scratch/kingspeak/serial/u0949991/Data/fd_ped_vect/<span class="k">*</span>s0<span class="k">*</span> | <span class="nb">wc</span> <span class="nt">-l</span>
+19759
+<span class="nv">$ </span><span class="nb">ls</span> /scratch/kingspeak/serial/u0949991/Data/fd_ped_vect_nonpadded/<span class="k">*</span>s0<span class="k">*</span> | <span class="nb">wc</span> <span class="nt">-l</span>
+19759
+</code></pre></div></div>
+
+<p>Clear out LR data on CHPC:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-lrt</span> /scratch/kingspeak/serial/u0949991/Data/fd_ped_vect/<span class="k">*</span>s1<span class="k">*</span> | <span class="nb">wc</span> <span class="nt">-l</span>
+3032
+<span class="nv">$ </span><span class="nb">rm</span> /scratch/kingspeak/serial/u0949991/Data/fd_ped_vect/<span class="k">*</span>s1<span class="k">*</span>
+<span class="nv">$ </span><span class="nb">ls</span> /scratch/kingspeak/serial/u0949991/Data/fd_ped_vect/<span class="k">*</span>s1<span class="k">*</span>
+<span class="nb">ls</span>: cannot access /scratch/kingspeak/serial/u0949991/Data/fd_ped_vect/<span class="k">*</span>s1<span class="k">*</span>: No such file or directory
+<span class="nv">$ </span><span class="nb">rm</span> /scratch/kingspeak/serial/u0949991/Data/fd_ped_vect_nonpadded/<span class="k">*</span>s1<span class="k">*</span>
+<span class="nv">$ </span><span class="nb">ls</span> /scratch/kingspeak/serial/u0949991/Data/fd_ped_vect_nonpadded/<span class="k">*</span>s1<span class="k">*</span>
+<span class="nb">ls</span>: cannot access /scratch/kingspeak/serial/u0949991/Data/fd_ped_vect_nonpadded/<span class="k">*</span>s1<span class="k">*</span>: No such file or directory
+</code></pre></div></div>
+
+<p>Size of Data :</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">du</span> <span class="nt">-sh</span> /scratch/kingspeak/serial/u0949991/Data/<span class="k">*</span>
+16G	/scratch/kingspeak/serial/u0949991/Data/fd_ped_h5
+98G	/scratch/kingspeak/serial/u0949991/Data/fd_ped_vect
+14G	/scratch/kingspeak/serial/u0949991/Data/fd_ped_vect_nonpadded
+</code></pre></div></div>
+
+<h3 id="looking-at-data-with-numpy">Looking at Data with Numpy</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">du</span> <span class="nt">-sh</span> <span class="s1">'/scratch/kingspeak/serial/u0949991/Data/fd_ped_vect_nonpadded/y2007m11d07s0p4_ped_fluct_vectorized.npy'</span>
+196K	/scratch/kingspeak/serial/u0949991/Data/fd_ped_vect_nonpadded/y2007m11d07s0p4_ped_fluct_vectorized.npy
+</code></pre></div></div>
+
+<p>Looking at y2007m11d07 on CHPC :</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">'/scratch/kingspeak/serial/u0949991/Data/fd_ped_vect_nonpadded/y2007m11d07s0p4_ped_fluct_vectorized.npy'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+<span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">96</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">array</span><span class="p">([[</span> <span class="mf">0.55176031</span><span class="p">,</span>  <span class="mf">0.69698009</span><span class="p">,</span>  <span class="mf">0.64952331</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">0.47971234</span><span class="p">,</span>
+         <span class="mf">0.47971234</span><span class="p">,</span>  <span class="mf">0.42252466</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">0.57747534</span><span class="p">,</span>  <span class="mf">0.63466303</span><span class="p">,</span>  <span class="mf">0.57747534</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">0.47971234</span><span class="p">,</span>
+         <span class="mf">0.47971234</span><span class="p">,</span>  <span class="mf">0.32476166</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">0.42252466</span><span class="p">,</span>  <span class="mf">0.64952331</span><span class="p">,</span>  <span class="mf">0.69698009</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">0.47971234</span><span class="p">,</span>
+         <span class="mf">0.55176031</span><span class="p">,</span>  <span class="mf">0.47971234</span><span class="p">],</span>
+       <span class="o">...</span><span class="p">,</span>
+       <span class="p">[</span> <span class="mf">0.32476166</span><span class="p">,</span>  <span class="mf">0.32476166</span><span class="p">,</span>  <span class="mf">0.47971234</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">0.32476166</span><span class="p">,</span>
+         <span class="mf">0.32476166</span><span class="p">,</span>  <span class="mf">0.32476166</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">0.32476166</span><span class="p">,</span>  <span class="mf">0.32476166</span><span class="p">,</span>  <span class="mf">0.32476166</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">0.32476166</span><span class="p">,</span>
+         <span class="mf">0.42252466</span><span class="p">,</span>  <span class="mf">0.32476166</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">0.32476166</span><span class="p">,</span>  <span class="mf">0.47971234</span><span class="p">,</span>  <span class="mf">0.32476166</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">0.32476166</span><span class="p">,</span>
+         <span class="mf">0.32476166</span><span class="p">,</span>  <span class="mf">0.32476166</span><span class="p">]])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">array</span><span class="p">([[</span> <span class="mf">0.62178303</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.42507626</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span>
+         <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span>
+         <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">0.42507626</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.52342965</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span>
+         <span class="mf">0.42507626</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">],</span>
+       <span class="o">...</span><span class="p">,</span>
+       <span class="p">[</span> <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span>
+         <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span>
+         <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">,</span>
+         <span class="mf">0.32672288</span><span class="p">,</span>  <span class="mf">0.32672288</span><span class="p">]])</span>
+</code></pre></div></div>
+
+<p>Issues with colormaps on CHPC. Creating quick plots on <code class="highlighter-rouge">GF_Ultra</code></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="n">mlp</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">'y2007m11d07s0p4_ped_fluct_vectorized.npy'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'inferno'</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">.1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="nb">max</span><span class="p">())</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">'y2007m11d07s0p4_framefirst.png'</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s">'tight'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">'y2007m11d07s0p30_ped_fluct_vectorized.npy'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'inferno'</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">.1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="nb">max</span><span class="p">())</span>
+<span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">AxesImage</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7fd076e24bd0</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">'y2007m11d07s0p30_framelast.png'</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s">'tight'</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<p><strong>y2017m11d07 images</strong></p>
+
+<center>First Frame</center>
+<center>
+<img src="/assets/20190319/frame_p04_min00.jpg" width="400" align="center" />
+<img src="/assets/20190319/y2007m11d07s0p4_framefirst.png" width="400" align="center" />
+</center>
+<center>Comparing Photos of DataFrame Generated images(Left) and Numpy Vectorized Data(right)</center>
+<p><br /></p>
+
+<center>Last Frame</center>
+<center>
+<img src="/assets/20190319/frame_p30_min40.jpg" width="400" align="center" />
+<img src="/assets/20190319/y2007m11d07s0p30_framelast.png" width="400" align="center" />
+</center>
+<center>Comparing Photos of DataFrame Generated images(Left) and Numpy Vectorized Data(right)</center>
+<p><br /></p>
+
+<p>In agreement.</p>
+
+<h3 id="backup-to-gf-ultra">Backup to GF-Ultra</h3>
+
+<p>Cleared out old data on <code class="highlighter-rouge">GF-Ultra</code></p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">du</span> <span class="nt">-sh</span> <span class="k">*</span>
+16G	fd_ped_h5
+8.9G	fd_ped_vect
+1.2G	fd_ped_vect_nonpadded
+
+<span class="nv">$ </span><span class="nb">du</span> <span class="nt">-sh</span> <span class="k">*</span>
+16G	fd_ped_h5
+148K	fd_ped_vect
+132K	fd_ped_vect_nonpadded
+</code></pre></div></div>
+
+<p>Backup from CHPC to <code class="highlighter-rouge">GF-Ultra</code></p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rsync <span class="nt">-avn</span> kingspeak:/scratch/kingspeak/serial/u0949991/Data/<span class="k">*</span> <span class="nb">.</span>
+...
+fd_ped_vect_nonpadded/y2017m11d28s0p16_ped_fluct_vectorized.npy
+fd_ped_vect_nonpadded/y2017m11d28s0p20_ped_fluct_vectorized.npy
+fd_ped_vect_nonpadded/y2017m11d28s0p21_ped_fluct_vectorized.npy
+fd_ped_vect_nonpadded/y2017m11d28s0p5_ped_fluct_vectorized.npy
+fd_ped_vect_nonpadded/y2017m11d28s0p6_ped_fluct_vectorized.npy
+
+sent 118,593 bytes  received 2,005,409 bytes  83,294.20 bytes/sec
+total size is 135,588,134,692  speedup is 63,836.16 <span class="o">(</span>DRY RUN<span class="o">)</span>
+
+<span class="nv">$ </span>rsync <span class="nt">-av</span> kingspeak:/scratch/kingspeak/serial/u0949991/Data/<span class="k">*</span> <span class="nb">.</span>
+receiving incremental file list
+fd_ped_vect/
+fd_ped_vect/y2007m11d01s0p4_ped_fluct_vectorized_padded.npy
+fd_ped_vect/y2007m11d01s0p7_ped_fluct_vectorized_padded.npy
+...
+fd_ped_vect_nonpadded/y2017m11d28s0p5_ped_fluct_vectorized.npy
+fd_ped_vect_nonpadded/y2017m11d28s0p6_ped_fluct_vectorized.npy
+
+sent 750,929 bytes  received 119,005,598,217 bytes  55,779,868.36 bytes/sec
+total size is 135,588,134,692  speedup is 1.14
+</code></pre></div></div>
+<p>Size on <code class="highlighter-rouge">GF-Ultra</code></p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">du</span> <span class="nt">-sh</span> <span class="k">*</span>
+16G	fd_ped_h5
+98G	fd_ped_vect
+14G	fd_ped_vect_nonpadded
+</code></pre></div></div>
+
+<h1 id="loading-files-into-keras-in-batch">Loading Files into Keras in Batch</h1>
+
+<p>Since my data is so expansive, it would be nice to just point keras to which <code class="highlighter-rouge">.npy</code> files to load for the training data.</p>
+
+<p>Example Sources <a href="https://medium.com/@vijayabhaskar96/tutorial-on-keras-imagedatagenerator-with-flow-from-dataframe-8bd5776e45c1">1</a> <a href="https://medium.com/@vijayabhaskar96/tutorial-on-keras-flow-from-dataframe-1fd4493d237c">2</a></p>
+
+<p>Creating a test directory to test using these functions</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>find <span class="nb">.</span> <span class="nt">-maxdepth</span> 1 <span class="nt">-type</span> f | <span class="nb">head</span> <span class="nt">-100</span> |xargs <span class="nb">cp</span> <span class="nt">-t</span> <span class="s2">"../test"</span>
+<span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-lrt</span> /GDF/TAResearch/FD_Ped_Weather/Data/fd_ped_vect/ | <span class="nb">wc</span> <span class="nt">-l</span>
+19760
+<span class="nv">$ </span><span class="nb">ls</span> ../test| <span class="nb">wc</span> <span class="nt">-l</span>
+100
+</code></pre></div></div>
+
+<p>Another Really Good Machine Learning source from a <a href="https://stanford.edu/~shervine/teaching/cs-230/">TA at Stanford</a>. This covers using a data <a href="https://wiki.python.org/moin/Generators">generator</a> with keras in python. Test Using this <a href="https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly">example</a>.</p>
+
+  </div><a class="u-url" href="/digital_research_journal/chpc/weather/ml%20data%20preprocessing/keras/2019/03/19/taresearch-20190319.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/digital_research_journal/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Greg Furlich Telescope Array Digital Research Journal</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Greg Furlich Telescope Array Digital Research Journal</li><li><a class="u-email" href="mailto:greg.furlich@cosmic.utah.com">greg.furlich@cosmic.utah.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Digital Research Journal of Greg Furlich</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
