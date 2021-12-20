@@ -18,17 +18,6 @@
 
 
     
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-174230725-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-174230725-1');
-</script>
-
-    
 
 </head>
 <body><header>
@@ -46,9 +35,9 @@
            <div class="topnav-right">
                <a href="/Education.html"><p>Education</p></a>
                <a href="/Research.html"><p>Research</p></a>
-               <!-- <a href="/Hobbies.html"><p>Hobbies</p></a> -->
                <a href="/Projects.html"><p>Projects</p></a>
-               <!-- <a href="/Photography.html"><p>Photography</p></a> -->
+               <a href="/Hobbies.html"><p>Hobbies</p></a>
+               <a href="/Photography.html"><p>Photography</p></a>
                <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/images/github.png" height=30vw></p></a>
                <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/images/in.png" height=30vw></p></a>
                <a href="mailto:g.furlich@gmail.com"><p><img id="mzil" src="/assets/images/mail.png" height=30vw></p></a>
@@ -132,16 +121,16 @@ ROOT Version: 6.18/04
 <p>Generate a test distribution using 500 random samples from a gaussian distribution using <code class="highlighter-rouge">scipy.random.normal()</code> with μ=1, σ=.1. The histogram was binned using <code class="highlighter-rouge">plt.hist()</code>.</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Define Python Histogram #
 </span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">,</span> <span class="mf">0.1</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span><span class="n">std</span><span class="p">,</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">sp</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span><span class="n">std</span><span class="p">,</span><span class="mi">500</span><span class="p">)</span>
 
 <span class="c1"># Define Bin Size #
-</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="mf">10.</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="nb">min</span><span class="p">())</span><span class="o">/</span><span class="mf">10.</span>
-<span class="n">xmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">10.</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="nb">max</span><span class="p">())</span><span class="o">/</span><span class="mf">10.</span>
+</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">floor</span><span class="p">(</span><span class="mf">10.</span><span class="o">*</span><span class="n">data</span><span class="p">.</span><span class="nb">min</span><span class="p">())</span><span class="o">/</span><span class="mf">10.</span>
+<span class="n">xmax</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">10.</span><span class="o">*</span><span class="n">data</span><span class="p">.</span><span class="nb">max</span><span class="p">())</span><span class="o">/</span><span class="mf">10.</span>
 <span class="n">nbins</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">xmax</span><span class="o">-</span><span class="n">xmin</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
 <span class="c1"># print(xmin, xmax, nbins)
 </span>
 <span class="c1"># Create Python Histogram #
-</span><span class="n">hist</span><span class="p">,</span> <span class="n">bin_edges</span><span class="p">,</span> <span class="n">patches</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">nbins</span><span class="p">,(</span><span class="n">xmin</span><span class="p">,</span><span class="n">xmax</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="s">'g'</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+</span><span class="n">hist</span><span class="p">,</span> <span class="n">bin_edges</span><span class="p">,</span> <span class="n">patches</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">nbins</span><span class="p">,(</span><span class="n">xmin</span><span class="p">,</span><span class="n">xmax</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="s">'g'</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
 <span class="n">bin_centers</span> <span class="o">=</span> <span class="p">(</span><span class="n">bin_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">+</span><span class="n">bin_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
 
 <span class="c1"># Find Non-zero bins in Histogram
@@ -153,11 +142,11 @@ ROOT Version: 6.18/04
 <h1 id="creating-the-histogram-in-pyroot">Creating the histogram in PyRoot</h1>
 
 <p>Define the PyRoot histogram using <code class="highlighter-rouge">TH1D()</code>. Then using the distribution sampled above and load it the histogram <code class="highlighter-rouge">h</code> with <code class="highlighter-rouge">SetContent()</code>.</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">root_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nbins</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">root_hist</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nbins</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 <span class="n">root_hist</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span>
 <span class="n">h</span> <span class="o">=</span> <span class="n">TH1D</span><span class="p">(</span><span class="s">'h'</span><span class="p">,</span><span class="s">'hist'</span><span class="p">,</span><span class="n">nbins</span><span class="p">,</span><span class="n">bin_edges</span><span class="p">)</span>
-<span class="n">h</span><span class="o">.</span><span class="n">SetContent</span><span class="p">(</span><span class="n">root_hist</span><span class="p">)</span>
-<span class="n">h</span><span class="o">.</span><span class="n">SetTitle</span><span class="p">(</span><span class="s">"Root Histogram with Fit;X Axis;Y Axis [Counts]"</span><span class="p">)</span>
+<span class="n">h</span><span class="p">.</span><span class="n">SetContent</span><span class="p">(</span><span class="n">root_hist</span><span class="p">)</span>
+<span class="n">h</span><span class="p">.</span><span class="n">SetTitle</span><span class="p">(</span><span class="s">"Root Histogram with Fit;X Axis;Y Axis [Counts]"</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h1 id="fit-the-histogram-with-pyroot">Fit the Histogram with PyRoot</h1>
@@ -165,13 +154,13 @@ ROOT Version: 6.18/04
 <p>Fit the PyRoot histogram with <code class="highlighter-rouge">Fit()</code> using the ROOT predefined <code class="highlighter-rouge">gaus</code> function over the range <code class="highlighter-rouge">xmin</code> to <code class="highlighter-rouge">xmax</code>. The retrieve the fit function with <code class="highlighter-rouge">GetFunction()</code>, retrieve the fit function <code class="highlighter-rouge">f</code> using <code class="highlighter-rouge">GetParameter()</code>, the fit function parameter error using <code class="highlighter-rouge">GetParError()</code>, and the fit statistics with <code class="highlighter-rouge">GetNDF()</code>,<code class="highlighter-rouge"> GetChisquared()</code>, and <code class="highlighter-rouge">GetProb()</code>.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Fit histogram with root #
-</span><span class="n">h</span><span class="o">.</span><span class="n">Fit</span><span class="p">(</span><span class="s">'gaus'</span><span class="p">,</span><span class="s">''</span><span class="p">,</span><span class="s">''</span><span class="p">,</span><span class="n">xmin</span><span class="p">,</span><span class="n">xmax</span><span class="p">)</span>
+</span><span class="n">h</span><span class="p">.</span><span class="n">Fit</span><span class="p">(</span><span class="s">'gaus'</span><span class="p">,</span><span class="s">''</span><span class="p">,</span><span class="s">''</span><span class="p">,</span><span class="n">xmin</span><span class="p">,</span><span class="n">xmax</span><span class="p">)</span>
 
 <span class="c1"># Get Root Fit and Goodness of Fit Parameters #
-</span><span class="n">f</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">GetFunction</span><span class="p">(</span><span class="s">'gaus'</span><span class="p">)</span>
-<span class="n">const</span><span class="p">,</span><span class="n">mu</span><span class="p">,</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">GetParameter</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">f</span><span class="o">.</span><span class="n">GetParameter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">f</span><span class="o">.</span><span class="n">GetParameter</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">econst</span><span class="p">,</span><span class="n">emu</span><span class="p">,</span><span class="n">esigma</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">GetParError</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">f</span><span class="o">.</span><span class="n">GetParError</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">f</span><span class="o">.</span><span class="n">GetParError</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">ndf</span><span class="p">,</span><span class="n">chi2</span><span class="p">,</span><span class="n">prob</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">GetNDF</span><span class="p">(),</span><span class="n">f</span><span class="o">.</span><span class="n">GetChisquare</span><span class="p">(),</span><span class="n">f</span><span class="o">.</span><span class="n">GetProb</span><span class="p">()</span>
+</span><span class="n">f</span> <span class="o">=</span> <span class="n">h</span><span class="p">.</span><span class="n">GetFunction</span><span class="p">(</span><span class="s">'gaus'</span><span class="p">)</span>
+<span class="n">const</span><span class="p">,</span><span class="n">mu</span><span class="p">,</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="n">GetParameter</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">f</span><span class="p">.</span><span class="n">GetParameter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">f</span><span class="p">.</span><span class="n">GetParameter</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">econst</span><span class="p">,</span><span class="n">emu</span><span class="p">,</span><span class="n">esigma</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="n">GetParError</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">f</span><span class="p">.</span><span class="n">GetParError</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">f</span><span class="p">.</span><span class="n">GetParError</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ndf</span><span class="p">,</span><span class="n">chi2</span><span class="p">,</span><span class="n">prob</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="n">GetNDF</span><span class="p">(),</span><span class="n">f</span><span class="p">.</span><span class="n">GetChisquare</span><span class="p">(),</span><span class="n">f</span><span class="p">.</span><span class="n">GetProb</span><span class="p">()</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">ndf</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">chi2</span><span class="o">/</span><span class="n">ndf</span><span class="p">,</span><span class="n">prob</span><span class="p">)</span>
@@ -191,9 +180,9 @@ ROOT Version: 6.18/04
 
 <p>Plotting the PyRoot canvas and histogram and save the canvas as a pdf.</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Draw Fit and Histogram#
-</span><span class="n">h</span><span class="o">.</span><span class="n">Draw</span><span class="p">()</span>
-<span class="n">c1</span><span class="o">.</span><span class="n">Draw</span><span class="p">()</span>
-<span class="n">c1</span><span class="o">.</span><span class="n">SaveAs</span><span class="p">(</span><span class="s">'root_fit.png'</span><span class="p">)</span>
+</span><span class="n">h</span><span class="p">.</span><span class="n">Draw</span><span class="p">()</span>
+<span class="n">c1</span><span class="p">.</span><span class="n">Draw</span><span class="p">()</span>
+<span class="n">c1</span><span class="p">.</span><span class="n">SaveAs</span><span class="p">(</span><span class="s">'root_fit.png'</span><span class="p">)</span>
 </code></pre></div></div>
 <center>
 <img src="/assets/coding/root_fit.png" alt="ROOT fit to the histogram" style="width:50vw" />
@@ -207,7 +196,7 @@ ROOT Version: 6.18/04
 </span>
 <span class="c1"># Gaussian Fit Function :
 </span><span class="k">def</span> <span class="nf">gaus</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">const</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">const</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">sigma</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">const</span><span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">sigma</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
 <span class="c1"># Define Range and Fit :
 </span><span class="n">coeff</span><span class="p">,</span> <span class="n">covar</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">gaus</span><span class="p">,</span> <span class="n">bin_centers</span><span class="p">[</span><span class="n">nz</span><span class="p">],</span> <span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span>
@@ -225,21 +214,21 @@ ROOT Version: 6.18/04
 <span class="c1"># Calculate chi Squared
 </span><span class="n">f_root</span> <span class="o">=</span> <span class="n">gaus</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">*</span><span class="n">root_gaus</span><span class="p">)</span>
 <span class="n">f_opti</span> <span class="o">=</span> <span class="n">gaus</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">*</span><span class="n">opti_gaus</span><span class="p">)</span>
-<span class="n">ch2_root</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span> <span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">]</span><span class="o">-</span><span class="n">f_root</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span>
-<span class="n">ch2_opti</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span> <span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">]</span><span class="o">-</span><span class="n">f_opti</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span>
+<span class="n">ch2_root</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span> <span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">]</span><span class="o">-</span><span class="n">f_root</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span>
+<span class="n">ch2_opti</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span> <span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">]</span><span class="o">-</span><span class="n">f_opti</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">hist</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span>
 
 <span class="c1"># Calculate Degrees of Freedom with 3 fit parameters
 </span><span class="n">dof</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span><span class="o">-</span><span class="mi">3</span>
 
 <span class="c1"># Calculate Probablity #
-</span><span class="n">p_root</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">ch2_root</span><span class="p">,</span> <span class="n">dof</span><span class="p">)</span>
-<span class="n">p_opti</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">ch2_opti</span><span class="p">,</span> <span class="n">dof</span><span class="p">)</span>
+</span><span class="n">p_root</span> <span class="o">=</span> <span class="n">sp</span><span class="p">.</span><span class="n">stats</span><span class="p">.</span><span class="n">chi2</span><span class="p">.</span><span class="n">sf</span><span class="p">(</span><span class="n">ch2_root</span><span class="p">,</span> <span class="n">dof</span><span class="p">)</span>
+<span class="n">p_opti</span> <span class="o">=</span> <span class="n">sp</span><span class="p">.</span><span class="n">stats</span><span class="p">.</span><span class="n">chi2</span><span class="p">.</span><span class="n">sf</span><span class="p">(</span><span class="n">ch2_opti</span><span class="p">,</span> <span class="n">dof</span><span class="p">)</span>
 
 <span class="k">print</span><span class="p">(</span><span class="s">'Hist</span><span class="se">\t</span><span class="s">Calc Package</span><span class="se">\t</span><span class="s">Chi Sq</span><span class="se">\t</span><span class="s"> Chi2/dof</span><span class="se">\t</span><span class="s">prob'</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s">'Root</span><span class="se">\t</span><span class="s">Root</span><span class="se">\t</span><span class="s">{0}</span><span class="se">\t</span><span class="s">{1}</span><span class="se">\t</span><span class="s">{2}'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">chi2</span><span class="o">/</span><span class="n">dof</span><span class="p">,</span> <span class="n">prob</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s">'Root</span><span class="se">\t</span><span class="s">Python</span><span class="se">\t</span><span class="s">{0}</span><span class="se">\t</span><span class="s">{1}</span><span class="se">\t</span><span class="s">{2}'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">ch2_root</span><span class="p">,</span> <span class="n">ch2_root</span><span class="o">/</span><span class="n">dof</span><span class="p">,</span> <span class="n">p_root</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s">'SciPy</span><span class="se">\t</span><span class="s">Python</span><span class="se">\t</span><span class="s">{0}</span><span class="se">\t</span><span class="s">{1}</span><span class="se">\t</span><span class="s">{2}'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">ch2_opti</span><span class="p">,</span> <span class="n">ch2_opti</span><span class="o">/</span><span class="n">dof</span><span class="p">,</span> <span class="n">p_opti</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s">'Degrees of Freedom =</span><span class="se">\t</span><span class="s">{0}'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dof</span><span class="p">)))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'Root</span><span class="se">\t</span><span class="s">Root</span><span class="se">\t</span><span class="s">{0}</span><span class="se">\t</span><span class="s">{1}</span><span class="se">\t</span><span class="s">{2}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">chi2</span><span class="o">/</span><span class="n">dof</span><span class="p">,</span> <span class="n">prob</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'Root</span><span class="se">\t</span><span class="s">Python</span><span class="se">\t</span><span class="s">{0}</span><span class="se">\t</span><span class="s">{1}</span><span class="se">\t</span><span class="s">{2}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">ch2_root</span><span class="p">,</span> <span class="n">ch2_root</span><span class="o">/</span><span class="n">dof</span><span class="p">,</span> <span class="n">p_root</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'SciPy</span><span class="se">\t</span><span class="s">Python</span><span class="se">\t</span><span class="s">{0}</span><span class="se">\t</span><span class="s">{1}</span><span class="se">\t</span><span class="s">{2}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">ch2_opti</span><span class="p">,</span> <span class="n">ch2_opti</span><span class="o">/</span><span class="n">dof</span><span class="p">,</span> <span class="n">p_opti</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'Degrees of Freedom =</span><span class="se">\t</span><span class="s">{0}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dof</span><span class="p">)))</span>
 </code></pre></div></div>
 <p>which outputs</p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Hist	Calc Package	Chi Sq	 Chi2/dof	prob
@@ -266,7 +255,7 @@ Degrees of Freedom =	48
     </main><footer class="site-footer h-card">
   <data class="u-url" href="/"></data>
   <!--- Footer Content --->
-  	&copy Greg Furlich 2020 <br>
+  	&copy Greg Furlich 2021 <br>
   	All Rights Reserved<br>
 </footer>
 </body>
