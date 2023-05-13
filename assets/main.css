@@ -154,7 +154,8 @@ figcaption {
  * Lists
  */
 ul, ol {
-  text-align: justify; }
+  text-align: justify;
+  padding-left: 30px; }
 
 .menu {
   display: flex;
