@@ -33,9 +33,10 @@
                <a href="/Projects.html"><p>Projects</p></a>
                <a href="/Hobbies.html"><p>Hobbies</p></a>
                <a href="/Photography.html"><p>Photography</p></a>
+               <a href="https://www.colorado.edu/center/nsi/greg-furlich"><p><img id="CU" src="/assets/images/cub.png" height=30vw></p></a>
                <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/images/github.png" height=30vw></p></a>
                <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/images/in.png" height=30vw></p></a>
-               <a href="mailto:g.furlich@gmail.com"><p><img id="mzil" src="/assets/images/mail.png" height=30vw></p></a>
+               <a href="mailto:greg.furlich@colorado.edu"><p><img id="mzil" src="/assets/images/mail.png" height=30vw></p></a>
            </div>
 
        </div>
@@ -119,7 +120,7 @@
 <span class="kn">import</span> <span class="nn">re</span>
 </code></pre></div></div>
 <p>The python module versions I used in my example are:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Python 3.6.9
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Python 3.6.9
 Pandas: 0.24.1
 Numpy: 1.16.0
 Matplotlib: 3.0.2
@@ -141,7 +142,7 @@ Rasterio: 1.1.5
 <span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="p">.</span><span class="n">tail</span><span class="p">())</span>
 </code></pre></div></div>
 <p>We see shape of the list and the most recent scenes</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(2039703, 12)
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(2039703, 12)
 
 	productId 	entityId 	acquisitionDate 	cloudCover 	processingLevel 	path 	row 	min_lat 	min_lon 	max_lat 	max_lon 	download_url
 2039698 	LC08_L1GT_208004_20200806_20200807_01_RT 	LC82080042020219LGN00 	2020-08-06 11:27:39.935012 	98.45 	L1GT 	208 	4 	76.76868 	17.36822 	79.20000 	29.91599 	https://s3-us-west-2.amazonaws.com/landsat-pds...
@@ -174,7 +175,7 @@ Rasterio: 1.1.5
 <span class="n">display</span><span class="p">(</span><span class="n">clf_df</span><span class="p">.</span><span class="n">head</span><span class="p">())</span>
 </code></pre></div></div>
 <p>which yields the at list of scenes with the selections above</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>productId 	entityId 	acquisitionDate 	cloudCover 	processingLevel 	path 	row 	min_lat 	min_lon 	max_lat 	max_lon 	download_url
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>productId 	entityId 	acquisitionDate 	cloudCover 	processingLevel 	path 	row 	min_lat 	min_lon 	max_lat 	max_lon 	download_url
 1948587 	LC08_L1TP_038033_20200425_20200426_01_RT 	LC80380332020116LGN00 	2020-04-25 18:08:06.916571 	3.24 	L1TP 	38 	33 	37.80464 	-113.83262 	39.94594 	-111.09092 	https://s3-us-west-2.amazonaws.com/landsat-pds...
 1971570 	LC08_L1TP_038033_20200425_20200509_01_T1 	LC80380332020116LGN00 	2020-04-25 18:08:06.916571 	3.24 	L1TP 	38 	33 	37.80464 	-113.83262 	39.94594 	-111.09092 	https://s3-us-west-2.amazonaws.com/landsat-pds...
 947415 	LC08_L1TP_038033_20150428_20170301_01_T1 	LC80380332015118LGN01 	2015-04-28 18:07:52.232930 	2.87 	L1TP 	38 	33 	37.80416 	-113.85367 	39.94543 	-111.11137 	https://s3-us-west-2.amazonaws.com/landsat-pds...
@@ -199,8 +200,8 @@ Rasterio: 1.1.5
 <span class="n">download_urls</span> <span class="o">=</span> <span class="p">[</span> <span class="s">'{0}_{1}.TIF'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">download_urls</span><span class="p">,</span> <span class="n">band</span><span class="p">)</span> <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">]</span>
 <span class="c1"># print download_urls[0]
 </span></code></pre></div></div>
-<p>Then the <code class="highlighter-rouge">.tif</code> rasters for all 11 spectral bands is retrieved from AWS using <code class="highlighter-rouge">wget()</code></p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Make Image Directory to put pulled images #
+<p>Then the <code class="language-plaintext highlighter-rouge">.tif</code> rasters for all 11 spectral bands is retrieved from AWS using <code class="language-plaintext highlighter-rouge">wget()</code></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Make Image Directory to put pulled images #
 img_dir = dir + '/' + productId
 if not os.path.exists(img_dir):
     os.makedirs(img_dir)
@@ -320,7 +321,7 @@ for d in download_urls:
 
 <h1 id="creating-a-composite-image-from-the-rgb-layers">Creating a composite image from the RGB layers</h1>
 
-<p>To create a composite image using the RGB bands (bands 2-4), the bands are loaded using <code class="highlighter-rouge">gdal.Open()</code>, normalized and values converted to floats, and then stacked in an array using Numpy <code class="highlighter-rouge">dstack()</code></p>
+<p>To create a composite image using the RGB bands (bands 2-4), the bands are loaded using <code class="language-plaintext highlighter-rouge">gdal.Open()</code>, normalized and values converted to floats, and then stacked in an array using Numpy <code class="language-plaintext highlighter-rouge">dstack()</code></p>
 
 <pre><code class="language-Python">
 def norm(band):
@@ -358,7 +359,7 @@ plt.savefig(productId+'.png', dpi=300)
 
 <h1 id="setting-the-raster-window">Setting the Raster Window</h1>
 
-<p>To center the raster on a point of interest, in this case, the CLF, we use define the following function. We determine the downloaded raster size with <code class="highlighter-rouge">raster.RasterXSize</code> and <code class="highlighter-rouge">raster.RasterYSize</code>, then determine where the point of interest is relative to the corners, the number of pixels, and the pixel size (given the band’s resolution). Then the window is set using <code class="highlighter-rouge">rasterio.windows.Window()</code> and the location of the point of interest and the desired window size.</p>
+<p>To center the raster on a point of interest, in this case, the CLF, we use define the following function. We determine the downloaded raster size with <code class="language-plaintext highlighter-rouge">raster.RasterXSize</code> and <code class="language-plaintext highlighter-rouge">raster.RasterYSize</code>, then determine where the point of interest is relative to the corners, the number of pixels, and the pixel size (given the band’s resolution). Then the window is set using <code class="language-plaintext highlighter-rouge">rasterio.windows.Window()</code> and the location of the point of interest and the desired window size.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">centerPOI</span><span class="p">(</span><span class="n">max_lat</span><span class="p">,</span>
     <span class="n">min_lat</span><span class="p">,</span>
@@ -403,7 +404,7 @@ plt.savefig(productId+'.png', dpi=300)
     <span class="k">return</span> <span class="n">window</span>
 </code></pre></div></div>
 
-<p>Using the <code class="highlighter-rouge">centerPOI()</code> to set a square window ± 30km around the CLF</p>
+<p>Using the <code class="language-plaintext highlighter-rouge">centerPOI()</code> to set a square window ± 30km around the CLF</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Create Window #
 </span><span class="n">window</span> <span class="o">=</span> <span class="n">centerPOI</span><span class="p">(</span><span class="n">poi_lat</span> <span class="o">=</span> <span class="n">ta_df</span><span class="p">[</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Site'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'CLF'</span><span class="p">][</span><span class="s">'Latitude'</span><span class="p">].</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
               <span class="n">poi_lon</span> <span class="o">=</span> <span class="n">ta_df</span><span class="p">[</span><span class="n">ta_df</span><span class="p">[</span><span class="s">'Site'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'CLF'</span><span class="p">][</span><span class="s">'Longitude'</span><span class="p">].</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
@@ -490,7 +491,7 @@ plt.savefig(productId+'.png', dpi=300)
 
 <h1 id="haversine-formula-and-great-circle-distances-to-clf-coordinates">Haversine Formula and Great-Circle Distances to CLF Coordinates</h1>
 
-<p>To determine the position of the SD sites relative to the center of the satellite for adding these positions to the map, I take the measured GPS locations of the SD and use the <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine_formula</a>. I use the Haversine formula to determine the positions of the SDs on the map given the components of the great-circle distance between the SD site and the CLF. Then I have the SDs in CLF coordinates and account of the curvature of the Earth. I defined the <code class="highlighter-rouge">haversine()</code> function to compute the great-circle distance and bearing between two positions given their latitude and longitude. I use this in the <code class="highlighter-rouge">CLF_coord()</code> to determine the x and y position in CLF coordinates.</p>
+<p>To determine the position of the SD sites relative to the center of the satellite for adding these positions to the map, I take the measured GPS locations of the SD and use the <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine_formula</a>. I use the Haversine formula to determine the positions of the SDs on the map given the components of the great-circle distance between the SD site and the CLF. Then I have the SDs in CLF coordinates and account of the curvature of the Earth. I defined the <code class="language-plaintext highlighter-rouge">haversine()</code> function to compute the great-circle distance and bearing between two positions given their latitude and longitude. I use this in the <code class="language-plaintext highlighter-rouge">CLF_coord()</code> to determine the x and y position in CLF coordinates.</p>
 
 <pre><code class="language-Python">def haversine(longitude_1, latitude_1, longitude_2, latitude_2):
     """
@@ -724,7 +725,7 @@ def CLF_coord(longitude, latitude):
     </main><footer class="site-footer h-card">
   <data class="u-url" href="/"></data>
   <!--- Footer Content --->
-  	&copy Greg Furlich 2022 <br>
+  	&copy Greg Furlich 2023 <br>
   	All Rights Reserved<br>
 </footer>
 </body>

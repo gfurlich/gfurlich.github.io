@@ -33,9 +33,10 @@
                <a href="/Projects.html"><p>Projects</p></a>
                <a href="/Hobbies.html"><p>Hobbies</p></a>
                <a href="/Photography.html"><p>Photography</p></a>
+               <a href="https://www.colorado.edu/center/nsi/greg-furlich"><p><img id="CU" src="/assets/images/cub.png" height=30vw></p></a>
                <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/images/github.png" height=30vw></p></a>
                <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/images/in.png" height=30vw></p></a>
-               <a href="mailto:g.furlich@gmail.com"><p><img id="mzil" src="/assets/images/mail.png" height=30vw></p></a>
+               <a href="mailto:greg.furlich@colorado.edu"><p><img id="mzil" src="/assets/images/mail.png" height=30vw></p></a>
            </div>
 
        </div>
@@ -116,7 +117,7 @@
 <span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1.inset_locator</span> <span class="kn">import</span> <span class="n">inset_axes</span>
 </code></pre></div></div>
 <p>The python module versions I used in this example are:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Python 3.6.9
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Python 3.6.9
 Pandas: 0.24.1
 Numpy: 1.16.0
 Matplotlib: 3.0.2
@@ -126,7 +127,7 @@ Rasterio: 1.1.5
 
 <h1 id="retrieving-shuttle-radar-topography-mission-data">Retrieving Shuttle Radar Topography Mission Data</h1>
 
-<p>The <a href="https://www2.jpl.nasa.gov/srtm/">Shuttle Radar Topography Mission (SRTM)</a> was topographic data collected by radar on the STS-99 with Space Shuttle Endeavour. I accessed preprocessed SRTM data raster from the International  Centre for Tropical  Agriculture (CIAT) in the <a href="http://srtm.csi.cgiar.org/wp-content/uploads/files/srtm_5x5/TIFF/srtm_14_05.zip">CGIAR-CSI SRTM data set</a>. You can also access the data from <a href="https://earthexplorer.usgs.gov/">USGS Earth Explorer</a>. The CIAT data set provides a header (<code class="highlighter-rouge">.hdr</code>) file with the GeoTIFF information and a <a href="https://en.wikipedia.org/wiki/World_file">world file</a> (<code class="highlighter-rouge">.twf</code>) for georeferencing and determing the pixel size of the raster provided as a <code class="highlighter-rouge">.tiff</code>. To read the raster using GDAL in python and plotting the whole raster:</p>
+<p>The <a href="https://www2.jpl.nasa.gov/srtm/">Shuttle Radar Topography Mission (SRTM)</a> was topographic data collected by radar on the STS-99 with Space Shuttle Endeavour. I accessed preprocessed SRTM data raster from the International  Centre for Tropical  Agriculture (CIAT) in the <a href="http://srtm.csi.cgiar.org/wp-content/uploads/files/srtm_5x5/TIFF/srtm_14_05.zip">CGIAR-CSI SRTM data set</a>. You can also access the data from <a href="https://earthexplorer.usgs.gov/">USGS Earth Explorer</a>. The CIAT data set provides a header (<code class="language-plaintext highlighter-rouge">.hdr</code>) file with the GeoTIFF information and a <a href="https://en.wikipedia.org/wiki/World_file">world file</a> (<code class="language-plaintext highlighter-rouge">.twf</code>) for georeferencing and determing the pixel size of the raster provided as a <code class="language-plaintext highlighter-rouge">.tiff</code>. To read the raster using GDAL in python and plotting the whole raster:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Open Raster File #
 </span><span class="n">topo</span> <span class="o">=</span> <span class="n">gdal</span><span class="p">.</span><span class="n">Open</span><span class="p">(</span><span class="nb">dir</span><span class="o">+</span><span class="s">'/srtm_14_05.tif'</span><span class="p">)</span>
@@ -147,7 +148,7 @@ Rasterio: 1.1.5
 
 <h1 id="setting-the-raster-window">Setting the Raster Window</h1>
 
-<p>Centering the topographic map on the CLF at TA using the <code class="highlighter-rouge">centerPOI</code> function also used in <a href="{ % post_url telescope-array-satellite-map.html#setting-raster-window %}">composite satellite map post</a> to set the raster window.</p>
+<p>Centering the topographic map on the CLF at TA using the <code class="language-plaintext highlighter-rouge">centerPOI</code> function also used in <a href="{ % post_url telescope-array-satellite-map.html#setting-raster-window %}">composite satellite map post</a> to set the raster window.</p>
 <center>
 <img src="/assets/research/TAmap/Delta_topo.png" alt="Topographic Map of the area near Delta, UT" style="width:50vw" />
 </center>
@@ -155,7 +156,7 @@ Rasterio: 1.1.5
 
 <h1 id="ta-topographic-map">TA Topographic Map</h1>
 
-<p>I changed the color map to <code class="highlighter-rouge">cmap='RdGy'</code>, plotted the altitude contours using <code class="highlighter-rouge">contourf()</code>, overlayed TA information and a altitude colormap reference. The resulting topographic map:</p>
+<p>I changed the color map to <code class="language-plaintext highlighter-rouge">cmap='RdGy'</code>, plotted the altitude contours using <code class="language-plaintext highlighter-rouge">contourf()</code>, overlayed TA information and a altitude colormap reference. The resulting topographic map:</p>
 <center>
 <img src="/assets/research/TAmap/ta_topo.png" alt="Telescope Array Cosmic Ray Observatory Topographic Map" style="width:50vw" />
 </center>
@@ -163,7 +164,7 @@ Rasterio: 1.1.5
 
 <h1 id="ta-shaded-relief-map">TA Shaded Relief Map</h1>
 
-<p>A light source is applied to the SRTM raster to create shading in a shaded relief map using <code class="highlighter-rouge">LightSource</code> from <code class="highlighter-rouge">matplotlib.colors</code></p>
+<p>A light source is applied to the SRTM raster to create shading in a shaded relief map using <code class="language-plaintext highlighter-rouge">LightSource</code> from <code class="language-plaintext highlighter-rouge">matplotlib.colors</code></p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">LightSource</span>
 
@@ -200,7 +201,7 @@ data V4, International  Centre for Tropical  Agriculture (CIAT), available  from
     </main><footer class="site-footer h-card">
   <data class="u-url" href="/"></data>
   <!--- Footer Content --->
-  	&copy Greg Furlich 2022 <br>
+  	&copy Greg Furlich 2023 <br>
   	All Rights Reserved<br>
 </footer>
 </body>

@@ -33,9 +33,10 @@
                <a href="/Projects.html"><p>Projects</p></a>
                <a href="/Hobbies.html"><p>Hobbies</p></a>
                <a href="/Photography.html"><p>Photography</p></a>
+               <a href="https://www.colorado.edu/center/nsi/greg-furlich"><p><img id="CU" src="/assets/images/cub.png" height=30vw></p></a>
                <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/images/github.png" height=30vw></p></a>
                <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/images/in.png" height=30vw></p></a>
-               <a href="mailto:g.furlich@gmail.com"><p><img id="mzil" src="/assets/images/mail.png" height=30vw></p></a>
+               <a href="mailto:greg.furlich@colorado.edu"><p><img id="mzil" src="/assets/images/mail.png" height=30vw></p></a>
            </div>
 
        </div>
@@ -101,7 +102,7 @@
 
 <p>A categories page listing all posts by categories was added to create a way to look up previous posts by the post categories. This page lists a table of contents of each category using the liquid variables in the following code</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
 {% assign sortedcats = site.categories | sort %}
 
 &lt;toc id="Table of Contents"&gt;
@@ -119,7 +120,7 @@
 </code></pre></div></div>
 <p>Then categories post by each category were lists using the liquid variables in the following code</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
 &lt;div id="archives"&gt;
 {% for category in sortedcats %}
   &lt;div class="archive-group"&gt;
@@ -142,7 +143,7 @@
 
 <h2 id="statistics">Statistics</h2>
 
-<p>The python script <code class="highlighter-rouge">post_stats.py</code> (<a href="https://github.com/gfurlich/Projects/blob/master/Digital_Research_Journal/post_stats.py">Github link</a>) was created to track the meta data of this digital research journal by creating the calendar heatmap of the top five categories, the git repository submissions, and the detector shifts for the Telescope Array Cosmic Ray Observatory. <code class="highlighter-rouge">post_stats.py</code> scraps the digital research journal post categories and creates a database of posts and the categories of the posts. <code class="highlighter-rouge">post_stats.py</code> also scraps the git repository log for git submissions to create a database of git submissions. Lastly, <code class="highlighter-rouge">post_stats.py</code> scraps the Telescope Array Project internal wiki page of detector shift to create a database of my detector shifts.The top five categories heatmap allow me to track the projects I focus on in each post over the journal. The git repository heatmap allows me to track the submissions to my digital research journal. The shift heatmap allows me to track my detector service to Telescope Array Project.</p>
+<p>The python script <code class="language-plaintext highlighter-rouge">post_stats.py</code> (<a href="https://github.com/gfurlich/Projects/blob/master/Digital_Research_Journal/post_stats.py">Github link</a>) was created to track the meta data of this digital research journal by creating the calendar heatmap of the top five categories, the git repository submissions, and the detector shifts for the Telescope Array Cosmic Ray Observatory. <code class="language-plaintext highlighter-rouge">post_stats.py</code> scraps the digital research journal post categories and creates a database of posts and the categories of the posts. <code class="language-plaintext highlighter-rouge">post_stats.py</code> also scraps the git repository log for git submissions to create a database of git submissions. Lastly, <code class="language-plaintext highlighter-rouge">post_stats.py</code> scraps the Telescope Array Project internal wiki page of detector shift to create a database of my detector shifts.The top five categories heatmap allow me to track the projects I focus on in each post over the journal. The git repository heatmap allows me to track the submissions to my digital research journal. The shift heatmap allows me to track my detector service to Telescope Array Project.</p>
 
 <iframe src="/digital_research_journal/stats/" style="height:100vh; width:100%;" title="Digital Research Journal Statistics Page"></iframe>
 
@@ -154,7 +155,7 @@
     </main><footer class="site-footer h-card">
   <data class="u-url" href="/"></data>
   <!--- Footer Content --->
-  	&copy Greg Furlich 2022 <br>
+  	&copy Greg Furlich 2023 <br>
   	All Rights Reserved<br>
 </footer>
 </body>
