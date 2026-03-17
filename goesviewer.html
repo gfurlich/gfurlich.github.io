@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en"> <!--- Header --->
+<head>
+    <title>
+        
+        Greg Furlich
+    </title>
+    <meta itemprop="description" name="description" content="Personal Website of Greg Furlich, PhD" />
+    <meta name="author" content="Greg Furlich">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" />
+
+</head>
+<body><header>
+
+    <nav>
+       <div class="topnav">
+           <a href="/">
+               <p>
+                   <h> Greg Furlich</h>
+               </p>
+           </a>
+
+           <div class="topnav-right">
+                <a href="/Research.html"><p>Research</p></a>
+                <a href="/Education.html"><p>Education</p></a>
+                <a href="/Projects.html"><p>Projects</p></a>
+                <a href="/Hobbies.html"><p>Hobbies</p></a>
+                <a href="/Photography.html"><p>Photography</p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich"><p><img id="CU" src="/assets/logos/cub.png" height=30vw></p></a>
+                <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/logos/github.png" height=30vw></p></a>
+                <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/logos/in.png" height=30vw></p></a>
+                <a href="mailto:greg.furlich@colorado.edu"><p><img id="mzil" src="/assets/logos/mail.png" height=30vw></p></a>
+           </div>
+
+       </div>
+   </nav>
+
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap');
+
+  .goes-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1rem 3rem;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .goes-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .goes-title {
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #111;
+    margin: 0;
+  }
+
+  .goes-title span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: #888;
+    margin-left: 0.5rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  /* Toggle */
+  .goes-toggle {
+    display: flex;
+    background: #f0f0f0;
+    border-radius: 6px;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .goes-toggle button {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: transparent;
+    color: #888;
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  }
+
+  .goes-toggle button.active {
+    background: #fff;
+    color: #111;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  }
+
+  /* Image container */
+  .goes-img-wrap {
+    position: relative;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    line-height: 0;
+  }
+
+  .goes-img-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: opacity 0.3s ease;
+  }
+
+  .goes-img-wrap img.fading {
+    opacity: 0.35;
+  }
+
+  /* Spinner overlay */
+  .goes-spinner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .goes-spinner.visible { opacity: 1; }
+
+  .goes-spinner-ring {
+    width: 36px;
+    height: 36px;
+    border: 2.5px solid rgba(255,255,255,0.2);
+    border-top-color: rgba(255,255,255,0.85);
+    border-radius: 50%;
+    animation: goes-spin 0.8s linear infinite;
+  }
+  @keyframes goes-spin { to { transform: rotate(360deg); } }
+
+  /* Footer meta */
+  .goes-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: #aaa;
+  }
+
+  .goes-meta a {
+    color: #aaa;
+    text-decoration: none;
+    border-bottom: 1px solid #ddd;
+    transition: color 0.15s;
+  }
+  .goes-meta a:hover { color: #333; }
+</style>
+
+<div class="goes-wrap">
+
+<div style="height: 5vh"></div>
+
+  <div class="goes-header">
+    <h1 class="goes-title">
+      GOES Full Disk
+      <span>GeoColor · NOAA/NESDIS</span>
+    </h1>
+
+    <div class="goes-toggle" role="group" aria-label="Satellite selection">
+      <button id="btn-19" class="active" onclick="goesSwitch('19')">GOES-19 East</button>
+      <button id="btn-18"               onclick="goesSwitch('18')">GOES-18 West</button>
+    </div>
+  </div>
+
+  <div class="goes-img-wrap">
+    <img id="goes-img"
+         src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/FD/GEOCOLOR/1808x1808.jpg"
+         alt="GOES-19 Full Disk GeoColor satellite image" />
+    <div class="goes-spinner" id="goes-spinner">
+      <div class="goes-spinner-ring"></div>
+    </div>
+  </div>
+
+  <div class="goes-meta">
+    <span>Loaded: <span id="goes-time">—</span></span>
+    <a id="goes-link"
+       href="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/FD/GEOCOLOR/1808x1808.jpg"
+       target="_blank" rel="noopener">Open full image ↗</a>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var current = '19';
+  var img     = document.getElementById('goes-img');
+  var spinner = document.getElementById('goes-spinner');
+  var timeEl  = document.getElementById('goes-time');
+  var linkEl  = document.getElementById('goes-link');
+
+  var BASE = 'https://cdn.star.nesdis.noaa.gov/GOES{SAT}/ABI/FD/GEOCOLOR/1808x1808.jpg';
+
+  function url(sat) {
+    // Append a cache-buster rounded to 10-min windows (NOAA updates every ~10 min)
+    var cb = Math.floor(Date.now() / 600000);
+    return BASE.replace('{SAT}', sat) + '?cb=' + cb;
+  }
+
+  function loadImage(sat) {
+    var src  = url(sat);
+    var bare = BASE.replace('{SAT}', sat);
+
+    spinner.classList.add('visible');
+    img.classList.add('fading');
+    linkEl.href = bare;
+    img.alt = 'GOES-' + sat + ' Full Disk GeoColor satellite image';
+
+    var tmp = new Image();
+
+    tmp.onload = function () {
+      img.src = src;
+      img.classList.remove('fading');
+      spinner.classList.remove('visible');
+      timeEl.textContent = new Date().toUTCString().replace(' GMT', ' UTC');
+    };
+
+    tmp.onerror = function () {
+      img.classList.remove('fading');
+      spinner.classList.remove('visible');
+      timeEl.textContent = 'image unavailable';
+    };
+
+    tmp.src = src;
+  }
+
+  window.goesSwitch = function (sat) {
+    if (sat === current) return;
+    current = sat;
+    document.getElementById('btn-19').classList.toggle('active', sat === '19');
+    document.getElementById('btn-18').classList.toggle('active', sat === '18');
+    loadImage(sat);
+  };
+
+  // Stamp the initial load time
+  img.addEventListener('load', function () {
+    if (timeEl.textContent === '—') {
+      timeEl.textContent = new Date().toUTCString().replace(' GMT', ' UTC');
+    }
+  });
+
+})();
+</script>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+  <!--- Footer Content --->
+  	&copy Greg Furlich 2026 <br>
+  	All Rights Reserved<br>
+</footer>
+</body>
+
+</html>
