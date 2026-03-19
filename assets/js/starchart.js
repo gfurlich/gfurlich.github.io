@@ -1,8 +1,8 @@
 //===========================================================
 //
-//  Star Chart Javascript for Website
+//  Javascript Star Chart for Website
 //
-//  Assisted by Claude
+//  Author: Greg Furlich, Assisted by Claude
 //
 //===========================================================
 
@@ -155,7 +155,7 @@ function gmst(jd) {
     return mod360(g);
     }
   
-/** Format decimal degrees as HH MM SS sidereal time string */
+/* Format decimal degrees as HH MM SS sidereal time string */
 function lstToHMS(deg) {
     const totalSec = Math.round((mod360(deg) / 360) * 86400);
     const h  = Math.floor(totalSec / 3600);
@@ -231,6 +231,10 @@ function polarProject(az, alt, cx, cy, R) {
 const starSize  = mag => Math.max(1.2, 5.5 - mag * 1.2);
 const starAlpha = mag => Math.min(1, Math.max(0.2, 1 - mag * 0.18));
 // const starColor = '#0d0d22'
+
+//===========================================================
+//  Display Colors
+//===========================================================
 const darkRed = 'rgba(100, 7, 7, 0.71)'
 const lightRed = 'rgba(226, 29, 29, 0.42)'
 
@@ -256,7 +260,7 @@ function drawTimeOverlay(ctx, lst, now) {
     const yStart = 10;
     const lineH  = 20;
   
-    ctx.font         = '14px monospace';
+    ctx.font         = '12px monospace';
     ctx.textBaseline = 'middle';
   
     lines.forEach(({ label, value }, i) => {
@@ -281,19 +285,19 @@ function drawTimeOverlay(ctx, lst, now) {
  * @param {number} outer    Outer spike radius
  * @param {number} inner    Inner waist radius (controls spike sharpness)
  */
-function drawStar(ctx, x, y, outer, inner) {
-    const spikes = 4;
-    const step   = Math.PI / spikes;   // angle between outer and inner point
-    ctx.beginPath();
-    for (let i = 0; i < spikes * 2; i++) {
-      const r     = i % 2 === 0 ? outer : inner;
-      const angle = i * step - Math.PI / 4;  // rotate 45° so spikes point N/S/E/W
-      const px    = x + r * Math.cos(angle);
-      const py    = y + r * Math.sin(angle);
-      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
-    }
-    ctx.closePath();
-  }
+// function drawStar(ctx, x, y, outer, inner) {
+//     const spikes = 4;
+//     const step   = Math.PI / spikes;   // angle between outer and inner point
+//     ctx.beginPath();
+//     for (let i = 0; i < spikes * 2; i++) {
+//       const r     = i % 2 === 0 ? outer : inner;
+//       const angle = i * step - Math.PI / 4;  // rotate 45° so spikes point N/S/E/W
+//       const px    = x + r * Math.cos(angle);
+//       const py    = y + r * Math.sin(angle);
+//       i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+//     }
+//     ctx.closePath();
+//   }
 
 //===========================================================
 //  Galactic → Equatorial (J2000)
@@ -322,7 +326,7 @@ function drawStar(ctx, x, y, outer, inner) {
 //   const ra = mod360(toDeg(GAL_NGP_RA) - toDeg(Math.atan2(y, x)));
 
 //   return { ra, dec: toDeg(dec) };
-  // }
+// }
 // ─── Galactic → Equatorial (J2000) ───────────────────────────────────────────
 //
 // Rotation matrix columns are the galactic X, Y, Z axes expressed in
@@ -366,6 +370,84 @@ function galacticToEquatorial(l, b) {
   return { ra, dec };
 }
 
+//===  Galactic Plane Overlay ===//
+
+/**
+ * Draw the galactic plane (b = 0) on the polar plot.
+ * Samples every 2° of galactic longitude and draws connected segments.
+ */
+function drawGalacticPlane(ctx, lst, lat, cx, cy, R) {
+  const STEP    = 2;     // degrees of galactic longitude per sample
+  const SAMPLES = 360 / STEP;
+
+  // collect projected points, marking gaps where the plane dips below horizon
+  const points = [];
+  for (let i = 0; i <= SAMPLES; i++) {
+    const l = i * STEP;
+    const { ra, dec } = galacticToEquatorial(l, 0);
+    const { alt, az } = equatorialToHorizontal(ra, dec, lst, lat);
+    if (alt < 0) {
+      points.push(null);   // below horizon — break the line
+    } else {
+      const { x, y } = polarProject(az, alt, cx, cy, R);
+      points.push({ x, y });
+    }
+  }
+
+  // ── build path ──
+  let pathD = '';
+  let inSeg = false;
+  points.forEach(pt => {
+    if (!pt) { inSeg = false; return; }
+    pathD += inSeg ? `L${pt.x.toFixed(1)},${pt.y.toFixed(1)}`
+                  : `M${pt.x.toFixed(1)},${pt.y.toFixed(1)}`;
+    inSeg = true;
+  });
+
+  if (!pathD) return;
+  const path = new Path2D(pathD);
+
+  ctx.save();
+  ctx.lineCap  = 'round';
+  ctx.lineJoin = 'round';
+
+  // ── layer 1: wide soft outer glow ──
+  ctx.filter      = 'blur(10px)';
+  ctx.strokeStyle = 'rgba(17, 17, 69, 0.18)';
+  ctx.lineWidth   = 40;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+  ctx.stroke(path);
+
+  // ── layer 2: mid haze ──
+  ctx.filter      = 'blur(5px)';
+  ctx.strokeStyle = 'rgba(35, 35, 102, 0.40)';
+  ctx.lineWidth   = 15;
+  ctx.stroke(path);
+
+  // ── layer 3: bright dense core ──
+  ctx.filter      = 'blur(2px)';
+  ctx.strokeStyle = 'rgba(94, 94, 175, 0.5)';
+  ctx.lineWidth   = 3;
+  ctx.stroke(path);
+
+  ctx.filter = 'none';
+  // label near galactic center (l=0)
+  const { ra: gcRa, dec: gcDec } = galacticToEquatorial(0, 0);
+  const { alt: gcAlt, az: gcAz } = equatorialToHorizontal(gcRa, gcDec, lst, lat);
+  if (gcAlt > 5) {
+    const { x: gx, y: gy } = polarProject(gcAz, gcAlt, cx, cy, R);
+    ctx.fillStyle    = darkRed;
+    ctx.font         = '10px sans-serif';
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Galactic Plane', gx + 6, gy);
+    }
+
+  ctx.setLineDash([]);   // reset dash for subsequent drawing
+  ctx.restore();
+  }
+
 //===========================================================
 //  Ecliptic → Equatorial (J2000)
 //===========================================================
@@ -393,6 +475,53 @@ function eclipticToEquatorial(lambda, beta) {
 
   return { ra, dec: toDeg(dec) };
   }
+
+//===  Ecliptic Plane Overlay ===//
+
+/**
+ * Draw the ecliptic (beta = 0) on the polar plot.
+ * Samples every 2° of ecliptic longitude and draws connected segments.
+ */
+function drawEcliptic(ctx, lst, lat, cx, cy, R) {
+  const STEP    = 2;
+  const SAMPLES = 360 / STEP;
+
+  const points = [];
+  for (let i = 0; i <= SAMPLES; i++) {
+    const lambda = i * STEP;
+    const { ra, dec } = eclipticToEquatorial(lambda, 0);
+    const { alt, az } = equatorialToHorizontal(ra, dec, lst, lat);
+    if (alt < 0) {
+      points.push(null);   // below horizon — break the line
+    } else {
+      const { x, y } = polarProject(az, alt, cx, cy, R);
+      points.push({ x, y });
+    }
+  }
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(80, 200, 255, 0.50)';   // cool blue tint
+  ctx.lineWidth   = 1;
+  ctx.setLineDash([4, 3]);
+
+  let drawing = false;
+  ctx.beginPath();
+  points.forEach(pt => {
+    if (!pt) {
+      drawing = false;
+      return;
+    }
+    if (!drawing) {
+      ctx.moveTo(pt.x, pt.y);
+      drawing = true;
+    } else {
+      ctx.lineTo(pt.x, pt.y);
+    }
+  });
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+}
 
 //===========================================================
 //  Sun Position
@@ -454,13 +583,13 @@ function moonPosition(jd) {
 //===========================================================
 //  Draw Sun and Moon
 //===========================================================
-/**
+/*
  * Draw the Sun and Moon on the polar plot.
  */
 function drawSolarSystem(ctx, jd, lst, lat, cx, cy, R) {
   const bodies = [
-    { name: 'Sun',  coords: sunPosition(jd),  draw: drawSun  },
     { name: 'Moon', coords: moonPosition(jd), draw: drawMoon },
+    { name: 'Sun',  coords: sunPosition(jd),  draw: drawSun  },
   ];
 
   bodies.forEach(({ name, coords, draw }) => {
@@ -478,10 +607,11 @@ function drawSolarSystem(ctx, jd, lst, lat, cx, cy, R) {
   });
 }
 
+//=== Sun ===//
 function drawSun(ctx, x, y) {
   const r = 10;
 
-  // corona glow
+  // Corona glow
   ctx.save();
   ctx.filter      = 'blur(6px)';
   ctx.fillStyle   = 'rgba(255, 200, 50, 0.5)';
@@ -515,11 +645,12 @@ function drawSun(ctx, x, y) {
   ctx.restore();
 }
 
+//=== Moon ===//
 function drawMoon(ctx, x, y) {
   const r = 8;
+  ctx.save();
 
   // glow
-  ctx.save();
   ctx.filter    = 'blur(5px)';
   ctx.fillStyle = 'rgba(200, 220, 255, 0.3)';
   ctx.beginPath();
@@ -537,7 +668,7 @@ function drawMoon(ctx, x, y) {
   ctx.arc(x, y, r, 0, Math.PI * 2);
   ctx.fill();
 
-  // crescent shadow — compute Moon phase from Sun/Moon elongation
+  // Moon Phase crescent shadow — compute Moon phase from Sun/Moon elongation
   const sunCoords  = sunPosition(ctx._jd || 0);   // passed via ctx hack below
   const moonCoords = moonPosition(ctx._jd || 0);
   const elongation = mod360(moonCoords.ra - sunCoords.ra);
@@ -554,11 +685,11 @@ function drawMoon(ctx, x, y) {
 }
 
 //===========================================================
-//  Planets
+//  Planets Orbital elements at J2000.0 and rates per Julian century
+//
+//  Source: Meeus "Astronomical Algorithms" Table 33.a
+//
 //===========================================================
-
-// ─── Orbital elements at J2000.0 and rates per Julian century ────────────────
-// Source: Meeus "Astronomical Algorithms" Table 33.a
 const PLANET_ELEMENTS = {
   Mercury: { a0:0.38709927, ad:0.00000037,  e0:0.20563593, ed:0.00001906,
              I0:7.00497902, Id:-0.00594749, L0:252.25032350, Ld:149472.67411175,
@@ -590,8 +721,9 @@ const EARTH_ELEMENTS = {
   lp0:102.93768193, lpd:0.32327364, Om0:-11.26064, Omd:-0.00503616,
 };
 
-// ─── Kepler solver ────────────────────────────────────────────────────────────
-
+//===========================================================
+//  Kepler solver
+//===========================================================
 /**
  * Solve Kepler's equation M = E - e·sin(E) for eccentric anomaly E.
  * @param {number} M  Mean anomaly, degrees
@@ -608,8 +740,9 @@ function solveKepler(M, e) {
   return ER;
 }
 
-// ─── Heliocentric ecliptic cartesian from orbital elements ────────────────────
-
+//===========================================================
+//  Heliocentric ecliptic cartesian from orbital elements
+//===========================================================
 function heliocentricXYZ(el, T) {
   const a  = el.a0  + el.ad  * T;
   const e  = el.e0  + el.ed  * T;
@@ -639,8 +772,9 @@ function heliocentricXYZ(el, T) {
   return { Xh, Yh, Zh };
 }
 
-// ─── Planet geocentric equatorial coordinates ─────────────────────────────────
-
+//===========================================================
+//  Planet geocentric equatorial coordinates
+//===========================================================
 /**
  * Compute geocentric equatorial (RA, Dec) for a planet.
  * @param {string} name  Planet name key in PLANET_ELEMENTS
@@ -670,8 +804,10 @@ function planetPosition(name, jd) {
   return { ra, dec };
 }
 
-// ─── Planet rendering ─────────────────────────────────────────────────────────
-
+//===========================================================
+//  Planet Visual Settings
+//===========================================================
+//=== Plant Color, Size, and Symbol
 const PLANET_STYLE = {
   Mercury: { color: 'rgba(180,170,160,1.0)', glow: 'rgba(180,170,160,0.4)', r: 4,  symbol: '☿' },
   Venus:   { color: 'rgba(240,220,160,1.0)', glow: 'rgba(240,220,100,0.4)', r: 5,  symbol: '♀' },
@@ -681,7 +817,7 @@ const PLANET_STYLE = {
   Uranus:  { color: 'rgba(160,220,230,1.0)', glow: 'rgba(160,220,230,0.4)', r: 5,  symbol: '⛢' },
   Neptune: { color: 'rgba(100,140,230,1.0)', glow: 'rgba(100,140,230,0.4)', r: 5,  symbol: '♆' },
 };
-
+//=== Draw Planet ===//
 function drawPlanet(ctx, x, y, style, name) {
   const { color, glow, r, symbol } = style;
 
@@ -721,9 +857,10 @@ function drawPlanet(ctx, x, y, style, name) {
   ctx.restore();
 }
 
-// ─── Draw all planets ─────────────────────────────────────────────────────────
-
-/**
+//===========================================================
+//  Draw all planets 
+//===========================================================
+/*
  * Call this inside drawSkyPlot after the stars.
  */
 function drawPlanets(ctx, jd, lst, lat, cx, cy, R) {
@@ -737,17 +874,286 @@ function drawPlanets(ctx, jd, lst, lat, cx, cy, R) {
 }
 
 //===========================================================
+//  Satellite catalog groups available from CelesTrak
+//===========================================================
+const SAT_GROUPS = {
+  'ISS':              'https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE',
+  'Brightest':        'https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=TLE',
+  'Earth Observing':  'https://celestrak.org/NORAD/elements/gp.php?GROUP=resource&FORMAT=TLE',
+  'Weather':          'https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=TLE',
+  'Comms':            'https://celestrak.org/NORAD/elements/gp.php?GROUP=geo&FORMAT=TLE',
+  'GNSS':             'https://celestrak.org/NORAD/elements/gp.php?GROUP=gnss&FORMAT=TLE',
+  'Science':          'https://celestrak.org/NORAD/elements/gp.php?GROUP=science&FORMAT=TLE',
+  'Cubesat':          'https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=TLE',
+  'Calibration':      'https://celestrak.org/NORAD/elements/gp.php?GROUP=radar&FORMAT=TLE',
+  'Starlink':         'https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=TLE',
+};
+
+//===========================================================
+//  Fetch Satellite TLEs available from CelesTrak
+//===========================================================
+// Direct TLE URLs (more reliable, standard CelesTrak format)
+const TLE_URLS = {
+  'ISS':              'https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE',
+  'Brightest':        'https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=TLE',
+  'Earth Observing':  'https://celestrak.org/NORAD/elements/gp.php?GROUP=resource&FORMAT=TLE',
+  'Weather':          'https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=TLE',
+  'Comms':            'https://celestrak.org/NORAD/elements/gp.php?GROUP=geo&FORMAT=TLE',
+  'GNSS':             'https://celestrak.org/NORAD/elements/gp.php?GROUP=gnss&FORMAT=TLE',
+  'Science':          'https://celestrak.org/NORAD/elements/gp.php?GROUP=science&FORMAT=TLE',
+  'Cubesat':          'https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=TLE',
+  'Calibration':      'https://celestrak.org/NORAD/elements/gp.php?GROUP=radar&FORMAT=TLE',
+  'Starlink':         'https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=TLE',
+};
+
+/*
+ * Parse a raw TLE text block into an array of satellite records.
+ * Handles both 2-line and 3-line (with name) TLE formats.
+ */
+function parseTLEs(text) {
+  const lines = text.trim().split('\n').map(l => l.trim()).filter(Boolean);
+  const sats  = [];
+
+  // 3-line format: name, line1, line2
+  if (lines.length % 3 === 0 && !lines[0].startsWith('1 ')) {
+    for (let i = 0; i < lines.length; i += 3) {
+      try {
+        const satrec = satellite.twoline2satrec(lines[i + 1], lines[i + 2]);
+        sats.push({ name: lines[i].replace(/^0 /, '').trim(), satrec });
+      } catch(e) { /* skip malformed */ }
+    }
+  } else {
+    // 2-line format
+    for (let i = 0; i < lines.length - 1; i += 2) {
+      if (lines[i].startsWith('1 ') && lines[i+1].startsWith('2 ')) {
+        try {
+          const satrec = satellite.twoline2satrec(lines[i], lines[i + 1]);
+          sats.push({ name: `NORAD ${satrec.satnum}`, satrec });
+        } catch(e) { /* skip malformed */ }
+      }
+    }
+  }
+  return sats;
+}
+
+/*
+ * Fetch and parse TLEs for a named group.
+ * Results are cached in sessionStorage to avoid hammering CelesTrak.
+ */
+async function fetchTLEs(groupName) {
+  const url       = TLE_URLS[groupName];
+  const cacheKey  = `tle_${groupName}`;
+  const cacheTime = `tle_time_${groupName}`;
+  const maxAge    = 3600 * 1000;   // refresh TLEs every hour
+
+  // return cached data if fresh
+  const cached = sessionStorage.getItem(cacheKey);
+  const cachedAt = parseInt(sessionStorage.getItem(cacheTime) || '0');
+  if (cached && Date.now() - cachedAt < maxAge) {
+    return parseTLEs(cached);
+  }
+
+  try {
+    const res  = await fetch(url);
+    const text = await res.text();
+    sessionStorage.setItem(cacheKey, text);
+    sessionStorage.setItem(cacheTime, Date.now().toString());
+    return parseTLEs(text);
+  } catch (err) {
+    console.warn(`TLE fetch failed for ${groupName}:`, err);
+    return [];
+  }
+}
+
+/**
+ * Compute topocentric Az/Alt for a satellite at the current time.
+ * Uses satellite.js for SGP4 propagation and coordinate transforms.
+ *
+ * @param {Object} satrec    satellite.js satrec object
+ * @param {Date}   date      current UTC date
+ * @param {number} lat       observer latitude, degrees
+ * @param {number} lon       observer longitude, degrees
+ * @param {number} altM      observer altitude, metres (default 0)
+ * @returns {{ az, alt, range, lat, lon, visible } | null}
+ */
+function satelliteAzAlt(satrec, date, lat, lon, altM = 0) {
+  const posVel = satellite.propagate(satrec, date);
+  if (!posVel || !posVel.position || posVel.position === true) return null;
+ 
+  const gmstRad    = satellite.gstime(date);
+  const observerGd = {
+    longitude: satellite.degreesToRadians(lon),
+    latitude:  satellite.degreesToRadians(lat),
+    height:    altM / 1000,   // km
+  };
+ 
+  const posEcf  = satellite.eciToEcf(posVel.position, gmstRad);
+  const lookAng = satellite.ecfToLookAngles(observerGd, posEcf);
+  const geo     = satellite.eciToGeodetic(posVel.position, gmstRad);
+ 
+  return {
+    az:    toDeg(lookAng.azimuth),
+    alt:   toDeg(lookAng.elevation),
+    range: lookAng.rangeSat,             // km (was incorrectly wrapped in toDeg before)
+    subLat: toDeg(geo.latitude),
+    subLon: toDeg(geo.longitude),
+    altKm:  geo.height,
+  };
+}
+
+//===========================================================
+//  Satellite State Manager
+//===========================================================
+
+const satManager = {
+  satellites:   [],          // array of { name, satrec }
+  activeGroup:  'ISS',
+  loading:      false,
+
+  async loadGroup(groupName) {
+    this.loading = true;
+    this.satellites = await fetchTLEs(groupName);
+    this.activeGroup = groupName;
+    this.loading = false;
+    console.log(`Loaded ${this.satellites.length} satellites for ${groupName}`);
+  }
+};
+
+//===========================================================
+//  Satellite Visual Options
+//===========================================================
+
+// Satellite colors by group 
+const SAT_COLORS = {
+  'ISS':              'rgba(255, 220, 100, 1.0)',
+  'Brightest':        'rgba(255, 220, 100, 1.0)',
+  'Earth Observing':  'rgba(100, 220, 180, 1.0)',
+  'Weather':          'rgba(100, 180, 255, 1.0)',
+  'Comms':            'rgba(180, 140, 255, 1.0)',
+  'GNSS':             'rgba(180, 100, 255, 1.0)',
+  'Science':          'rgba(140, 140, 255, 1.0)',
+  'Cubesat':          'rgba(100, 100, 255, 1.0)',
+  'Calibration':      'rgba(60, 140, 255, 1.0)',
+  'Starlink':         'rgba(200, 200, 200, 0.7)',
+};
+
+/*
+ * Draw a single satellite marker.
+ */
+function drawSatellite(ctx, x, y, name, color, isISS = false, hovered = false) {
+  ctx.save();
+
+  // hover highlight ring — drawn first so marker renders on top
+  if (hovered) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.lineWidth   = 1;
+    ctx.beginPath();
+    ctx.arc(x, y, isISS ? 16 : 10, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // glow
+  ctx.filter    = 'blur(3px)';
+  ctx.fillStyle = color.replace('1.0', '0.4');
+  ctx.beginPath();
+  ctx.arc(x, y, isISS ? 8 : 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.filter = 'none';
+
+  ctx.fillStyle = color;
+  if (isISS) {
+    // distinctive ISS cross with solar panel arms
+    const s = 5;
+    ctx.fillRect(x - 1,       y - s,       2,      s * 2);
+    ctx.fillRect(x - s,       y - 1,       s * 2,  2);
+    ctx.fillRect(x - s * 2.5, y - 2.5,     s * 2,  5);
+    ctx.fillRect(x + s * 0.5, y - 2.5,     s * 2,  5);
+  } else {
+    ctx.beginPath();
+    ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // always show label when hovered; otherwise only for ISS or small groups
+  if (hovered || isISS || satManager.satellites.length <= 10) {
+    ctx.fillStyle    = hovered ? 'rgba(255,255,255,0.95)' : color;
+    ctx.font         = hovered ? '500 11px sans-serif'
+                      : isISS  ? '500 11px sans-serif'
+                      :          '10px sans-serif';
+    ctx.textAlign    = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(name, x + (isISS ? 14 : 6), y);
+  }
+
+  ctx.restore();
+}
+
+function drawSatellites(ctx, date, lat, lon, cx, cy, R, hoveredSat = null) {
+  if (satManager.loading) {
+    ctx.fillStyle    = darkRed;
+    ctx.font         = '12px sans-serif';
+    ctx.textAlign    = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText('Loading satellites...', 0, 100);
+    return [];
+  }
+
+  const color      = SAT_COLORS[satManager.activeGroup] || 'rgba(200,200,200,0.9)';
+  let   visCount   = 0;
+  const projSats   = [];   // { name, px, py, az, alt, altKm, range }
+
+  satManager.satellites.forEach(({ name, satrec }) => {
+    const pos = satelliteAzAlt(satrec, date, lat, lon);
+    if (!pos || pos.alt < 0) return;
+    const { x, y } = polarProject(pos.az, pos.alt, cx, cy, R);
+    projSats.push({ name, px: x, py: y, az: pos.az, alt: pos.alt,
+                    altKm: pos.altKm, range: pos.range });
+    visCount++;
+  });
+
+  // draw non-hovered satellites first, hovered one last (so it's on top)
+  const isISS = n => n.includes('ISS') || n.includes('25544');
+
+  projSats.forEach(s => {
+    if (s.name === hoveredSat) return;   // skip — draw after
+    drawSatellite(ctx, s.px, s.py, s.name, color, isISS(s.name), false);
+  });
+
+  // draw hovered satellite on top
+  const hovSat = projSats.find(s => s.name === hoveredSat);
+  if (hovSat) {
+    drawSatellite(ctx, hovSat.px, hovSat.py, hovSat.name, color, isISS(hovSat.name), true);
+  }
+
+  ctx.fillStyle    = darkRed;
+  ctx.font         = '12px sans-serif';
+  ctx.textAlign    = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText(
+    `${satManager.activeGroup} Satellites:`,
+    0, 100
+  );
+  ctx.fillText(
+    `${visCount} visible / ${satManager.satellites.length} tracked`,
+    0, 120
+  );
+
+  return projSats;
+}
+
+//===========================================================
 //  Main Visual - Sky Plot
 //===========================================================
   
 /**
- * Draw the full polar sky chart onto a canvas.
+ * Draw everything onto the canvas.
  * @param {HTMLCanvasElement} canvas
- * @param {{ lat, lon, toffset}} params  Observer parameters
- * @param {string|null} hoveredStar  Name of star to highlight, or null
- * @returns {Array} projected  Array of star objects with {px, py, alt, az, ...}
+ * @param {{ lat, lon, toffset }} params
+ * @param {string|null} hoveredStar   Name of hovered star, or null
+ * @param {string|null} hoveredSat    Name of hovered satellite, or null
+ * @returns {{ stars: Array, sats: Array }}
  */
-function drawSkyPlot(canvas, params, hoveredStar = null) {
+function drawSkyPlot(canvas, params, hoveredStar = null, hoveredSat = null) {
     const { lat, lon, toffset} = params;
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
@@ -761,7 +1167,7 @@ function drawSkyPlot(canvas, params, hoveredStar = null) {
   
     ctx.clearRect(0, 0, W, H);
   
-    //=== Sky background ===//
+    //=== Sky background gradient ===//
     const skyGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
     skyGrad.addColorStop(0,   '#0d0d22');
     skyGrad.addColorStop(0.7, '#070714');
@@ -845,106 +1251,6 @@ function drawSkyPlot(canvas, params, hoveredStar = null) {
     ctx.fill();
     */
   
-    //===  Galactic Plane Overlay ===//
-
-    /**
-     * Draw the galactic plane (b = 0) on the polar plot.
-     * Samples every 2° of galactic longitude and draws connected segments.
-     */
-    function drawGalacticPlane(ctx, lst, lat, cx, cy, R) {
-      const STEP    = 2;     // degrees of galactic longitude per sample
-      const SAMPLES = 360 / STEP;
-
-      // collect projected points, marking gaps where the plane dips below horizon
-      const points = [];
-      for (let i = 0; i <= SAMPLES; i++) {
-        const l = i * STEP;
-        const { ra, dec } = galacticToEquatorial(l, 0);
-        const { alt, az } = equatorialToHorizontal(ra, dec, lst, lat);
-        if (alt < 0) {
-          points.push(null);   // below horizon — break the line
-        } else {
-          const { x, y } = polarProject(az, alt, cx, cy, R);
-          points.push({ x, y });
-        }
-      }
-
-      // ── build path ──
-      let pathD = '';
-      let inSeg = false;
-      points.forEach(pt => {
-        if (!pt) { inSeg = false; return; }
-        pathD += inSeg ? `L${pt.x.toFixed(1)},${pt.y.toFixed(1)}`
-                      : `M${pt.x.toFixed(1)},${pt.y.toFixed(1)}`;
-        inSeg = true;
-      });
-
-      if (!pathD) return;
-      const path = new Path2D(pathD);
-
-      ctx.save();
-      ctx.lineCap  = 'round';
-      ctx.lineJoin = 'round';
-
-      // ── layer 1: wide soft outer glow ──
-      ctx.filter      = 'blur(10px)';
-      ctx.strokeStyle = 'rgba(17, 17, 69, 0.18)';
-      ctx.lineWidth   = 40;
-      ctx.lineCap     = 'round';
-      ctx.lineJoin    = 'round';
-      ctx.stroke(path);
-
-      // ── layer 2: mid haze ──
-      ctx.filter      = 'blur(5px)';
-      ctx.strokeStyle = 'rgba(35, 35, 102, 0.40)';
-      ctx.lineWidth   = 15;
-      ctx.stroke(path);
-
-      // ── layer 3: bright dense core ──
-      ctx.filter      = 'blur(2px)';
-      ctx.strokeStyle = 'rgba(94, 94, 175, 0.5)';
-      ctx.lineWidth   = 3;
-      ctx.stroke(path);
-
-      ctx.filter = 'none';
-      ctx.restore();
-
-      // ctx.strokeStyle = 'rgba(255, 200, 80, 0.55)';   // warm amber tint
-      // ctx.lineWidth   = 1;
-      // ctx.setLineDash([4, 3]);                          // dashed so it doesn't overpower stars
-
-      // let drawing = false;
-      // ctx.beginPath();
-      // points.forEach(pt => {
-      //   if (!pt) {
-      //     drawing = false;
-      //     return;
-      //   }
-      //   if (!drawing) {
-      //     ctx.moveTo(pt.x, pt.y);
-      //     drawing = true;
-      //   } else {
-      //     ctx.lineTo(pt.x, pt.y);
-      //   }
-      // });
-      // ctx.stroke();
-
-      // label near galactic center (l=0)
-      const { ra: gcRa, dec: gcDec } = galacticToEquatorial(0, 0);
-      const { alt: gcAlt, az: gcAz } = equatorialToHorizontal(gcRa, gcDec, lst, lat);
-      if (gcAlt > 5) {
-        const { x: gx, y: gy } = polarProject(gcAz, gcAlt, cx, cy, R);
-        ctx.fillStyle    = darkRed;
-        ctx.font         = '10px sans-serif';
-        ctx.textAlign    = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('Galactic Plane', gx + 6, gy);
-        }
-
-      ctx.setLineDash([]);   // reset dash for subsequent drawing
-      ctx.restore();
-      }
-
     //===  Sun and Moon ===//
 
     // store jd on ctx so drawMoon can access it for phase calc
@@ -955,6 +1261,8 @@ function drawSkyPlot(canvas, params, hoveredStar = null) {
 
     // after drawSolarSystem(ctx, jd, lst, lat, cx, cy, R);
     drawPlanets(ctx, jd, lst, lat, cx, cy, R);
+
+    //===  Zodiac References ===//
 
     // Point of Ares
     // const ZODIAC = ['♈︎'];
@@ -988,56 +1296,12 @@ function drawSkyPlot(canvas, params, hoveredStar = null) {
     //   ctx.fillText(glyph, x, y - 8);
     // });
 
-    //===  Ecliptic Plane Overlay ===//
-
-    /**
-     * Draw the ecliptic (beta = 0) on the polar plot.
-     * Samples every 2° of ecliptic longitude and draws connected segments.
-     */
-    function drawEcliptic(ctx, lst, lat, cx, cy, R) {
-      const STEP    = 2;
-      const SAMPLES = 360 / STEP;
-
-      const points = [];
-      for (let i = 0; i <= SAMPLES; i++) {
-        const lambda = i * STEP;
-        const { ra, dec } = eclipticToEquatorial(lambda, 0);
-        const { alt, az } = equatorialToHorizontal(ra, dec, lst, lat);
-        if (alt < 0) {
-          points.push(null);   // below horizon — break the line
-        } else {
-          const { x, y } = polarProject(az, alt, cx, cy, R);
-          points.push({ x, y });
-        }
-      }
-
-      ctx.save();
-      ctx.strokeStyle = 'rgba(80, 200, 255, 0.50)';   // cool blue tint
-      ctx.lineWidth   = 1;
-      ctx.setLineDash([4, 3]);
-
-      let drawing = false;
-      ctx.beginPath();
-      points.forEach(pt => {
-        if (!pt) {
-          drawing = false;
-          return;
-        }
-        if (!drawing) {
-          ctx.moveTo(pt.x, pt.y);
-          drawing = true;
-        } else {
-          ctx.lineTo(pt.x, pt.y);
-        }
-      });
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.restore();
-    }
-
-    //=== Draw Refeerence Planes ===//
+    //=== Draw Reference Planes ===//
     drawGalacticPlane(ctx, lst, lat, cx, cy, R);
     drawEcliptic(ctx, lst, lat, cx, cy, R);
+
+    //=== Draw Satellites ===//
+    const projSats = drawSatellites(ctx, now, lat, lon, cx, cy, R, hoveredSat);
 
     //=== Project & Draw Stars ===//
     const projected = [];
@@ -1164,7 +1428,7 @@ function drawSkyPlot(canvas, params, hoveredStar = null) {
     // ── Time overlay (drawn last so it sits on top) ──
     drawTimeOverlay(ctx, lst, now);
 
-    return projected;
+    return { stars: projected, sats: projSats };
     }
   
 //===========================================================
@@ -1172,8 +1436,11 @@ function drawSkyPlot(canvas, params, hoveredStar = null) {
 //===========================================================
 
 const canvas = document.getElementById('sky');
-let hoveredStar = null;
-let lastProjected = [];
+let hoveredStar    = null;
+let hoveredSat     = null;
+let lastProjected  = { stars: [], sats: [] };
+
+//=== Display Star Information ===//
 
 function getParams() {
     return {
@@ -1184,39 +1451,74 @@ function getParams() {
     }
   
 function redraw() {
-    lastProjected = drawSkyPlot(canvas, getParams(), hoveredStar);
-    }
+  lastProjected = drawSkyPlot(canvas, getParams(), hoveredStar, hoveredSat);
+  }
 
-//=== Display Star Information ===//
 canvas.addEventListener('mousemove', e => {
-    const rect   = canvas.getBoundingClientRect();
-    const scaleX = canvas.width  / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const mx = (e.clientX - rect.left) * scaleX;
-    const my = (e.clientY - rect.top)  * scaleY;
-  
-    let found = null, minD = Infinity;
-    lastProjected.forEach(s => {
-      const d = Math.hypot(s.px - mx, s.py - my);
-      if (d < 22 && d < minD) { minD = d; found = s; }
-    });
-  
-    hoveredStar = found ? found.name : null;
-  
-    if (found) {
-      document.getElementById('info').textContent =
-        `${found.name}  |  Az: ${found.az.toFixed(1)}°  E of N, ` +
-        `Alt: ${found.alt.toFixed(1)}°  |  mag ${found.mag}  |  ` +
-        `RA: ${found.ra.toFixed(2)}°,  Dec: ${found.dec.toFixed(2)}°`;
-    } else {
-      document.getElementById('info').textContent = 'Hover over a star to see its name';
-    }
-    redraw();
+  const rect   = canvas.getBoundingClientRect();
+  const scaleX = canvas.width  / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top)  * scaleY;
+
+  // hit-test stars
+  let foundStar = null, minStarD = Infinity;
+  lastProjected.stars.forEach(s => {
+    const d = Math.hypot(s.px - mx, s.py - my);
+    if (d < 22 && d < minStarD) { minStarD = d; foundStar = s; }
   });
+
+  // hit-test satellites (slightly larger hit radius — dots are small)
+  let foundSat = null, minSatD = Infinity;
+  lastProjected.sats.forEach(s => {
+    const d = Math.hypot(s.px - mx, s.py - my);
+    if (d < 18 && d < minSatD) { minSatD = d; foundSat = s; }
+  });
+
+  // satellites take priority over stars when both are close
+  if (foundSat && (!foundStar || minSatD <= minStarD)) {
+    hoveredStar = null;
+    hoveredSat  = foundSat.name;
+    document.getElementById('info').textContent =
+      `${foundSat.name}  |  Az: ${foundSat.az.toFixed(1)}° E of N,  ` +
+      `Alt: ${foundSat.alt.toFixed(1)}°  |  ` +
+      `Range: ${Math.round(foundSat.range)} km,  ` +
+      `Orbit alt: ${Math.round(foundSat.altKm)} km`;
+  } else if (foundStar) {
+    hoveredStar = foundStar.name;
+    hoveredSat  = null;
+    document.getElementById('info').textContent =
+      `${foundStar.name}  |  Az: ${foundStar.az.toFixed(1)}° E of N,  ` +
+      `Alt: ${foundStar.alt.toFixed(1)}°  |  mag ${foundStar.mag}  |  ` +
+      `RA: ${foundStar.ra.toFixed(2)}°,  Dec: ${foundStar.dec.toFixed(2)}°`;
+  } else {
+    hoveredStar = null;
+    hoveredSat  = null;
+    document.getElementById('info').textContent = 'Hover over a star or satellite to see details';
+  }
+
+  redraw();
+});
   
 ['lat', 'lon', 'toffset'].forEach(id => {
 document.getElementById(id).addEventListener('input', redraw);
 });
-  
+
+document.getElementById('sat-group').addEventListener('change', async e => {
+  const group = e.target.value;
+  if (!group) {
+    satManager.satellites = [];
+    satManager.activeGroup = '';
+    redraw();
+    return;
+  }
+  await satManager.loadGroup(group);
+  redraw();
+});
+
+// initial Satellite, load ISS
+satManager.loadGroup('ISS');
+
+// Refresher
 redraw();
 setInterval(redraw, 1000);  // auto-refresh every 1 s

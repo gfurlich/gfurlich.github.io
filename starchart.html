@@ -102,7 +102,26 @@
           <span>+24 hrs</span>
         </div>
   </div>
+  <div class="row">
+    <label>Display Satellite Groups:</label>
+    <select id="sat-group">
+      <option value="" selected>None</option>
+      <option value="ISS">ISS</option>
+      <option value="Brightest">Brightest</option>
+      <option value="Earth Observing">Earth Observing</option>
+      <option value="Weather">Weather</option>
+      <option value="Comms">Comms</option>
+      <option value="GNSS">GNSS</option>
+      <option value="Science">Science</option>
+      <option value="Cubesat">Cubesat</option>
+      <option value="Calibration">Calibration</option>
+      <option value="Starlink">Starlink</option>
+    </select>
+  </div>
 </div>
+
+<!-- Load Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/satellite.js/4.1.3/satellite.min.js"></script>
 <script src="/assets/js/starchart.js"></script>
       </div>
     </main><footer class="site-footer h-card">
