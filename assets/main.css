@@ -121,6 +121,12 @@ top a { color: white; font-size: 1.5em; }
 
 top a:hover { color: #0c314d; text-decoration: none; }
 
+body.night-mode { background-color: #0a0000; color: #aa0000; }
+
+body.night-mode input, body.night-mode select, body.night-mode label { background-color: #1a0000; color: #cc0000; border-color: #440000; }
+
+body.night-mode #info { color: #aa0000; }
+
 /** Alignment */
 .alignleft { float: left; }
 

@@ -233,10 +233,16 @@ const starAlpha = mag => Math.min(1, Math.max(0.2, 1 - mag * 0.18));
 // const starColor = '#0d0d22'
 
 //===========================================================
-//  Display Colors
+//  Display Colors + Night Mode
 //===========================================================
-const darkRed = 'rgba(100, 7, 7, 0.71)'
-const lightRed = 'rgba(226, 29, 29, 0.42)'
+
+let nightMode = false;
+
+function uiDark()  { return nightMode ? 'rgba(120, 0, 0, 0.85)' : 'rgba(100, 7, 7, 0.71)'; }
+function uiLight() { return nightMode ? 'rgba(180, 0, 0, 0.70)' : 'rgba(226, 29, 29, 0.42)'; }
+
+Object.defineProperty(window, 'darkRed',  { get: uiDark,  configurable: true });
+Object.defineProperty(window, 'lightRed', { get: uiLight, configurable: true });
 
 //===========================================================
 //  Time Display Visual
@@ -372,81 +378,70 @@ function galacticToEquatorial(l, b) {
 
 //===  Galactic Plane Overlay ===//
 
-/**
- * Draw the galactic plane (b = 0) on the polar plot.
- * Samples every 2° of galactic longitude and draws connected segments.
- */
-function drawGalacticPlane(ctx, lst, lat, cx, cy, R) {
-  const STEP    = 2;     // degrees of galactic longitude per sample
-  const SAMPLES = 360 / STEP;
+// Offscreen cache — blur is expensive, only rebuild when sky moves
+const galCache = { canvas: null, key: null };
 
-  // collect projected points, marking gaps where the plane dips below horizon
-  const points = [];
-  for (let i = 0; i <= SAMPLES; i++) {
-    const l = i * STEP;
-    const { ra, dec } = galacticToEquatorial(l, 0);
-    const { alt, az } = equatorialToHorizontal(ra, dec, lst, lat);
-    if (alt < 0) {
-      points.push(null);   // below horizon — break the line
-    } else {
+function drawGalacticPlane(ctx, lst, lat, cx, cy, R) {
+  const W = ctx.canvas.width, H = ctx.canvas.height;
+  const key = `${lst.toFixed(2)}|${lat.toFixed(2)}|${R.toFixed(0)}|${nightMode}`;
+
+  if (galCache.key !== key) {
+    if (!galCache.canvas || galCache.canvas.width !== W || galCache.canvas.height !== H) {
+      galCache.canvas = document.createElement('canvas');
+      galCache.canvas.width  = W;
+      galCache.canvas.height = H;
+    }
+    const oc = galCache.canvas.getContext('2d');
+    oc.clearRect(0, 0, W, H);
+
+    const points = [];
+    for (let i = 0; i <= 180; i++) {
+      const l = i * 2;
+      const { ra, dec } = galacticToEquatorial(l, 0);
+      const { alt, az } = equatorialToHorizontal(ra, dec, lst, lat);
+      if (alt < 0) { points.push(null); continue; }
       const { x, y } = polarProject(az, alt, cx, cy, R);
       points.push({ x, y });
     }
+
+    let pathD = '', inSeg = false;
+    points.forEach(pt => {
+      if (!pt) { inSeg = false; return; }
+      pathD += inSeg ? `L${pt.x.toFixed(1)},${pt.y.toFixed(1)}`
+                     : `M${pt.x.toFixed(1)},${pt.y.toFixed(1)}`;
+      inSeg = true;
+    });
+
+    if (pathD) {
+      const path = new Path2D(pathD);
+      oc.lineCap = oc.lineJoin = 'round';
+      if (nightMode) {
+        // red-tinted milky way in night mode
+        oc.filter = 'blur(10px)'; oc.strokeStyle = 'rgba(60,0,0,0.25)';    oc.lineWidth = 40; oc.stroke(path);
+        oc.filter = 'blur(5px)';  oc.strokeStyle = 'rgba(100,0,0,0.45)';   oc.lineWidth = 15; oc.stroke(path);
+        oc.filter = 'blur(2px)';  oc.strokeStyle = 'rgba(140,20,20,0.55)'; oc.lineWidth = 3;  oc.stroke(path);
+      } else {
+        oc.filter = 'blur(10px)'; oc.strokeStyle = 'rgba(17,17,69,0.18)';  oc.lineWidth = 40; oc.stroke(path);
+        oc.filter = 'blur(5px)';  oc.strokeStyle = 'rgba(35,35,102,0.40)'; oc.lineWidth = 15; oc.stroke(path);
+        oc.filter = 'blur(2px)';  oc.strokeStyle = 'rgba(94,94,175,0.5)';  oc.lineWidth = 3;  oc.stroke(path);
+      }
+      oc.filter = 'none';
+    }
+    galCache.key = key;
   }
 
-  // ── build path ──
-  let pathD = '';
-  let inSeg = false;
-  points.forEach(pt => {
-    if (!pt) { inSeg = false; return; }
-    pathD += inSeg ? `L${pt.x.toFixed(1)},${pt.y.toFixed(1)}`
-                  : `M${pt.x.toFixed(1)},${pt.y.toFixed(1)}`;
-    inSeg = true;
-  });
+  ctx.drawImage(galCache.canvas, 0, 0);
 
-  if (!pathD) return;
-  const path = new Path2D(pathD);
-
-  ctx.save();
-  ctx.lineCap  = 'round';
-  ctx.lineJoin = 'round';
-
-  // ── layer 1: wide soft outer glow ──
-  ctx.filter      = 'blur(10px)';
-  ctx.strokeStyle = 'rgba(17, 17, 69, 0.18)';
-  ctx.lineWidth   = 40;
-  ctx.lineCap     = 'round';
-  ctx.lineJoin    = 'round';
-  ctx.stroke(path);
-
-  // ── layer 2: mid haze ──
-  ctx.filter      = 'blur(5px)';
-  ctx.strokeStyle = 'rgba(35, 35, 102, 0.40)';
-  ctx.lineWidth   = 15;
-  ctx.stroke(path);
-
-  // ── layer 3: bright dense core ──
-  ctx.filter      = 'blur(2px)';
-  ctx.strokeStyle = 'rgba(94, 94, 175, 0.5)';
-  ctx.lineWidth   = 3;
-  ctx.stroke(path);
-
-  ctx.filter = 'none';
-  // label near galactic center (l=0)
+  // label near galactic center
   const { ra: gcRa, dec: gcDec } = galacticToEquatorial(0, 0);
   const { alt: gcAlt, az: gcAz } = equatorialToHorizontal(gcRa, gcDec, lst, lat);
   if (gcAlt > 5) {
     const { x: gx, y: gy } = polarProject(gcAz, gcAlt, cx, cy, R);
-    ctx.fillStyle    = darkRed;
-    ctx.font         = '10px sans-serif';
-    ctx.textAlign    = 'center';
-    ctx.textBaseline = 'middle';
+    ctx.fillStyle = darkRed; ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText('Galactic Plane', gx + 6, gy);
-    }
-
-  ctx.setLineDash([]);   // reset dash for subsequent drawing
-  ctx.restore();
   }
+}
 
 //===========================================================
 //  Ecliptic → Equatorial (J2000)
@@ -1005,18 +1000,61 @@ function satelliteAzAlt(satrec, date, lat, lon, altM = 0) {
 //  Satellite State Manager
 //===========================================================
 
+// const satManager = {
+//   satellites:   [],          // array of { name, satrec }
+//   activeGroup:  'ISS',
+//   loading:      false,
+
+//   async loadGroup(groupName) {
+//     this.loading = true;
+//     this.satellites = await fetchTLEs(groupName);
+//     this.activeGroup = groupName;
+//     this.loading = false;
+//     console.log(`Loaded ${this.satellites.length} satellites for ${groupName}`);
+//   }
+// };
+
+//===========================================================
+//  Satellite State Manager
+//===========================================================
 const satManager = {
-  satellites:   [],          // array of { name, satrec }
-  activeGroup:  'ISS',
-  loading:      false,
+  satellites:    [],       // merged array of { name, satrec, group }
+  activeGroups:  new Set(['ISS']),
+  loading:       new Set(),   // tracks which groups are currently fetching
+
+  isLoading() { return this.loading.size > 0; },
 
   async loadGroup(groupName) {
-    this.loading = true;
-    this.satellites = await fetchTLEs(groupName);
-    this.activeGroup = groupName;
-    this.loading = false;
-    console.log(`Loaded ${this.satellites.length} satellites for ${groupName}`);
-  }
+    this.loading.add(groupName);
+    const sats = await fetchTLEs(groupName);
+    // tag each sat with its group for coloring
+    sats.forEach(s => s.group = groupName);
+    this.loading.delete(groupName);
+    this._rebuild();
+    return sats;
+  },
+
+  async setGroups(groupNames) {
+    this.activeGroups = new Set(groupNames);
+    // fetch any groups not already cached
+    await Promise.all(groupNames.map(g => this.loadGroup(g)));
+  },
+
+  _rebuild() {
+    // merge satellites from all active groups, re-fetching from cache
+    this.satellites = [];
+    this.activeGroups.forEach(groupName => {
+      const cacheKey = `tle_${groupName}`;
+      const cached   = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        const sats = parseTLEs(cached);
+        sats.forEach(s => {
+          s.group = groupName;
+          this.satellites.push(s);
+        });
+      }
+    });
+  },
 };
 
 //===========================================================
@@ -1025,17 +1063,93 @@ const satManager = {
 
 // Satellite colors by group 
 const SAT_COLORS = {
-  'ISS':              'rgba(255, 220, 100, 1.0)',
-  'Brightest':        'rgba(255, 220, 100, 1.0)',
-  'Earth Observing':  'rgba(100, 220, 180, 1.0)',
-  'Weather':          'rgba(100, 180, 255, 1.0)',
-  'Comms':            'rgba(180, 140, 255, 1.0)',
-  'GNSS':             'rgba(180, 100, 255, 1.0)',
-  'Science':          'rgba(140, 140, 255, 1.0)',
-  'Cubesat':          'rgba(100, 100, 255, 1.0)',
-  'Calibration':      'rgba(60, 140, 255, 1.0)',
-  'Starlink':         'rgba(200, 200, 200, 0.7)',
+  'ISS':             'rgba(247,212,109,1.0)',   // hue  45° — warm gold
+  'Brightest':       'rgba(189,247,109,1.0)',   // hue  85° — yellow-green
+  'Earth Observing': 'rgba(109,247,121,1.0)',   // hue 125° — green
+  'Weather':         'rgba(109,247,212,1.0)',   // hue 165° — teal
+  'Comms':           'rgba(109,189,247,1.0)',   // hue 205° — sky blue
+  'GNSS':            'rgba(121,109,247,1.0)',   // hue 245° — indigo
+  'Science':         'rgba(212,109,247,1.0)',   // hue 285° — violet
+  'Cubesat':         'rgba(247,109,189,1.0)',   // hue 325° — pink
+  'Calibration':     'rgba(247,121,109,1.0)',   // hue   5° — red-orange
+  'Starlink':        'rgba(200,200,200,0.7)'
 };
+
+/**
+ * Draw ISS silhouette — top-down view.
+ * Matches the published configuration: long truss, 4 pairs of solar wings,
+ * central habitat spine, radiator panels.
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {number} cx   Center x
+ * @param {number} cy   Center y
+ * @param {number} s    Scale factor (1 = ~30px wide truss span)
+ * @param {string} color  Fill color
+ */
+function drawISSShape(ctx, cx, cy, s, color) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.fillStyle   = color;
+  ctx.strokeStyle = color;
+
+  // ── Main truss (long horizontal bar) ──
+  // Full span ~109m, habitat ~73m — ratio truss:habitat ≈ 3:2
+  const tw = s * 15;   // half-truss width (full span = 30s)
+  const th = s * 0.9;  // truss thickness (half)
+  ctx.fillRect(-tw, -th, tw * 2, th * 2);
+
+  // ── Central habitat spine (perpendicular to truss) ──
+  const hw = s * 1.2;   // half habitat width
+  const hh = s * 5;     // half habitat length
+  ctx.fillRect(-hw, -hh, hw * 2, hh * 2);
+
+  // ── Solar array wings — 4 pairs, symmetric port & starboard ──
+  // Each pair: 2 rectangular panels, stacked forward/aft of truss
+  // Pair positions along truss (from center): P6/S6, P4/S4, P3/S3, P1/S1
+  const wingW  = s * 4.5;   // wing width (span direction)
+  // const wingH  = s * 1.8;   // wing chord (depth)
+  const wingH  = s * 10;   // wing chord (depth)
+  const wingGap = s * 0.5;  // gap between forward and aft panel in a pair
+
+  // Attachment points along truss (x offsets from center)
+  const attachX = [-tw * 0.85, -tw * 0.52, tw * 0.52, tw * 0.85];
+
+  attachX.forEach(ax => {
+    // forward panel (above truss in top view)
+    ctx.fillRect(ax - wingW / 2,  th + wingGap,           wingW, wingH);
+    // aft panel (below truss in top view)
+    ctx.fillRect(ax - wingW / 2, -th - wingGap - wingH,   wingW, wingH);
+  });
+
+  // ── iROSA roll-out arrays (inner pairs, slightly smaller) ──
+  // Mounted inboard of P4/S4, overlapping slightly
+  // const irosaW = s * 3.2;
+  // const irosaH = s * 1.2;
+  // const irosaX = [-tw * 0.38, tw * 0.38];
+
+  // irosaX.forEach(ax => {
+  //   ctx.fillRect(ax - irosaW / 2,  th + wingGap + wingH + s * 0.4,  irosaW, irosaH);
+  //   ctx.fillRect(ax - irosaW / 2, -th - wingGap - wingH - s * 0.4 - irosaH, irosaW, irosaH);
+  // });
+
+  // // ── Radiator panels (on S1/P1 truss segments, perpendicular to arrays) ──
+  // const radW = s * 1.0;
+  // const radH = s * 3.2;
+  // const radX = [-tw * 0.30, tw * 0.30];   // inboard of outer solar pairs
+
+  // radX.forEach(ax => {
+  //   // port-side radiators fold perpendicular — rendered as thin tall rects
+  //   ctx.fillRect(ax - radW / 2, -radH / 2, radW, radH);
+  // });
+
+  // // ── Z1 truss + P6 solar array (top of habitat, forward) ──
+  // // Small crossbar near top of habitat spine
+  // const z1w = s * 2.5;
+  // const z1h = s * 0.6;
+  // ctx.fillRect(-z1w / 2, -hh - z1h * 2, z1w, z1h);
+
+  ctx.restore();
+}
 
 /*
  * Draw a single satellite marker.
@@ -1043,53 +1157,73 @@ const SAT_COLORS = {
 function drawSatellite(ctx, x, y, name, color, isISS = false, hovered = false) {
   ctx.save();
 
-  // hover highlight ring — drawn first so marker renders on top
-  if (hovered) {
-    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
-    ctx.lineWidth   = 1;
-    ctx.beginPath();
-    ctx.arc(x, y, isISS ? 16 : 10, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-
-  // glow
-  ctx.filter    = 'blur(3px)';
-  ctx.fillStyle = color.replace('1.0', '0.4');
-  ctx.beginPath();
-  ctx.arc(x, y, isISS ? 8 : 4, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.filter = 'none';
-
-  ctx.fillStyle = color;
   if (isISS) {
-    // distinctive ISS cross with solar panel arms
-    const s = 5;
-    ctx.fillRect(x - 1,       y - s,       2,      s * 2);
-    ctx.fillRect(x - s,       y - 1,       s * 2,  2);
-    ctx.fillRect(x - s * 2.5, y - 2.5,     s * 2,  5);
-    ctx.fillRect(x + s * 0.5, y - 2.5,     s * 2,  5);
+    // glow halo
+    ctx.filter    = 'blur(6px)';
+    ctx.fillStyle = color.replace('1.0', '0.35');
+    ctx.beginPath();
+    ctx.arc(x, y, 22, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.filter = 'none';
+
+    // hover ring
+    if (hovered) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+      ctx.lineWidth   = 1;
+      ctx.beginPath();
+      ctx.arc(x, y, 26, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // ISS silhouette — scale 0.7 fits in ~21px radius
+    // drawISSShape(ctx, x, y, 0.7, color);
+    drawISSShape(ctx, x, y, 1, color);
+
+    // label
+    if (hovered) {
+      ctx.fillStyle    = 'rgba(255,255,255,0.95)';
+      ctx.font         = '500 11px sans-serif';
+      ctx.textAlign    = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('ISS', x + 24, y);
+    }
+
   } else {
+    // all other satellites — existing dot logic unchanged
+    if (hovered) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+      ctx.lineWidth   = 1;
+      ctx.beginPath();
+      ctx.arc(x, y, 10, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    ctx.filter    = 'blur(3px)';
+    ctx.fillStyle = color.replace('1.0', '0.4');
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.filter = 'none';
+
+    ctx.fillStyle = color;
     ctx.beginPath();
     ctx.arc(x, y, 2.5, 0, Math.PI * 2);
     ctx.fill();
-  }
 
-  // always show label when hovered; otherwise only for ISS or small groups
-  if (hovered || isISS || satManager.satellites.length <= 10) {
-    ctx.fillStyle    = hovered ? 'rgba(255,255,255,0.95)' : color;
-    ctx.font         = hovered ? '500 11px sans-serif'
-                      : isISS  ? '500 11px sans-serif'
-                      :          '10px sans-serif';
-    ctx.textAlign    = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(name, x + (isISS ? 14 : 6), y);
+    if (hovered || satManager.satellites.length <= 10) {
+      ctx.fillStyle    = hovered ? 'rgba(255,255,255,0.95)' : color;
+      ctx.font         = hovered ? '500 11px sans-serif' : '10px sans-serif';
+      ctx.textAlign    = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(name, x + 6, y);
+    }
   }
 
   ctx.restore();
 }
 
 function drawSatellites(ctx, date, lat, lon, cx, cy, R, hoveredSat = null) {
-  if (satManager.loading) {
+  if (satManager.isLoading()) {
     ctx.fillStyle    = darkRed;
     ctx.font         = '12px sans-serif';
     ctx.textAlign    = 'left';
@@ -1098,47 +1232,521 @@ function drawSatellites(ctx, date, lat, lon, cx, cy, R, hoveredSat = null) {
     return [];
   }
 
-  const color      = SAT_COLORS[satManager.activeGroup] || 'rgba(200,200,200,0.9)';
-  let   visCount   = 0;
-  const projSats   = [];   // { name, px, py, az, alt, altKm, range }
+  let visCount = 0;
+  const projSats = [];
 
-  satManager.satellites.forEach(({ name, satrec }) => {
+  satManager.satellites.forEach(({ name, satrec, group }) => {
     const pos = satelliteAzAlt(satrec, date, lat, lon);
     if (!pos || pos.alt < 0) return;
     const { x, y } = polarProject(pos.az, pos.alt, cx, cy, R);
+    const color = SAT_COLORS[group] || 'rgba(200,200,200,0.9)';
     projSats.push({ name, px: x, py: y, az: pos.az, alt: pos.alt,
-                    altKm: pos.altKm, range: pos.range });
+                    altKm: pos.altKm, range: pos.range, color, group });
     visCount++;
   });
 
-  // draw non-hovered satellites first, hovered one last (so it's on top)
   const isISS = n => n.includes('ISS') || n.includes('25544');
 
+  // draw non-hovered first
   projSats.forEach(s => {
-    if (s.name === hoveredSat) return;   // skip — draw after
-    drawSatellite(ctx, s.px, s.py, s.name, color, isISS(s.name), false);
+    if (s.name === hoveredSat) return;
+    drawSatellite(ctx, s.px, s.py, s.name, s.color, isISS(s.name), false);
   });
 
-  // draw hovered satellite on top
+  // draw hovered on top
   const hovSat = projSats.find(s => s.name === hoveredSat);
   if (hovSat) {
-    drawSatellite(ctx, hovSat.px, hovSat.py, hovSat.name, color, isISS(hovSat.name), true);
+    drawSatellite(ctx, hovSat.px, hovSat.py, hovSat.name, hovSat.color, isISS(hovSat.name), true);
   }
 
+  // count display
   ctx.fillStyle    = darkRed;
   ctx.font         = '12px sans-serif';
   ctx.textAlign    = 'left';
   ctx.textBaseline = 'top';
-  ctx.fillText(
-    `${satManager.activeGroup} Satellites:`,
-    0, 100
-  );
-  ctx.fillText(
-    `${visCount} visible / ${satManager.satellites.length} tracked`,
-    0, 120
-  );
+  const groupList  = [...satManager.activeGroups].join(', ') || 'none';
+  ctx.fillText(`Satellites (${groupList}): ${visCount} visible / ${satManager.satellites.length} tracked`, 0, 100);
 
   return projSats;
+}
+
+function seasonalEvents(year) {
+  const Y = (year - 2000) / 1000;
+  return {
+    spring: 2451623.80984 + 365242.37404*Y + 0.05169*Y*Y - 0.00411*Y*Y*Y - 0.00057*Y*Y*Y*Y,
+    summer: 2451716.56767 + 365241.62603*Y + 0.00325*Y*Y + 0.00888*Y*Y*Y - 0.00030*Y*Y*Y*Y,
+    autumn: 2451810.21715 + 365242.01767*Y - 0.11575*Y*Y + 0.00337*Y*Y*Y + 0.00078*Y*Y*Y*Y,
+    winter: 2451900.05952 + 365242.74049*Y - 0.06223*Y*Y - 0.00823*Y*Y*Y + 0.00032*Y*Y*Y*Y,
+  };
+}
+
+//===========================================================
+//  Astronomical Twighlight Calc
+//===========================================================
+
+/**
+ * Compute astronomical twilight begin/end for the current day.
+ * Sun is at -18° altitude at astronomical twilight.
+ * Returns { begin, end } as local time strings, or '—' if not applicable.
+ */
+function astronomicalTwilight(jd, lat, lon) {
+  const H0     = -18;                          // astronomical twilight altitude
+  const jd0    = Math.floor(jd - 0.5) + 0.5;  // 0h UT of the day
+  const latR   = toRad(lat);
+  const gmst0  = mod360(280.46061837 + 360.98564736629 * jd0);
+
+  function calcTime(body) {
+    const { ra, dec } = body(jd0 + 0.5);
+    const cosH = (Math.sin(toRad(H0)) - Math.sin(latR) * Math.sin(toRad(dec)))
+               / (Math.cos(latR) * Math.cos(toRad(dec)));
+    if (Math.abs(cosH) > 1) return { rise: null, set: null };
+    const H0deg = toDeg(Math.acos(cosH));
+    let mT = mod360(ra - lon - gmst0) / 360;
+    let mR = ((mT - H0deg / 360) % 1 + 1) % 1;
+    let mS = ((mT + H0deg / 360) % 1 + 1) % 1;
+
+    function refine(m) {
+      const { ra: raM, dec: decM } = body(jd0 + m);
+      const gmstM = mod360(gmst0 + 360.985647 * m);
+      let lha = mod360(gmstM + lon - raM);
+      if (lha > 180) lha -= 360;
+      const hM = toDeg(Math.asin(
+        Math.sin(latR) * Math.sin(toRad(decM))
+        + Math.cos(latR) * Math.cos(toRad(decM)) * Math.cos(toRad(lha))
+      ));
+      const dm = (hM - H0) / (360 * Math.cos(toRad(decM)) * Math.cos(latR) * Math.sin(toRad(lha)));
+      return ((m + dm) * 24 + 24) % 24;
+    }
+    return { rise: refine(mR), set: refine(mS) };
+  }
+
+  const { rise, set } = calcTime(sunPosition);
+  if (rise === null) return { begin: '—', end: '—' };
+
+  // convert decimal hours UT to local time string
+  function utToLocal(h) {
+    const d = new Date();
+    d.setUTCHours(0, 0, 0, 0);
+    d.setTime(d.getTime() + h * 3600000);
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  return { begin: utToLocal(rise), end: utToLocal(set) };
+}
+
+//===========================================================
+//  Backup Moon Phase
+//===========================================================
+
+function nextSeasonalEvent(jd) {
+  const now  = new Date((jd - 2440587.5) * 86400000);
+  const year = now.getUTCFullYear();
+  const LABELS = {
+    spring: 'Spring Equinox', summer: 'Summer Solstice',
+    autumn: 'Autumn Equinox', winter: 'Winter Solstice',
+  };
+  const candidates = [];
+  for (const y of [year, year + 1]) {
+    const evts = seasonalEvents(y);
+    for (const [key, evtJd] of Object.entries(evts)) {
+      if (evtJd > jd) candidates.push({ name: LABELS[key], jd: evtJd });
+    }
+  }
+  candidates.sort((a, b) => a.jd - b.jd);
+  const next = candidates[0];
+  return { name: next.name, jd: next.jd, daysAway: next.jd - jd };
+}
+
+function moonPhaseInfo(jd) {
+  const sunCoords    = sunPosition(jd);
+  const moonCoords   = moonPosition(jd);
+  const elongation   = mod360(moonCoords.ra - sunCoords.ra);
+  const illumination = (1 - Math.cos(toRad(elongation))) / 2 * 100;
+  const ageDays      = elongation / 360 * 29.53059;
+  const NAMES   = ['New Moon','Waxing Crescent','First Quarter','Waxing Gibbous',
+                   'Full Moon','Waning Gibbous','Last Quarter','Waning Crescent'];
+  const SYMBOLS = ['🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘'];
+  const idx = Math.round(elongation / 45) % 8;
+  return { elongation, illumination, phaseName: NAMES[idx], symbol: SYMBOLS[idx], ageDays };
+}
+
+//===========================================================
+//  Moon Phase
+//===========================================================
+
+/**
+ * Compute moon phase information from current JD.
+ * @param {number} jd
+ * @returns {{ elongation, illumination, phaseName, agedays, symbol }}
+ */
+function moonPhaseInfo(jd) {
+  const sunCoords  = sunPosition(jd);
+  const moonCoords = moonPosition(jd);
+  const elongation = mod360(moonCoords.ra - sunCoords.ra);
+  const illumination = (1 - Math.cos(toRad(elongation))) / 2 * 100;
+  const ageDays = elongation / 360 * 29.53059;
+
+  const PHASE_NAMES = [
+    'New Moon', 'Waxing Crescent', 'First Quarter', 'Waxing Gibbous',
+    'Full Moon', 'Waning Gibbous',  'Last Quarter',  'Waning Crescent',
+  ];
+  const PHASE_SYMBOLS = ['🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘'];
+  const idx = Math.round(elongation / 45) % 8;
+
+  return {
+    elongation,
+    illumination,
+    phaseName: PHASE_NAMES[idx],
+    symbol:    PHASE_SYMBOLS[idx],
+    ageDays,
+  };
+}
+
+//===========================================================
+//  Equinox / Solstice
+//===========================================================
+
+/**
+ * Find the next equinox or solstice after a given JD.
+ * Returns { name, jd, daysAway }.
+ */
+function nextSeasonalEvent(jd) {
+  const now  = new Date((jd - 2440587.5) * 86400000);
+  const year = now.getUTCFullYear();
+
+  const LABELS = {
+    spring: 'Spring Equinox',
+    summer: 'Summer Solstice',
+    autumn: 'Autumn Equinox',
+    winter: 'Winter Solstice',
+  };
+
+  // check this year and next to always find the true next event
+  const candidates = [];
+  for (const y of [year, year + 1]) {
+    const evts = seasonalEvents(y);
+    for (const [key, evtJd] of Object.entries(evts)) {
+      if (evtJd > jd) candidates.push({ name: LABELS[key], jd: evtJd });
+    }
+  }
+
+  candidates.sort((a, b) => a.jd - b.jd);
+  const next = candidates[0];
+  return {
+    name:     next.name,
+    jd:       next.jd,
+    daysAway: next.jd - jd,
+  };
+}
+
+/**
+ * Format a decimal hours UT value as a local time string,
+ * accounting for the observer's UTC offset from their longitude.
+ * Uses the browser's local timezone when lon is null.
+ */
+function hoursUTtoLocalString(hoursUT, now) {
+  if (hoursUT === null) return '—';
+  // Build a Date for today at hoursUT
+  const d = new Date(now);
+  d.setUTCHours(0, 0, 0, 0);
+  d.setTime(d.getTime() + hoursUT * 3600000);
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+/** Format a days-away value as "Xd Yh" */
+function formatCountdown(daysAway) {
+  const totalMin = Math.round(daysAway * 24 * 60);
+  const d  = Math.floor(totalMin / (60 * 24));
+  const h  = Math.floor((totalMin % (60 * 24)) / 60);
+  const m  = totalMin % 60;
+  if (d > 0) return `${d}d ${h}h ${m}m`;
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+}
+
+
+//===========================================================
+//  USNO API — Rise/Set/Phase/Seasons
+//===========================================================
+
+const usnoCache = {
+  rstt:    null,   // { key, data }  — data may be null on fetch failure
+  seasons: null,   // { key, data }
+};
+
+/** YYYY-MM-DD from a real (non-offset) Date */
+function dateStringReal() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/** Browser's actual UTC offset in hours, DST-aware */
+function browserTZOffset() {
+  return -new Date().getTimezoneOffset() / 60;
+}
+
+/**
+ * Fetch sun/moon rise-set + phase from USNO rstt/oneday.
+ * Keyed on real today's date + rounded location — never uses toffset time.
+ * Returns the inner data object, or null on failure.
+ */
+async function fetchUSNO_RSTT(lat, lon) {
+  const tz      = browserTZOffset();
+  const dateStr = dateStringReal();
+  const key     = `${dateStr}|${lat.toFixed(1)}|${lon.toFixed(1)}|${tz}`;
+
+  if (usnoCache.rstt?.key === key) return usnoCache.rstt.data;
+
+  const url = `https://aa.usno.navy.mil/api/rstt/oneday`
+            + `?date=${dateStr}`
+            + `&coords=${lat.toFixed(4)},${lon.toFixed(4)}`
+            + `&tz=${tz}`
+            + `&ID=starchart`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    const data = json?.properties?.data ?? null;
+    usnoCache.rstt = { key, data };
+    console.log('USNO RSTT loaded:', data ? 'ok' : 'data null', url);
+    return data;
+  } catch (err) {
+    console.warn('USNO RSTT fetch failed:', err, url);
+    usnoCache.rstt = { key, data: null };
+    return null;
+  }
+}
+
+/**
+ * Fetch equinox/solstice dates for current + next year.
+ * Returns flat array of event objects or [] on failure.
+ */
+async function fetchUSNO_Seasons() {
+  const tz   = browserTZOffset();
+  const year = new Date().getUTCFullYear();
+  const key  = `${year}|${tz}`;
+
+  if (usnoCache.seasons?.key === key) return usnoCache.seasons.data;
+
+  try {
+    const urls = [year, year + 1].map(y =>
+      `https://aa.usno.navy.mil/api/seasons?year=${y}&tz=${tz}&ID=starchart`
+    );
+    const jsons = await Promise.all(urls.map(u => fetch(u).then(r => r.json())));
+    const data  = jsons.flatMap(j => j?.data ?? []);
+    usnoCache.seasons = { key, data };
+    console.log('USNO Seasons loaded:', data.length, 'events');
+    return data;
+  } catch (err) {
+    console.warn('USNO Seasons fetch failed:', err);
+    usnoCache.seasons = { key, data: [] };
+    return [];
+  }
+}
+
+//===========================================================
+//  Parse helpers
+//===========================================================
+
+/** Extract time string for phen code from sundata/moondata array */
+function usnoTime(arr, phen) {
+  return arr?.find(e => e.phen === phen)?.time ?? '—';
+}
+
+/** Build phase display from USNO data object */
+function usnoPhaseDisplay(data) {
+  const SYMBOLS = {
+    'New Moon':        '🌑', 'Waxing Crescent': '🌒',
+    'First Quarter':   '🌓', 'Waxing Gibbous':  '🌔',
+    'Full Moon':       '🌕', 'Waning Gibbous':  '🌖',
+    'Last Quarter':    '🌗', 'Waning Crescent': '🌘',
+  };
+  const phaseName    = data?.curphase   ?? '—';
+  const illumination = data?.fracillum  ?? '—';   // already "16%"
+  const symbol       = SYMBOLS[phaseName] ?? '🌙';
+  const cp           = data?.closestphase;
+  const nextPhase    = cp
+    ? `Next: ${cp.phase} ${cp.month}/${cp.day} ${cp.time}`
+    : '';
+  return { phaseName, symbol, illumination, nextPhase };
+}
+
+/** Find the next equinox/solstice from USNO seasons array after now */
+function nextUSNOEvent(seasonsData, now) {
+  if (!seasonsData?.length) return null;
+
+  const candidates = seasonsData
+    .filter(e => e.phenom === 'Equinox' || e.phenom === 'Solstice')
+    .map(e => {
+      const [h, m] = (e.time ?? '00:00').split(':').map(Number);
+      const dt = new Date(e.year, e.month - 1, e.day, h, m);
+      return { phenom: e.phenom, month: e.month, dt };
+    })
+    .filter(e => e.dt > now)
+    .sort((a, b) => a.dt - b.dt);
+
+  if (!candidates.length) return null;
+  const next = candidates[0];
+
+  const name = next.phenom === 'Equinox'
+    ? (next.month <= 6 ? 'Spring Equinox' : 'Autumn Equinox')
+    : (next.month <= 6 ? 'Summer Solstice' : 'Winter Solstice');
+
+  const ms       = next.dt - now;
+  const totalMin = Math.round(ms / 60000);
+  const d = Math.floor(totalMin / 1440);
+  const h = Math.floor((totalMin % 1440) / 60);
+  const m = totalMin % 60;
+  const countdown = d > 0 ? `${d}d ${h}h ${m}m`
+                  : h > 0 ? `${h}h ${m}m`
+                  :         `${m}m`;
+  const dateStr = next.dt.toLocaleDateString([], { month: 'short', day: 'numeric' })
+                + ' ' + next.dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  return { name, dateStr, countdown };
+}
+
+//===========================================================
+//  Astro info state
+//===========================================================
+const astroInfo = {
+  rstt:     null,
+  seasons:  [],
+  lastKey:  null,
+  fetching: false,
+
+  /**
+   * Fire-and-forget refresh. Uses REAL current date/location,
+   * never the toffset-adjusted time. Calls redrawFn once on completion.
+   */
+  async refresh(lat, lon, redrawFn) {
+    const key = `${dateStringReal()}|${lat.toFixed(1)}|${lon.toFixed(1)}`;
+    if (key === this.lastKey || this.fetching) return;
+    this.lastKey  = key;
+    this.fetching = true;
+
+    const [rstt, seasons] = await Promise.all([
+      fetchUSNO_RSTT(lat, lon),
+      fetchUSNO_Seasons(),
+    ]);
+
+    this.rstt     = rstt;       // may be null on failure
+    this.seasons  = seasons;    // may be [] on failure
+    this.fetching = false;
+    redrawFn();
+  },
+};
+
+//===========================================================
+//  Astro Info Overlay
+//===========================================================
+
+function drawAstroInfoOverlay(ctx, jd, lat, lon, now, W, H) {
+
+  // fire background refresh using real lat/lon, real time
+  // redraw is the global redraw function defined in wiring section
+  astroInfo.refresh(lat, lon, redraw);
+
+  // ── assemble display values ──
+  let sunRise, sunSet, moonRise, moonSet, astroBegin, astroEnd, phaseDisp, nextEv;
+
+  // FIX: check astroInfo.rstt (not null) AND that its .data is not null
+  if (astroInfo.rstt !== null && astroInfo.rstt !== undefined) {
+    const d  = astroInfo.rstt;   // may be null if fetch failed
+    if (d && d.sundata) {
+      sunRise  = usnoTime(d.sundata, 'Rise');
+      sunSet   = usnoTime(d.sundata, 'Set');
+      moonRise = usnoTime(d.moondata, 'Rise');
+      moonSet  = usnoTime(d.moondata, 'Set');
+      phaseDisp = usnoPhaseDisplay(d);
+      // astronomical twilight always computed locally
+      const at = astronomicalTwilight(jd, lat, lon);
+      astroBegin = at.begin;
+      astroEnd   = at.end;
+    } else {
+      // fetch completed but returned null — USNO unavailable
+      sunRise = sunSet = moonRise = moonSet = 'n/a';
+      phaseDisp = usnoPhaseDisplay(null);
+    }
+  } else {
+    // not yet fetched — show local fallback
+    sunRise = sunSet = moonRise = moonSet = astroBegin = astroEnd = '…';
+    const lp  = moonPhaseInfo(jd);
+    phaseDisp = {
+      phaseName:    lp.phaseName,
+      symbol:       lp.symbol,
+      illumination: lp.illumination.toFixed(0) + '%',
+      nextPhase:    '(loading…)',
+    };
+  }
+
+  // countdown — use USNO seasons if available, else local Meeus
+  nextEv = nextUSNOEvent(astroInfo.seasons, now);
+  if (!nextEv) {
+    const ev = nextSeasonalEvent(jd);
+    nextEv = {
+      name:      ev.name,
+      dateStr:   '',
+      countdown: formatCountdown(ev.daysAway),
+    };
+  }
+
+  // ── build lines ──
+  const lines = [
+    { label: 'Moon:',      value: `${phaseDisp.symbol} ${phaseDisp.phaseName}  ${phaseDisp.illumination}` },
+    { label: '',           value: phaseDisp.nextPhase },
+    { label: 'Moonrise:',  value: moonRise },
+    { label: 'Moonset:',   value: moonSet  },
+    { label: 'Sunrise:',   value: sunRise  },
+    { label: 'Sunset:',    value: sunSet   },
+    { label: 'Astro Dawn:', value: astroBegin },   // ← add
+    { label: 'Astro Dusk:', value: astroEnd   },   // ← add
+    { label: nextEv.name + ':', value: nextEv.countdown },
+    { label: '',           value: nextEv.dateStr },
+  ].filter(l => l.label || l.value);
+
+  if (astroInfo.fetching) lines.push({ label: '', value: '⟳ fetching USNO…' });
+
+  // ── draw box ──
+  const pad  = 8;
+  const lh   = 17;
+  const boxW = 255;
+  const boxH = lines.length * lh + pad * 2;
+  const bx   = pad;
+  const by   = H - boxH - pad;
+
+  ctx.save();
+  ctx.fillStyle = 'rgba(5, 5, 18, 0.70)';
+  ctx.beginPath();
+  ctx.roundRect(bx - pad / 2, by, boxW, boxH, 4);
+  ctx.fill();
+
+  ctx.font         = '11px monospace';
+  ctx.textBaseline = 'middle';
+
+  lines.forEach(({ label, value }, i) => {
+    const y = by + pad + i * lh + lh / 2;
+    if (label) {
+      ctx.fillStyle = darkRed;
+      ctx.textAlign = 'left';
+      ctx.fillText(label, bx, y);
+    }
+    ctx.fillStyle = lightRed;
+    ctx.textAlign = 'left';
+    ctx.fillText(value, bx + (label ? 95 : 4), y);
+  });
+
+  ctx.restore();
+}
+
+/** Format a days-away value as countdown string */
+function formatCountdown(daysAway) {
+  const totalMin = Math.round(daysAway * 24 * 60);
+  const d = Math.floor(totalMin / 1440);
+  const h = Math.floor((totalMin % 1440) / 60);
+  const m = totalMin % 60;
+  return d > 0 ? `${d}d ${h}h ${m}m`
+       : h > 0 ? `${h}h ${m}m`
+       :         `${m}m`;
 }
 
 //===========================================================
@@ -1167,11 +1775,17 @@ function drawSkyPlot(canvas, params, hoveredStar = null, hoveredSat = null) {
   
     ctx.clearRect(0, 0, W, H);
   
-    //=== Sky background gradient ===//
+    //=== Nightsky background gradient ===//
     const skyGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
-    skyGrad.addColorStop(0,   '#0d0d22');
-    skyGrad.addColorStop(0.7, '#070714');
-    skyGrad.addColorStop(1,   '#020208');
+    if (nightMode) {
+      skyGrad.addColorStop(0,   '#0d0000');
+      skyGrad.addColorStop(0.7, '#070000');
+      skyGrad.addColorStop(1,   '#020000');
+    } else {
+      skyGrad.addColorStop(0,   '#0d0d22');
+      skyGrad.addColorStop(0.7, '#070714');
+      skyGrad.addColorStop(1,   '#020208');
+    }
     ctx.save();
     ctx.beginPath();
     ctx.arc(cx, cy, R, 0, Math.PI * 2);
@@ -1254,7 +1868,7 @@ function drawSkyPlot(canvas, params, hoveredStar = null, hoveredSat = null) {
     //===  Sun and Moon ===//
 
     // store jd on ctx so drawMoon can access it for phase calc
-    ctx._jd = jd;
+    // ctx._jd = jd;
 
     // after stars, before time overlay:
     drawSolarSystem(ctx, jd, lst, lat, cx, cy, R);
@@ -1312,31 +1926,6 @@ function drawSkyPlot(canvas, params, hoveredStar = null, hoveredSat = null) {
         const { x, y } = polarProject(az, alt, cx, cy, R);
         projected.push({ ...star, alt, az, px: x, py: y });
         });
-  
-    /*projected.forEach(star => {
-        const r     = starSize(star.mag);
-        const a     = starAlpha(star.mag);
-  
-        const t  = Math.min(1, star.alt / 60);
-        const rb = Math.round(200 + t * 55);
-        const gb = Math.round(200 + t * 55);
-        const bb = Math.round(230 + t * 25);
-
-        ctx.globalAlpha = a;
-        ctx.fillStyle   = `rgb(${rb},${gb},${bb})`;
-        ctx.beginPath();
-        ctx.arc(star.px, star.py, r, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (r > 2.8) {
-        ctx.globalAlpha = a * 0.12;
-        ctx.beginPath();
-        ctx.arc(star.px, star.py, r * 2.8, 0, Math.PI * 2);
-        ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-        });
-    */
 
     projected.forEach(star => {
 
@@ -1369,28 +1958,7 @@ function drawSkyPlot(canvas, params, hoveredStar = null, hoveredSat = null) {
         ctx.globalAlpha = 1;
     });
   
-    //=== Hover highlight ===//
-    /*if (hoveredStar) {
-      const s = projected.find(x => x.name === hoveredStar);
-      if (s) {
-        ctx.strokeStyle = 'rgba(200,220,255,0.85)';
-        ctx.lineWidth   = 1;
-        ctx.beginPath();
-        ctx.arc(s.px, s.py, starSize(s.mag) + 6, 0, Math.PI * 2);
-        ctx.stroke();
-  
-        let lx = s.px + 10;
-        if (lx > W - 80) lx = s.px - 10;
-        ctx.fillStyle    = 'rgba(210,225,255,0.95)';
-        ctx.font         = '12px sans-serif';
-        ctx.textAlign    = lx > s.px ? 'left' : 'right';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(s.name, lx, s.py - 6);
-      }
-    }
-      */
-  
-    //=== Highlight Star ===//
+    //=== Hover Highlight Star ===//
     if (hoveredStar) {
         const s = projected.find(x => x.name === hoveredStar);
         if (s) {
@@ -1425,14 +1993,28 @@ function drawSkyPlot(canvas, params, hoveredStar = null, hoveredSat = null) {
         }
       }
 
+    // ── Astro info overlay (lower-left) ──
+    drawAstroInfoOverlay(ctx, jd, lat, lon, now, W, H);
+
     // ── Time overlay (drawn last so it sits on top) ──
     drawTimeOverlay(ctx, lst, now);
+
+    // ── Night mode red wash over sky circle ──
+    if (nightMode) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.fillStyle = 'rgba(60, 0, 0, 0.25)';
+      ctx.fillRect(0, 0, W, H);
+      ctx.restore();
+    }
 
     return { stars: projected, sats: projSats };
     }
   
 //===========================================================
-//  Interactive Display
+//  Interactive Display Event Listeners
 //===========================================================
 
 const canvas = document.getElementById('sky');
@@ -1504,20 +2086,57 @@ canvas.addEventListener('mousemove', e => {
 document.getElementById(id).addEventListener('input', redraw);
 });
 
-document.getElementById('sat-group').addEventListener('change', async e => {
-  const group = e.target.value;
-  if (!group) {
-    satManager.satellites = [];
-    satManager.activeGroup = '';
+// document.getElementById('sat-group').addEventListener('change', async e => {
+//   const group = e.target.value;
+//   if (!group) {
+//     satManager.satellites = [];
+//     satManager.activeGroup = '';
+//     redraw();
+//     return;
+//   }
+//   await satManager.loadGroup(group);
+//   redraw();
+// });
+
+// // initial Satellite, load ISS
+// satManager.loadGroup('ISS');
+
+// read currently checked groups from the checkboxes
+function getCheckedGroups() {
+  return [...document.querySelectorAll('#sat-group-options input[type=checkbox]:checked')]
+    .map(cb => cb.value);
+}
+
+// wire up each checkbox
+document.querySelectorAll('#sat-group-options input[type=checkbox]').forEach(cb => {
+  cb.addEventListener('change', async () => {
+    const groups = getCheckedGroups();
+    await satManager.setGroups(groups);
     redraw();
-    return;
-  }
-  await satManager.loadGroup(group);
-  redraw();
+  });
 });
 
-// initial Satellite, load ISS
-satManager.loadGroup('ISS');
+// wire up each time slider
+// document.getElementById('toffset').addEventListener('input', () => {
+//   const v = parseFloat(document.getElementById('toffset').value);
+//   document.getElementById('toffset-val').textContent = v.toFixed(1) + ' h';
+//   redraw();
+// });
+
+// initial load — whatever is checked on page load (ISS by default)
+satManager.setGroups(getCheckedGroups()).then(redraw);
+
+// ── Night mode toggle ──
+const nightBtn = document.getElementById('night-mode-btn');
+if (nightBtn) {
+  nightBtn.addEventListener('click', () => {
+    nightMode = !nightMode;
+    galCache.key = null;   // force galactic plane redraw with new colors
+    nightBtn.textContent = nightMode ? '☀ Day Mode' : '🔴 Night Mode';
+    document.body.classList.toggle('night-mode', nightMode);
+    redraw();
+  });
+}
 
 // Refresher
 redraw();

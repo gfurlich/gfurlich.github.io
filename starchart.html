@@ -46,8 +46,14 @@
 <main class="page-content" aria-label="Content">
       <div class="wrapper">
         <div style="height: 10vh"></div>
+
+<!-- Night Mode -->
+<div class="row">
+  <button id="night-mode-btn">🌑 Night Mode</button>
+</div>
+
 <div id="lst-display" style="font-size:12px;color:grey;text-align:center;padding-bottom:4px"></div>
-<canvas id="sky" width="800" height="800" style="display:block;margin:0 auto;max-width:100%"></canvas>
+<canvas id="sky" width="1000" height="1000" style="display:block;margin:0 auto;max-width:100%"></canvas>
 <div id="info" style="font-size:12px;color:grey;min-height:18px;padding:2px 0;text-align:center"></div>
 <div class="ctrl">
 
@@ -102,7 +108,8 @@
           <span>+24 hrs</span>
         </div>
   </div>
-  <div class="row">
+  <!-- Satellite Controls -->
+  <!-- <div class="row">
     <label>Display Satellite Groups:</label>
     <select id="sat-group">
       <option value="" selected>None</option>
@@ -117,6 +124,21 @@
       <option value="Calibration">Calibration</option>
       <option value="Starlink">Starlink</option>
     </select>
+  </div> -->
+  <div class="row">
+    <label>Display Satellite Groups:</label>
+    <div id="sat-group-options" style="display:flex; flex-wrap:wrap; gap:6px;">
+      <label style="font-size:12px"><input type="checkbox" value="ISS" checked> ISS</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Brightest"> Brightest</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Earth Observing"> Earth Obs</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Weather"> Weather</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Comms"> Comms</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="GNSS"> GNSS</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Science"> Science</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Cubesat"> Cubesat</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Calibration"> Calibration</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Starlink"> Starlink</label><br>
+    </div>
   </div>
 </div>
 
