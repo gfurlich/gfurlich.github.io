@@ -1259,13 +1259,74 @@ function drawSatellites(ctx, date, lat, lon, cx, cy, R, hoveredSat = null) {
     drawSatellite(ctx, hovSat.px, hovSat.py, hovSat.name, hovSat.color, isISS(hovSat.name), true);
   }
 
-  // count display
-  ctx.fillStyle    = darkRed;
-  ctx.font         = '12px sans-serif';
-  ctx.textAlign    = 'left';
-  ctx.textBaseline = 'top';
-  const groupList  = [...satManager.activeGroups].join(', ') || 'none';
-  ctx.fillText(`Satellites (${groupList}): ${visCount} visible / ${satManager.satellites.length} tracked`, 0, 100);
+  //=== Satellite info box ===//
+  const activeGroups = [...satManager.activeGroups];
+  if (activeGroups.length > 0) {
+    const W   = ctx.canvas.width;
+    const H   = ctx.canvas.height;
+    const pad = 8;
+    const lh  = 15;
+
+    // count visible and total per group
+    const groupVis   = {};
+    const groupTotal = {};
+    projSats.forEach(s => {
+      groupVis[s.group] = (groupVis[s.group] || 0) + 1;
+    });
+    satManager.satellites.forEach(({ group }) => {
+      groupTotal[group] = (groupTotal[group] || 0) + 1;
+    });
+
+    const satLines = activeGroups.map(g => ({
+      label: g,
+      vis:   groupVis[g]   || 0,
+      total: groupTotal[g] || 0,
+      color: SAT_COLORS[g] || 'rgba(200,200,200,0.9)',
+    }));
+
+    const boxW = 210;
+    const boxH = satLines.length * lh + pad * 2;
+    const bx   = W - boxW - pad;   // right-aligned
+    const by   = H - boxH - pad;   // bottom-aligned
+
+    // background
+    ctx.save();
+    ctx.fillStyle = 'rgba(5, 5, 18, 0.70)';
+    ctx.beginPath();
+    ctx.roundRect(bx - pad / 2, by, boxW, boxH, 4);
+    ctx.fill();
+
+    ctx.font         = '11px monospace';
+    ctx.textBaseline = 'middle';
+
+    // title
+    ctx.fillStyle = lightRed;
+    ctx.font      = '500 11px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('Satellites Visible', bx + 4, by + pad + lh / 2 - 25);
+
+    satLines.forEach(({ label, vis, total, color }, i) => {
+      const y = by + pad + i * lh + lh / 2;
+
+      // colored dot
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(bx + 4, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // group name
+      ctx.fillStyle = darkRed;
+      ctx.textAlign = 'left';
+      ctx.fillText(label + ':', bx + 12, y);
+
+      // vis / total in group color
+      ctx.fillStyle = color;
+      ctx.textAlign = 'right';
+      ctx.fillText(`${vis} / ${total}`, bx + boxW - pad, y);
+    });
+
+    ctx.restore();
+  }
 
   return projSats;
 }
@@ -1698,8 +1759,8 @@ function drawAstroInfoOverlay(ctx, jd, lat, lon, now, W, H) {
     { label: 'Moonset:',   value: moonSet  },
     { label: 'Sunrise:',   value: sunRise  },
     { label: 'Sunset:',    value: sunSet   },
-    { label: 'Astro Dawn:', value: astroBegin },   // ← add
-    { label: 'Astro Dusk:', value: astroEnd   },   // ← add
+    { label: 'Astro Dawn:', value: astroBegin },
+    { label: 'Astro Dusk:', value: astroEnd   }, 
     { label: nextEv.name + ':', value: nextEv.countdown },
     { label: '',           value: nextEv.dateStr },
   ].filter(l => l.label || l.value);
@@ -1732,7 +1793,7 @@ function drawAstroInfoOverlay(ctx, jd, lat, lon, now, W, H) {
     }
     ctx.fillStyle = lightRed;
     ctx.textAlign = 'left';
-    ctx.fillText(value, bx + (label ? 95 : 4), y);
+    ctx.fillText(value, bx + (label ? 135 : 4), y);
   });
 
   ctx.restore();
@@ -2022,7 +2083,30 @@ let hoveredStar    = null;
 let hoveredSat     = null;
 let lastProjected  = { stars: [], sats: [] };
 
-//=== Display Star Information ===//
+//=== Display Time above StarChart ===//
+function redraw() {
+  lastProjected = drawSkyPlot(canvas, getParams(), hoveredStar, hoveredSat);
+
+  // update centered time display
+  const p      = getParams();
+  // const now    = new Date(Date.now() + p.toffset * 3_600_000);
+  const now    = new Date(Date.now());
+  // console.log(now)
+  const el     = document.getElementById('time-display');
+  if (el) {
+    el.textContent = now.toLocaleString([], {
+      weekday: 'short',
+      year:    'numeric',
+      month:   'short',
+      day:     'numeric',
+      hour:    '2-digit',
+      minute:  '2-digit',
+      second:  '2-digit',
+    });
+  }
+}
+
+//=== Display Star and Satellite Information ===//
 
 function getParams() {
     return {
@@ -2032,9 +2116,9 @@ function getParams() {
     };
     }
   
-function redraw() {
-  lastProjected = drawSkyPlot(canvas, getParams(), hoveredStar, hoveredSat);
-  }
+// function redraw() {
+//   lastProjected = drawSkyPlot(canvas, getParams(), hoveredStar, hoveredSat);
+//   }
 
 canvas.addEventListener('mousemove', e => {
   const rect   = canvas.getBoundingClientRect();
@@ -2126,13 +2210,13 @@ document.querySelectorAll('#sat-group-options input[type=checkbox]').forEach(cb 
 // initial load — whatever is checked on page load (ISS by default)
 satManager.setGroups(getCheckedGroups()).then(redraw);
 
-// ── Night mode toggle ──
+//=== Night mode toggle ===//
 const nightBtn = document.getElementById('night-mode-btn');
 if (nightBtn) {
   nightBtn.addEventListener('click', () => {
     nightMode = !nightMode;
     galCache.key = null;   // force galactic plane redraw with new colors
-    nightBtn.textContent = nightMode ? '☀ Day Mode' : '🔴 Night Mode';
+    nightBtn.textContent = nightMode ? '☀ Day Mode' : '🌜︎︎ Night Mode';
     document.body.classList.toggle('night-mode', nightMode);
     redraw();
   });
