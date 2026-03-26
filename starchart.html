@@ -26,48 +26,65 @@
                    <h> Greg Furlich</h>
                </p>
            </a>
-
-           <div class="topnav-right">
-                <a href="/Research.html"><p>Research</p></a>
-                <a href="/Education.html"><p>Education</p></a>
-                <a href="/Projects.html"><p>Projects</p></a>
-                <a href="/Hobbies.html"><p>Hobbies</p></a>
-                <a href="/Photography.html"><p>Photography</p></a>
-                <a href="https://www.colorado.edu/center/nsi/greg-furlich"><p><img id="CU" src="/assets/logos/cub.png" height=30vw></p></a>
-                <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/logos/github.png" height=30vw></p></a>
-                <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/logos/in.png" height=30vw></p></a>
-                <a href="mailto:greg.furlich@colorado.edu"><p><img id="mzil" src="/assets/logos/mail.png" height=30vw></p></a>
-           </div>
-
        </div>
    </nav>
 
 </header>
 <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <div style="height: 10vh"></div>
+        <div style="height: 5vh"></div>
 
 <!-- Time Display -->
 <div id="time-display" style="
   text-align: center;
   font-size: 15px;
-  padding: 6px 0 4px;
+  /* padding: 6px 0 4px; */
   letter-spacing: 0.05em;
-">foo</div>
+"></div>
 
 <!-- Night Mode -->
-<div style="float:right" class="row">
+<!-- <div style="float:right" class="row">
   <button id="night-mode-btn">🌜︎︎ Night Mode</button>
-</div>
+</div> -->
 
-<div id="lst-display" style="font-size:12px;color:grey;text-align:center;padding-bottom:4px"></div>
-<canvas id="sky" width="1000" height="1000" style="display:block;margin:0 auto;max-width:100%"></canvas>
-<div id="info" style="font-size:12px;color:grey;min-height:18px;padding:2px 0;text-align:center"></div>
+<!-- <div id="lst-display" style="font-size:12px;color:grey;text-align:center;padding-bottom:4px"></div> -->
+<div class="canvas-container">
 
+  <!-- Night Mode Button-->
+  <button id="night-mode-btn">🌜︎︎ Night Mode</button>
+
+  <!-- Time Info - Upper Left-->
+  <div class='info_box' id="time_info" style="top: 30px;left: 40px">Time Info</div>
+
+  <!-- Moon and Sun Info - Lower Left-->
+  <div class='info_box' id="moon_info" style="bottom: 30px;left: 40px">Moon Info</div>
+
+  <!-- Sat Info - Lower Right-->
+  <div class='info_box' id="sat_info" style="bottom: 30px;right: 40px">Sat Info</div>
+
+  <!-- Star Chart Canvas -->
+  <canvas id="sky" width="1000" height="1000"></canvas>
+
+</div> 
+
+<!-- Star and Satellite Info -->
+<div id="info" style="
+  font-size:12px;
+  color:grey;
+  min-height:18px;
+  padding:2px 0;
+  text-align:center"></div>
+
+<!-- Display Controls -->
 <div class="ctrl">
 
   <!-- Lat and Lon Inputs -->
-  <div class="row" style="display:flex;flex-direction:row;justify-content:center;align-items:center;gap:24px">
+  <div class="row" style="
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+    align-items:center;
+    gap:24px">
     <div style="display:flex;align-items:center;gap:6px">
       <label>Lat [°]</label><input type="number" id="lat" value="40.0" step="0.1">
     </div>
@@ -79,7 +96,10 @@
   <div class="row" style="flex-direction:column;gap:4px">
 
   <!-- Time Offset Control-->
-  <div style="display:flex;justify-content:space-between;align-items:center">
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center">
     <label>Time Offset [hrs]</label>
     <span id="toffset-display" style="font-size:12px;color:grey">0.0 hrs</span>
   </div>
@@ -101,7 +121,11 @@
           <option value="20"></option>
           <option value="24"></option>
         </datalist>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:grey;padding:0 1px">
+        <div style="display:flex;
+          justify-content:space-between;
+          font-size:10px;
+          color:grey;
+          padding:0 1px">
           <span>-24 hrs</span>
           <span>-20</span>
           <span>-16</span>
