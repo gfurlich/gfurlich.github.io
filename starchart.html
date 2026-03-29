@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
     <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 </head>
 <body><header>
@@ -27,9 +28,36 @@
                </p>
            </a>
        </div>
+
+       <!-- Top Navigation Menu -->
+        <div class="topnav-app">
+
+            <!-- Navigation links (hidden by default) -->
+            <div id="myLinks">
+                <a href="/Research.html"><p>Research</p></a>
+                <a href="/Education.html"><p>Education</p></a>
+                <a href="/Projects.html"><p>Projects</p></a>
+                <a href="/Hobbies.html"><p>Hobbies</p></a>
+                <a href="/Photography.html"><p>Photography</p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich"><p><img id="CU" src="/assets/logos/cub.png" height=30></p></a>
+                <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/logos/github.png" height=30></p></a>
+                <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/logos/in.png" height=30></p></a>
+                <a href="mailto:greg.furlich@colorado.edu"><p><img id="mzil" src="/assets/logos/mail.png" height=30></p></a>
+            </div>
+
+            <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <i class="fa fa-bars" height=30></i>
+            </a>
+        </div>
+
    </nav>
 
+   <script src="/assets/js/app_menu.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </header>
+
 <main class="page-content" aria-label="Content">
       <div class="wrapper">
         <div style="height: 5vh"></div>
@@ -142,22 +170,6 @@
         </div>
   </div>
   <!-- Satellite Controls -->
-  <!-- <div class="row">
-    <label>Display Satellite Groups:</label>
-    <select id="sat-group">
-      <option value="" selected>None</option>
-      <option value="ISS">ISS</option>
-      <option value="Brightest">Brightest</option>
-      <option value="Earth Observing">Earth Observing</option>
-      <option value="Weather">Weather</option>
-      <option value="Comms">Comms</option>
-      <option value="GNSS">GNSS</option>
-      <option value="Science">Science</option>
-      <option value="Cubesat">Cubesat</option>
-      <option value="Calibration">Calibration</option>
-      <option value="Starlink">Starlink</option>
-    </select>
-  </div> -->
   <div class="row">
     <label>Display Satellite Groups:</label>
     <div id="sat-group-options" style="display:flex; flex-wrap:wrap; gap:6px;">
@@ -173,6 +185,23 @@
       <label style="font-size:12px"><input type="checkbox" value="Starlink"> Starlink</label><br>
     </div>
   </div>
+
+  <!-- Planet Controls -->
+  <div class="row">
+    Show Planets: 
+    <label><input type="checkbox" id="show-planets" checked></label>
+    Show Messier Objects:
+    <label><input type="checkbox" id="show-messier"></label>
+  </div>
+
+  <!-- Star Toggle -->
+  <div class="row">
+    <label>Star Catalogue:</label>
+    <label><input type="radio" name="star-catalog" value="usno" checked> USNO Nav (57)</label>
+    <label><input type="radio" name="star-catalog" value="yale"> Yale BSC (~9000)</label>
+    <label><input type="radio" name="star-catalog" value="constellation"> Constellation Stars</label>
+  </div>
+
 </div>
 
 <!-- Load Scripts -->

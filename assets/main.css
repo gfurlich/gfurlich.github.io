@@ -300,3 +300,23 @@ footer { background-color: #0f3f63; font-family: 'Fira Sans', sans-serif; color:
 .info_box .info-value { color: rgba(180, 0, 0, 0.7); }
 
 .sat-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+
+/* Style the navigation menu */
+.topnav-app { position: fixed; /* fixes it to the viewport, not the page */ top: 0; right: 0; z-index: 1000; /* above the canvas and all overlays */ background-color: #333; }
+
+/* Hide the links inside the navigation menu (except for logo/home) */
+.topnav-app #myLinks { display: none; position: fixed; /* fixed so it doesn't affect page layout */ top: 48px; /* below the hamburger button */ right: 0; background-color: #333; min-width: 160px; z-index: 1000; }
+
+/* Style navigation menu links */
+.topnav-app a { color: white; padding: 14px 16px; text-decoration: none; font-size: 17px; display: block; }
+
+/* Style the hamburger menu */
+.topnav-app a.icon { display: block; position: fixed; /* change from absolute to fixed */ right: 0; top: 1; padding: 30 60; z-index: 101; /* just above the container */ }
+
+/* Add a grey background color on mouse-over */
+.topnav-app a:hover { background-color: #ddd; color: black; }
+
+/* Style the active link (or home/logo) */
+.active-app { background-color: #04AA6D; color: white; }
+
+.topnav-app img { height: 30px; width: auto; }

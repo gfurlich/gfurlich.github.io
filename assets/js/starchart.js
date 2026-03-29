@@ -63,6 +63,123 @@
 // ];
 
 //===========================================================
+//  Messier Catalogue (110 objects)
+//  RA in decimal degrees, Dec in decimal degrees, J2000
+//===========================================================
+const MESSIER = [
+  {id:'M1',  name:'Crab Nebula',       type:'SNR', ra:83.633,  dec:22.017,  mag:8.4},
+  {id:'M2',  name:'',                  type:'GC',  ra:323.363, dec:-0.823,  mag:6.3},
+  {id:'M3',  name:'',                  type:'GC',  ra:205.548, dec:28.383,  mag:6.4},
+  {id:'M4',  name:'',                  type:'GC',  ra:245.897, dec:-26.526, mag:5.9},
+  {id:'M5',  name:'',                  type:'GC',  ra:229.638, dec:2.083,   mag:6.7},
+  {id:'M6',  name:'Butterfly Cluster', type:'OC',  ra:265.083, dec:-32.217, mag:4.2},
+  {id:'M7',  name:'Ptolemy Cluster',   type:'OC',  ra:268.458, dec:-34.817, mag:3.3},
+  {id:'M8',  name:'Lagoon Nebula',     type:'DN',  ra:270.917, dec:-24.383, mag:6.0},
+  {id:'M9',  name:'',                  type:'GC',  ra:259.792, dec:-18.517, mag:7.9},
+  {id:'M10', name:'',                  type:'GC',  ra:254.288, dec:-4.100,  mag:6.4},
+  {id:'M11', name:'Wild Duck Cluster', type:'OC',  ra:282.767, dec:-6.267,  mag:5.8},
+  {id:'M12', name:'',                  type:'GC',  ra:251.808, dec:-1.950,  mag:6.1},
+  {id:'M13', name:'Hercules Cluster',  type:'GC',  ra:250.423, dec:36.460,  mag:5.8},
+  {id:'M14', name:'',                  type:'GC',  ra:264.400, dec:-3.250,  mag:7.6},
+  {id:'M15', name:'',                  type:'GC',  ra:322.493, dec:12.167,  mag:6.0},
+  {id:'M16', name:'Eagle Nebula',      type:'DN',  ra:274.700, dec:-13.783, mag:6.4},
+  {id:'M17', name:'Omega Nebula',      type:'DN',  ra:275.133, dec:-16.183, mag:6.0},
+  {id:'M18', name:'',                  type:'OC',  ra:274.533, dec:-17.133, mag:7.5},
+  {id:'M19', name:'',                  type:'GC',  ra:255.658, dec:-26.267, mag:6.8},
+  {id:'M20', name:'Trifid Nebula',     type:'DN',  ra:270.617, dec:-23.033, mag:6.3},
+  {id:'M21', name:'',                  type:'OC',  ra:271.283, dec:-22.500, mag:5.9},
+  {id:'M22', name:'',                  type:'GC',  ra:279.100, dec:-23.900, mag:5.1},
+  {id:'M23', name:'',                  type:'OC',  ra:269.217, dec:-19.017, mag:6.9},
+  {id:'M24', name:'Sagittarius Cloud', type:'MW',  ra:274.233, dec:-18.500, mag:4.6},
+  {id:'M25', name:'',                  type:'OC',  ra:277.933, dec:-19.250, mag:6.5},
+  {id:'M26', name:'',                  type:'OC',  ra:281.367, dec:-9.400,  mag:8.0},
+  {id:'M27', name:'Dumbbell Nebula',   type:'PN',  ra:299.900, dec:22.717,  mag:7.4},
+  {id:'M28', name:'',                  type:'GC',  ra:276.133, dec:-24.867, mag:6.8},
+  {id:'M29', name:'',                  type:'OC',  ra:306.333, dec:38.533,  mag:7.1},
+  {id:'M30', name:'',                  type:'GC',  ra:325.092, dec:-23.183, mag:7.2},
+  {id:'M31', name:'Andromeda Galaxy',  type:'Gx',  ra:10.683,  dec:41.267,  mag:3.4},
+  {id:'M32', name:'',                  type:'Gx',  ra:10.675,  dec:40.867,  mag:8.7},
+  {id:'M33', name:'Triangulum Galaxy', type:'Gx',  ra:23.467,  dec:30.650,  mag:5.7},
+  {id:'M34', name:'',                  type:'OC',  ra:40.533,  dec:42.783,  mag:5.2},
+  {id:'M35', name:'',                  type:'OC',  ra:92.267,  dec:24.333,  mag:5.3},
+  {id:'M36', name:'',                  type:'OC',  ra:84.067,  dec:34.133,  mag:6.3},
+  {id:'M37', name:'',                  type:'OC',  ra:88.083,  dec:32.550,  mag:5.6},
+  {id:'M38', name:'',                  type:'OC',  ra:82.183,  dec:35.833,  mag:7.4},
+  {id:'M39', name:'',                  type:'OC',  ra:323.917, dec:48.433,  mag:4.6},
+  {id:'M40', name:'Winnecke 4',        type:'DS',  ra:185.567, dec:58.083,  mag:8.4},
+  {id:'M41', name:'',                  type:'OC',  ra:101.500, dec:-20.733, mag:4.5},
+  {id:'M42', name:'Orion Nebula',      type:'DN',  ra:83.817,  dec:-5.450,  mag:4.0},
+  {id:'M43', name:'De Mairan Neb.',    type:'DN',  ra:83.883,  dec:-5.267,  mag:9.0},
+  {id:'M44', name:'Beehive Cluster',   type:'OC',  ra:130.100, dec:19.983,  mag:3.7},
+  {id:'M45', name:'Pleiades',          type:'OC',  ra:56.750,  dec:24.117,  mag:1.6},
+  {id:'M46', name:'',                  type:'OC',  ra:115.450, dec:-14.817, mag:6.0},
+  {id:'M47', name:'',                  type:'OC',  ra:114.167, dec:-14.500, mag:4.4},
+  {id:'M48', name:'',                  type:'OC',  ra:123.417, dec:-5.800,  mag:5.5},
+  {id:'M49', name:'',                  type:'Gx',  ra:187.450, dec:8.000,   mag:8.4},
+  {id:'M50', name:'',                  type:'OC',  ra:105.700, dec:-8.333,  mag:5.9},
+  {id:'M51', name:'Whirlpool Galaxy',  type:'Gx',  ra:202.470, dec:47.183,  mag:8.4},
+  {id:'M52', name:'',                  type:'OC',  ra:351.100, dec:61.583,  mag:7.3},
+  {id:'M53', name:'',                  type:'GC',  ra:198.233, dec:18.167,  mag:7.7},
+  {id:'M54', name:'',                  type:'GC',  ra:283.767, dec:-30.483, mag:7.7},
+  {id:'M55', name:'',                  type:'GC',  ra:294.967, dec:-30.967, mag:6.3},
+  {id:'M56', name:'',                  type:'GC',  ra:289.150, dec:30.183,  mag:8.3},
+  {id:'M57', name:'Ring Nebula',       type:'PN',  ra:283.400, dec:33.033,  mag:8.8},
+  {id:'M58', name:'',                  type:'Gx',  ra:189.433, dec:11.817,  mag:9.7},
+  {id:'M59', name:'',                  type:'Gx',  ra:190.508, dec:11.650,  mag:9.6},
+  {id:'M60', name:'',                  type:'Gx',  ra:190.917, dec:11.550,  mag:8.8},
+  {id:'M61', name:'',                  type:'Gx',  ra:184.717, dec:4.467,   mag:9.7},
+  {id:'M62', name:'',                  type:'GC',  ra:255.300, dec:-30.117, mag:6.5},
+  {id:'M63', name:'Sunflower Galaxy',  type:'Gx',  ra:198.958, dec:42.033,  mag:8.6},
+  {id:'M64', name:'Black Eye Galaxy',  type:'Gx',  ra:194.183, dec:21.683,  mag:8.5},
+  {id:'M65', name:'',                  type:'Gx',  ra:169.733, dec:13.083,  mag:9.3},
+  {id:'M66', name:'',                  type:'Gx',  ra:170.067, dec:12.983,  mag:8.9},
+  {id:'M67', name:'',                  type:'OC',  ra:132.833, dec:11.817,  mag:6.1},
+  {id:'M68', name:'',                  type:'GC',  ra:189.867, dec:-26.733, mag:7.3},
+  {id:'M69', name:'',                  type:'GC',  ra:277.850, dec:-32.350, mag:7.7},
+  {id:'M70', name:'',                  type:'GC',  ra:280.800, dec:-32.283, mag:7.9},
+  {id:'M71', name:'',                  type:'GC',  ra:298.450, dec:18.783,  mag:6.1},
+  {id:'M72', name:'',                  type:'GC',  ra:313.367, dec:-12.533, mag:9.3},
+  {id:'M73', name:'',                  type:'OC',  ra:314.733, dec:-12.633, mag:9.0},
+  {id:'M74', name:'Phantom Galaxy',    type:'Gx',  ra:24.175,  dec:15.783,  mag:9.4},
+  {id:'M75', name:'',                  type:'GC',  ra:301.517, dec:-21.917, mag:8.6},
+  {id:'M76', name:'Little Dumbbell',   type:'PN',  ra:25.583,  dec:51.567,  mag:10.1},
+  {id:'M77', name:'Cetus A',           type:'Gx',  ra:40.667,  dec:-0.017,  mag:8.9},
+  {id:'M78', name:'',                  type:'DN',  ra:86.683,  dec:0.067,   mag:8.3},
+  {id:'M79', name:'',                  type:'GC',  ra:81.042,  dec:-24.517, mag:7.7},
+  {id:'M80', name:'',                  type:'GC',  ra:244.258, dec:-22.967, mag:7.3},
+  {id:'M81', name:'Bode\'s Galaxy',    type:'Gx',  ra:148.883, dec:69.067,  mag:6.9},
+  {id:'M82', name:'Cigar Galaxy',      type:'Gx',  ra:148.967, dec:69.683,  mag:8.4},
+  {id:'M83', name:'Southern Pinwheel', type:'Gx',  ra:204.250, dec:-29.867, mag:7.5},
+  {id:'M84', name:'',                  type:'Gx',  ra:186.267, dec:12.883,  mag:9.1},
+  {id:'M85', name:'',                  type:'Gx',  ra:186.350, dec:18.183,  mag:9.1},
+  {id:'M86', name:'',                  type:'Gx',  ra:186.550, dec:12.950,  mag:8.9},
+  {id:'M87', name:'Virgo A',           type:'Gx',  ra:187.706, dec:12.391,  mag:8.6},
+  {id:'M88', name:'',                  type:'Gx',  ra:187.983, dec:14.417,  mag:9.6},
+  {id:'M89', name:'',                  type:'Gx',  ra:188.917, dec:12.556,  mag:9.8},
+  {id:'M90', name:'',                  type:'Gx',  ra:188.867, dec:13.150,  mag:9.5},
+  {id:'M91', name:'',                  type:'Gx',  ra:188.850, dec:14.500,  mag:10.2},
+  {id:'M92', name:'',                  type:'GC',  ra:259.283, dec:43.133,  mag:6.4},
+  {id:'M93', name:'',                  type:'OC',  ra:116.167, dec:-23.867, mag:6.0},
+  {id:'M94', name:'',                  type:'Gx',  ra:192.717, dec:41.117,  mag:8.2},
+  {id:'M95', name:'',                  type:'Gx',  ra:160.983, dec:11.700,  mag:9.7},
+  {id:'M96', name:'',                  type:'Gx',  ra:161.700, dec:11.817,  mag:9.2},
+  {id:'M97', name:'Owl Nebula',        type:'PN',  ra:168.700, dec:55.017,  mag:9.9},
+  {id:'M98', name:'',                  type:'Gx',  ra:183.450, dec:14.900,  mag:10.1},
+  {id:'M99', name:'',                  type:'Gx',  ra:184.708, dec:14.417,  mag:9.9},
+  {id:'M100',name:'',                  type:'Gx',  ra:185.729, dec:15.817,  mag:9.3},
+  {id:'M101',name:'Pinwheel Galaxy',   type:'Gx',  ra:210.802, dec:54.350,  mag:7.9},
+  {id:'M102',name:'Spindle Galaxy',    type:'Gx',  ra:226.633, dec:55.767,  mag:9.9},
+  {id:'M103',name:'',                  type:'OC',  ra:23.333,  dec:60.700,  mag:7.4},
+  {id:'M104',name:'Sombrero Galaxy',   type:'Gx',  ra:189.998, dec:-11.623, mag:8.0},
+  {id:'M105',name:'',                  type:'Gx',  ra:161.967, dec:12.583,  mag:9.8},
+  {id:'M106',name:'',                  type:'Gx',  ra:184.742, dec:47.300,  mag:8.4},
+  {id:'M107',name:'',                  type:'GC',  ra:248.133, dec:-13.050, mag:7.9},
+  {id:'M108',name:'Surfboard Galaxy',  type:'Gx',  ra:167.879, dec:55.674,  mag:10.0},
+  {id:'M109',name:'Vacuum Cleaner Gx.',type:'Gx',  ra:179.400, dec:53.383,  mag:9.8},
+  {id:'M110',name:'',                  type:'Gx',  ra:10.092,  dec:41.683,  mag:8.5},
+];
+
+//===========================================================
 //  Star catalog (USNO Nav stars) https://aa.usno.navy.mil/data/
 //===========================================================
 const STARS = [
@@ -128,6 +245,224 @@ const STARS = [
   {name:"Scheat",     ra:345.944, dec:28.083,  mag:2.44},
   {name:"Markab",     ra:346.190, dec:15.212,  mag:2.49},
 ];
+
+//===========================================================
+//  Yale Bright Star Catalogue
+//===========================================================
+
+// Parse sexagesimal RA "00h 05m 09.9s" → decimal degrees
+function parseRA(str) {
+  const m = str.match(/(\d+)h\s*(\d+)m\s*([\d.]+)s/);
+  if (!m) return null;
+  return (parseFloat(m[1]) + parseFloat(m[2]) / 60 + parseFloat(m[3]) / 3600) * 15;
+}
+
+// Parse sexagesimal Dec "+45° 13′ 45″" → decimal degrees
+function parseDec(str) {
+  const m = str.match(/([+-]?\d+)[°]\s*(\d+)[′ʹ']\s*([\d.]+)[″ʺ"]/);
+  if (!m) return null;
+  const sign = str.trim().startsWith('-') ? -1 : 1;
+  return sign * (Math.abs(parseFloat(m[1])) + parseFloat(m[2]) / 60 + parseFloat(m[3]) / 3600);
+}
+
+async function loadYaleCatalog() {
+  if (yaleStars || yaleLoading) return;
+  yaleLoading = true;
+
+  try {
+    const res  = await fetch('https://brettonw.github.io/YaleBrightStarCatalog/bsc5.json');
+    const data = await res.json();
+
+    yaleStars = data
+      .filter(s => s.Vmag !== undefined && s.RA && s.Dec)
+      .map(s => {
+        const ra  = parseRA(s.RA);
+        const dec = parseDec(s.Dec);
+        if (ra === null || dec === null) return null;
+        return {
+          name: s.Name || s.HR || '',
+          ra,
+          dec,
+          mag: parseFloat(s.Vmag),
+        };
+      })
+      .filter(Boolean)
+      .filter(s => !isNaN(s.ra) && !isNaN(s.dec) && !isNaN(s.mag));
+
+    console.log(`Yale BSC loaded: ${yaleStars.length} stars`);
+  } catch (err) {
+    console.warn('Yale BSC load failed:', err);
+    yaleStars = [];
+  }
+  yaleLoading = false;
+  redraw();
+}
+
+// Returns whichever catalogue is active
+function getActiveCatalog() {
+  if (activeCatalog === 'yale') {
+    if (!yaleStars && !yaleLoading) loadYaleCatalog();
+    return yaleStars || STARS;
+  }
+  if (activeCatalog === 'constellation') {
+    if (!constellationStars && !constellationLoading) loadConstellationData();
+    return constellationStars || STARS;
+  }
+  return STARS;
+}
+
+//===========================================================
+//  Constellation Stars + Lines
+//===========================================================
+
+let yaleStars   = null;   // null = not yet loaded
+let yaleLoading = false;
+let activeCatalog = 'usno';   // 'usno' | 'yale'
+let constellationStars   = null;
+let constellationLines   = null;
+let constellationLoading = false;
+let constellationLabels = null;
+
+async function loadConstellationData() {
+  if ((constellationStars && constellationLines) || constellationLoading) return;
+  constellationLoading = true;
+
+  const BASE = 'https://raw.githubusercontent.com/ofrohn/d3-celestial/master/data/';
+
+  try {
+    const [linesRes, starsRes, namesRes, constelRes] = await Promise.all([
+      fetch(BASE + 'constellations.lines.json'),
+      fetch(BASE + 'stars.6.json'),
+      fetch(BASE + 'starnames.json'),
+      fetch(BASE + 'constellations.json'),
+    ]);
+    const [linesData, starsData, namesData, constelData] = await Promise.all([
+      linesRes.json(), starsRes.json(), namesRes.json(), constelRes.json(),
+    ]);
+
+    // ── Build name lookup: HIP id (string) → proper name ──
+    const nameMap = {};
+    Object.entries(namesData).forEach(([hip, info]) => {
+      nameMap[hip] = info.name || info.desig || '';
+    });
+
+    // ── Build star lookup: HIP id → { ra, dec, mag, name } ──
+    // d3-celestial RA is -180..180, convert to 0..360
+    const starByHip = {};
+    starsData.features.forEach(f => {
+      const hip = String(f.id);
+      const [ra180, dec] = f.geometry.coordinates;
+      starByHip[hip] = {
+        name: nameMap[hip] || '',
+        ra:   mod360(ra180),
+        dec,
+        mag:  parseFloat(f.properties.mag),
+      };
+    });
+
+    // ── Collect HIP IDs used in constellation lines ──
+    // constellations.lines.json coordinates are RA/Dec, NOT HIP IDs
+    // So we match line endpoints to the nearest star in starByHip
+    // Build a spatial index: round to 3dp for fast lookup
+    const coordIndex = {};
+    Object.entries(starByHip).forEach(([hip, s]) => {
+      const key = `${s.ra.toFixed(2)},${s.dec.toFixed(2)}`;
+      coordIndex[key] = hip;
+    });
+
+    const usedHips = new Set();
+    linesData.features.forEach(feature => {
+      feature.geometry.coordinates.forEach(line => {
+        line.forEach(([ra, dec]) => {
+          const ra360 = mod360(ra);
+          const key   = `${ra360.toFixed(2)},${dec.toFixed(2)}`;
+          const hip   = coordIndex[key];
+          if (hip) usedHips.add(hip);
+        });
+      });
+    });
+
+    // ── Build final star array from used HIPs only ──
+    constellationStars = [...usedHips]
+      .map(hip => starByHip[hip])
+      .filter(Boolean);
+
+    constellationLines = linesData;
+    constellationLabels = constelData; 
+
+    console.log(`Constellation data loaded: ${constellationStars.length} stars, ${linesData.features.length} constellations`);
+  } catch (err) {
+    console.warn('Constellation data load failed:', err);
+    constellationStars = [];
+    constellationLines = null;
+  }
+  constellationLoading = false;
+  redraw();
+}
+
+// Draw constellation lines on the canvas
+function drawConstellationLines(ctx, lst, lat, cx, cy, R) {
+  if (!constellationLines) return;
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(150, 180, 255, 0.25)';
+  ctx.lineWidth   = 0.8;
+  ctx.setLineDash([3, 4]);
+
+  constellationLines.features.forEach(feature => {
+    feature.geometry.coordinates.forEach(line => {
+      let drawing = false;
+      ctx.beginPath();
+      line.forEach(([ra, dec]) => {
+        const ra360       = mod360(ra);
+        const { alt, az } = equatorialToHorizontal(ra360, dec, lst, lat);
+        if (alt < 0) { drawing = false; return; }
+        const { x, y }    = polarProject(az, alt, cx, cy, R);
+        if (!drawing) { ctx.moveTo(x, y); drawing = true; }
+        else            ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+    });
+  });
+
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+function drawConstellationNames(ctx, lst, lat, cx, cy, R) {
+  if (!constellationLabels) return;
+
+  ctx.save();
+  ctx.font         = '10px sans-serif';
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+
+  constellationLabels.features.forEach(feature => {
+    const [ra180, dec]    = feature.geometry.coordinates;
+    const ra360           = mod360(ra180);
+    const { alt, az }     = equatorialToHorizontal(ra360, dec, lst, lat);
+    if (alt < 5) return;   // skip if below or very near horizon
+    const { x, y }        = polarProject(az, alt, cx, cy, R);
+    const name            = feature.properties.name;
+    const desig           = feature.properties.desig;
+
+    // abbreviation in brighter color
+    ctx.fillStyle = nightMode
+      ? 'rgba(180, 60, 60, 0.75)'
+      : 'rgba(140, 160, 255, 0.70)';
+    ctx.font = '10px sans-serif';
+    ctx.fillText(desig, x, y);
+
+    // full name dimmer underneath
+    ctx.fillStyle = nightMode
+      ? 'rgba(120, 40, 40, 0.50)'
+      : 'rgba(120, 140, 220, 0.45)';
+    ctx.font = '9px sans-serif';
+    ctx.fillText(name, x, y + 11);
+  });
+
+  ctx.restore();
+}
 
 //===========================================================
 //  Math and Coordinate Transform Functions
@@ -236,7 +571,10 @@ const starAlpha = mag => Math.min(1, Math.max(0.2, 1 - mag * 0.18));
 //  Display Colors + Night Mode
 //===========================================================
 
+// Default Settings
 let nightMode = false;
+let showPlanets = true;
+let showMessier = false;
 
 function uiDark()  { return nightMode ? 'rgba(120, 0, 0, 0.85)' : 'rgba(100, 7, 7, 0.71)'; }
 function uiLight() { return nightMode ? 'rgba(180, 0, 0, 0.70)' : 'rgba(226, 29, 29, 0.42)'; }
@@ -257,91 +595,6 @@ function updateTimeOverlay(lst, now) {
   `;
 }
 
-/**
- * Draw LST / Local / UTC clock labels in the upper-left of the canvas.
- * @param {CanvasRenderingContext2D} ctx
- * @param {number} lst    Local sidereal time, degrees
- * @param {Date}   now    Current date (possibly offset)
- */
-// function drawTimeOverlay(ctx, lst, now) {
-//     const lines = [
-//       { label: 'Datetime:', value: now.toISOString()},
-//       { label: 'UTC:', value: formatUTC(now)},
-//       { label: 'Local Time:', value: formatLocal(now) },
-//       { label: 'Local Sidereal Time:', value: lstToHMS(lst) },
-//     ];
-  
-    // const x      = 0;
-    // const yStart = 10;
-    // const lineH  = 20;
-  
-    // ctx.font         = '12px monospace';
-    // ctx.textBaseline = 'middle';
-  
-    // lines.forEach(({ label, value }, i) => {
-    //   const y = yStart + i * lineH;
-      
-    //   // dim label
-    //   ctx.fillStyle = darkRed;
-    //   ctx.textAlign = 'left';
-    //   ctx.fillText(label, x, y);
-
-    //   // bright value
-    //   ctx.fillStyle = lightRed;
-    //   ctx.fillText(value, x + 200, y);
-    // });
-    // }
-
-/**
- * Draw a four-point star (cross/diamond hybrid) centered at (x, y).
- * @param {CanvasRenderingContext2D} ctx
- * @param {number} x        Center x
- * @param {number} y        Center y
- * @param {number} outer    Outer spike radius
- * @param {number} inner    Inner waist radius (controls spike sharpness)
- */
-// function drawStar(ctx, x, y, outer, inner) {
-//     const spikes = 4;
-//     const step   = Math.PI / spikes;   // angle between outer and inner point
-//     ctx.beginPath();
-//     for (let i = 0; i < spikes * 2; i++) {
-//       const r     = i % 2 === 0 ? outer : inner;
-//       const angle = i * step - Math.PI / 4;  // rotate 45° so spikes point N/S/E/W
-//       const px    = x + r * Math.cos(angle);
-//       const py    = y + r * Math.sin(angle);
-//       i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
-//     }
-//     ctx.closePath();
-//   }
-
-//===========================================================
-//  Galactic → Equatorial (J2000)
-//===========================================================
-
-// const GAL_NGP_RA  = toRad(192.85948);   // RA of north galactic pole
-// const GAL_NGP_DEC = toRad(27.12825);    // Dec of north galactic pole
-// const GAL_LON_NCP = toRad(122.93192); // galactic longitude of north celestial pole
-// const GAL_ANODE   = toRad(32.93192);    // ascending node of galactic plane on equator
-
-// /*
-//  * Galactic (l, b) → Equatorial (ra, dec), all degrees.
-//  */
-// function galacticToEquatorial(l, b) {
-//   const lR = toRad(l), bR = toRad(b);
-
-//   // declination
-//   const sinDec = Math.sin(bR) * Math.sin(GAL_NGP_DEC)
-//                + Math.cos(bR) * Math.cos(GAL_NGP_DEC) * Math.sin(lR - GAL_ANODE);
-//   const dec = Math.asin(Math.max(-1, Math.min(1, sinDec)));
-
-//   // right ascension
-//   const y  = Math.cos(bR) * Math.sin(GAL_LON_NCP - lR);
-//   const x  = Math.sin(bR) * Math.cos(GAL_NGP_DEC)
-//             - Math.cos(bR) * Math.sin(GAL_NGP_DEC) * Math.cos(GAL_LON_NCP - lR);
-//   const ra = mod360(toDeg(GAL_NGP_RA) - toDeg(Math.atan2(y, x)));
-
-//   return { ra, dec: toDeg(dec) };
-// }
 // ─── Galactic → Equatorial (J2000) ───────────────────────────────────────────
 //
 // Rotation matrix columns are the galactic X, Y, Z axes expressed in
@@ -528,6 +781,68 @@ function drawEcliptic(ctx, lst, lat, cx, cy, R) {
 }
 
 //===========================================================
+//  Messier Object Rendering
+//===========================================================
+const MESSIER_SYMBOL = {
+  GC:  '⊕',   // globular cluster  — cross in circle
+  OC:  '⊙',   // open cluster      — dot in circle
+  DN:  '□',   // diffuse nebula    — square
+  PN:  '◎',   // planetary nebula  — bullseye
+  SNR: '✕',   // supernova remnant — cross
+  Gx:  '⬭',   // galaxy            — ellipse
+  MW:  '☁',   // milky way patch
+  DS:  '✦',   // double star
+};
+
+const MESSIER_COLOR = {
+  GC:  'rgba(255, 200, 100, 0.85)',  // warm gold
+  OC:  'rgba(150, 220, 255, 0.85)',  // light blue
+  DN:  'rgba(180, 120, 255, 0.85)',  // purple
+  PN:  'rgba(100, 255, 200, 0.85)',  // teal
+  SNR: 'rgba(255, 100, 100, 0.85)',  // red
+  Gx:  'rgba(255, 160, 80,  0.85)',  // orange
+  MW:  'rgba(200, 200, 255, 0.60)',  // pale blue
+  DS:  'rgba(220, 220, 255, 0.85)',  // white-blue
+};
+
+function drawMessierObjects(ctx, lst, lat, cx, cy, R) {
+  MESSIER.forEach(obj => {
+    const { alt, az } = equatorialToHorizontal(obj.ra, obj.dec, lst, lat);
+    if (alt < 0) return;
+    const { x, y } = polarProject(az, alt, cx, cy, R);
+
+    const color  = MESSIER_COLOR[obj.type] || 'rgba(200,200,200,0.8)';
+    const symbol = MESSIER_SYMBOL[obj.type] || '○';
+
+    // glow
+    ctx.save();
+    ctx.filter    = 'blur(4px)';
+    ctx.fillStyle = color.replace('0.85', '0.25');
+    ctx.beginPath();
+    ctx.arc(x, y, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.filter    = 'none';
+
+    // symbol
+    ctx.fillStyle    = color;
+    ctx.font         = '11px sans-serif';
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(symbol, x, y);
+
+    // label — ID and common name if it has one
+    const label = obj.name ? `${obj.id} ${obj.name}` : obj.id;
+    ctx.fillStyle    = color;
+    ctx.font         = '9px sans-serif';
+    ctx.textAlign    = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, x + 8, y);
+
+    ctx.restore();
+  });
+}
+
+//===========================================================
 //  Sun Position
 //===========================================================
 /*
@@ -676,34 +991,54 @@ function drawMoon(ctx, x, y, jd) {
   const sunCoords  = sunPosition(jd);
   const moonCoords = moonPosition(jd);
   const elongation = mod360(moonCoords.ra - sunCoords.ra);
+  // const elongation = mod360(sunCoords.ra - moonCoords.ra);
   //  elong=0   → cos=1  → dx=-r  → shadow centered  → moon fully dark 
   //  elong=90  → cos=0  → dx=0   → shadow half off   → half lit        
   //  elong=180 → cos=-1 → dx=+r  → shadow fully off  → fully lit      
   //  elong=270 → cos=0  → dx=0   → shadow half off   → half lit       
 
   // Terminator is an ellipse: x-radius varies from -r (new) → 0 (quarter) → +r (full)
-  // Negative xRadius means the ellipse bulges left (waxing), positive = right (waning)
-  const terminatorX = Math.cos(toRad(elongation)) * r;  // -r..+r
+  // Negative terminatorX means the ellipse bulges left (waxing), positive = right (waning)
+  const terminatorX = Math.cos(toRad(elongation)) * r;  // -r...0...+r
   const waxing      = elongation < 180;
+  // console.log(terminatorX, elongation, waxing) Sanity Check
 
   ctx.fillStyle = 'rgba(5, 8, 20, 0.93)';
 
   // Draw shadow as: half-circle on the dark side + terminator ellipse
   ctx.beginPath();
+  // Waxing, lit on right, dark on left
   if (waxing) {
-    // lit on right, dark on left
+    
     // left semicircle (dark half)
     ctx.arc(x, y, r, Math.PI / 2, 3 * Math.PI / 2);
-    // terminator ellipse back to start (bulges right when near new, left when near full)
-    ctx.ellipse(x, y, Math.abs(terminatorX), r, 0, 3 * Math.PI / 2, Math.PI / 2);
-  } else {
-    // lit on left, dark on right
+
+    // terminator is concave when near new (elongation~0), 
+    // flat at quarter, is convex when near full
+    // anticlockwise=false → concave, anticlockwise=true → convex
+    // lit portion concave: New Moon → Waxing Cresent → First Quarter
+    // lit portion convex: First Quarter → Waxing Gibbous → Full Moon
+    const isGibbous = terminatorX < 0;   // terminatorX < 0 when elongation > 90 (near full)
+    
+    // terminator ellipse (bulges right when near new, left when near full)
+    ctx.ellipse(x, y, Math.abs(terminatorX), r, 0, 3 * Math.PI / 2, Math.PI / 2, isGibbous);
+  } 
+  // waning, lit on left, dark on right
+  else {
     // right semicircle (dark half)
     ctx.arc(x, y, r, -Math.PI / 2, Math.PI / 2);
+
+    // terminator is convex when near full (elongation~180), 
+    // flat at last quarter, concave when near new
+    // anticlockwise=false → bulges right, anticlockwise=true → bulges left
+    // lit portion convex: Full Moon → Waning Gibbous → Last Quarter
+    // lit portion concave: Last Quarter → Waning Cresent → New Moon
+    const isCresent = terminatorX > 0;   // terminatorX < 0 when elongation > 90 (near full)
+
     // terminator ellipse
-    ctx.ellipse(x, y, Math.abs(terminatorX), r, 0, Math.PI / 2, -Math.PI / 2);
+    ctx.ellipse(x, y, Math.abs(terminatorX), r, 0, Math.PI / 2, -Math.PI / 2, isCresent);
   }
-  ctx.fill();
+  ctx.fill(); // Fill Earth's Shadow on Moon
 
   ctx.restore();
 }
@@ -1028,24 +1363,6 @@ function satelliteAzAlt(satrec, date, lat, lon, altM = 0) {
 //===========================================================
 //  Satellite State Manager
 //===========================================================
-
-// const satManager = {
-//   satellites:   [],          // array of { name, satrec }
-//   activeGroup:  'ISS',
-//   loading:      false,
-
-//   async loadGroup(groupName) {
-//     this.loading = true;
-//     this.satellites = await fetchTLEs(groupName);
-//     this.activeGroup = groupName;
-//     this.loading = false;
-//     console.log(`Loaded ${this.satellites.length} satellites for ${groupName}`);
-//   }
-// };
-
-//===========================================================
-//  Satellite State Manager
-//===========================================================
 const satManager = {
   satellites:    [],       // merged array of { name, satrec, group }
   activeGroups:  new Set(['ISS']),
@@ -1252,14 +1569,6 @@ function drawSatellite(ctx, x, y, name, color, isISS = false, hovered = false) {
 }
 
 function drawSatellites(ctx, date, lat, lon, cx, cy, R, hoveredSat = null) {
-  if (satManager.isLoading()) {
-    // ctx.fillStyle    = darkRed;
-    // ctx.font         = '12px sans-serif';
-    // ctx.textAlign    = 'left';
-    // ctx.textBaseline = 'top';
-    // ctx.fillText('Loading satellites...', 0, 100);
-    // return [];
-  }
 
   let visCount = 0;
   const projSats = [];
@@ -1290,74 +1599,6 @@ function drawSatellites(ctx, date, lat, lon, cx, cy, R, hoveredSat = null) {
 
   //=== Satellite info box ===//
   updateSatInfoOverlay(projSats);
-
-  // const activeGroups = [...satManager.activeGroups];
-  // if (activeGroups.length > 0) {
-  //   const W   = ctx.canvas.width;
-  //   const H   = ctx.canvas.height;
-  //   const pad = 8;
-  //   const lh  = 15;
-
-  //   // count visible and total per group
-  //   const groupVis   = {};
-  //   const groupTotal = {};
-  //   projSats.forEach(s => {
-  //     groupVis[s.group] = (groupVis[s.group] || 0) + 1;
-  //   });
-  //   satManager.satellites.forEach(({ group }) => {
-  //     groupTotal[group] = (groupTotal[group] || 0) + 1;
-  //   });
-
-  //   const satLines = activeGroups.map(g => ({
-  //     label: g,
-  //     vis:   groupVis[g]   || 0,
-  //     total: groupTotal[g] || 0,
-  //     color: SAT_COLORS[g] || 'rgba(200,200,200,0.9)',
-  //   }));
-
-    // const boxW = 210;
-    // const boxH = satLines.length * lh + pad * 2;
-    // const bx   = W - boxW - pad;   // right-aligned
-    // const by   = H - boxH - pad;   // bottom-aligned
-
-    // // background
-    // ctx.save();
-    // ctx.fillStyle = 'rgba(5, 5, 18, 0.70)';
-    // ctx.beginPath();
-    // ctx.roundRect(bx - pad / 2, by, boxW, boxH, 4);
-    // ctx.fill();
-
-    // ctx.font         = '11px monospace';
-    // ctx.textBaseline = 'middle';
-
-    // // title
-    // ctx.fillStyle = lightRed;
-    // ctx.font      = '500 11px monospace';
-    // ctx.textAlign = 'left';
-    // ctx.fillText('Satellites Visible', bx + 4, by + pad + lh / 2 - 25);
-
-    // satLines.forEach(({ label, vis, total, color }, i) => {
-    //   const y = by + pad + i * lh + lh / 2;
-
-    //   // colored dot
-    //   ctx.fillStyle = color;
-    //   ctx.beginPath();
-    //   ctx.arc(bx + 4, y, 3, 0, Math.PI * 2);
-    //   ctx.fill();
-
-    //   // group name
-    //   ctx.fillStyle = darkRed;
-    //   ctx.textAlign = 'left';
-    //   ctx.fillText(label + ':', bx + 12, y);
-
-    //   // vis / total in group color
-    //   ctx.fillStyle = color;
-    //   ctx.textAlign = 'right';
-    //   ctx.fillText(`${vis} / ${total}`, bx + boxW - pad, y);
-    // });
-
-    // ctx.restore();
-  // }
 
   return projSats;
 }
@@ -1411,48 +1652,52 @@ function seasonalEvents(year) {
  * Returns { begin, end } as local time strings, or '—' if not applicable.
  */
 function astronomicalTwilight(lat, lon, now) {
-  const H0 = -18;
-
-  // Get the correct UT date boundary using local date components
+  const H0      = -18;
+  const latR    = toRad(lat);
   const localDate = new Date(now);
-  const jd0 = julianDate(new Date(Date.UTC(
+  const jd0     = julianDate(new Date(Date.UTC(
     localDate.getFullYear(),
     localDate.getMonth(),
     localDate.getDate()
-  )));  // midnight UT on the local calendar date
+  )));
+  const gmst0   = mod360(280.46061837 + 360.98564736629 * jd0);
 
-  const latR  = toRad(lat);
-  const gmst0 = mod360(280.46061837 + 360.98564736629 * jd0);
-
-  function calcTime(body) {
-    const { ra, dec } = body(jd0 + 0.5);
-    const cosH = (Math.sin(toRad(H0)) - Math.sin(latR) * Math.sin(toRad(dec)))
-               / (Math.cos(latR) * Math.cos(toRad(dec)));
-    if (Math.abs(cosH) > 1) return { rise: null, set: null };
-    const H0deg = toDeg(Math.acos(cosH));
-    let mT = mod360(ra - lon - gmst0) / 360;
-    let mR = ((mT - H0deg / 360) % 1 + 1) % 1;
-    let mS = ((mT + H0deg / 360) % 1 + 1) % 1;
-
-    function refine(m) {
-      const { ra: raM, dec: decM } = body(jd0 + m);
-      const gmstM = mod360(gmst0 + 360.985647 * m);
-      let lha = mod360(gmstM + lon - raM);
-      if (lha > 180) lha -= 360;
-      const hM = toDeg(Math.asin(
-        Math.sin(latR) * Math.sin(toRad(decM))
-        + Math.cos(latR) * Math.cos(toRad(decM)) * Math.cos(toRad(lha))
-      ));
-      const dm = (hM - H0) / (360 * Math.cos(toRad(decM)) * Math.cos(latR) * Math.sin(toRad(lha)));
-      return ((m + dm) * 24 + 24) % 24;
-    }
-    return { rise: refine(mR), set: refine(mS) };
+  function sunAltAtFraction(m) {
+    const { ra, dec } = sunPosition(jd0 + m);
+    const gmstM = mod360(gmst0 + 360.985647 * m);
+    let lha = mod360(gmstM + lon - ra);
+    if (lha > 180) lha -= 360;
+    return toDeg(Math.asin(
+      Math.sin(latR) * Math.sin(toRad(dec))
+      + Math.cos(latR) * Math.cos(toRad(dec)) * Math.cos(toRad(lha))
+    ));
   }
 
-  const { rise, set } = calcTime(sunPosition);
-  if (rise === null) return { begin: '—', end: '—' };
+  // Refine a crossing time starting from initial guess m0
+  // direction: +1 = rising crossing, -1 = setting crossing
+  function refineCrossing(m0) {
+    let m = m0;
+    for (let i = 0; i < 10; i++) {
+      const { ra, dec } = sunPosition(jd0 + m);
+      const gmstM = mod360(gmst0 + 360.985647 * m);
+      let lha = mod360(gmstM + lon - ra);
+      if (lha > 180) lha -= 360;
+      const hM = toDeg(Math.asin(
+        Math.sin(latR) * Math.sin(toRad(dec))
+        + Math.cos(latR) * Math.cos(toRad(dec)) * Math.cos(toRad(lha))
+      ));
+      const dm = (hM - H0) / (360 * Math.cos(toRad(dec)) * Math.cos(latR) * Math.sin(toRad(lha)));
+      m -= dm;
+      if (Math.abs(dm) < 1e-6) break;
+    }
+    return m;
+  }
 
-  // h is decimal UT hours — anchor to midnight UT of the local date
+  // Dawn: sun rising through -18°, happens in morning — start guess 0.25 (6am UT)
+  // Dusk: sun setting through -18°, happens in evening — start guess 0.75 (6pm UT)
+  const dawn = refineCrossing(0.25);
+  const dusk = refineCrossing(0.75);
+
   function utToLocal(h) {
     const d = new Date(Date.UTC(
       localDate.getFullYear(),
@@ -1463,7 +1708,7 @@ function astronomicalTwilight(lat, lon, now) {
     return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
-  return { begin: utToLocal(rise), end: utToLocal(set) };
+  return { begin: utToLocal(dawn), end: utToLocal(dusk) };
 }
 
 //===========================================================
@@ -1596,19 +1841,6 @@ function nextSeasonalEvent(jd) {
   const next = candidates[0];
   return { name: next.name, jd: next.jd, daysAway: next.jd - jd };
 }
-
-// function moonPhaseInfo(jd) {
-//   const sunCoords    = sunPosition(jd);
-//   const moonCoords   = moonPosition(jd);
-//   const elongation   = mod360(moonCoords.ra - sunCoords.ra);
-//   const illumination = (1 - Math.cos(toRad(elongation))) / 2 * 100;
-//   const ageDays      = elongation / 360 * 29.53059;
-//   const NAMES   = ['New Moon','Waxing Crescent','First Quarter','Waxing Gibbous',
-//                    'Full Moon','Waning Gibbous','Last Quarter','Waning Crescent'];
-//   const SYMBOLS = ['🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘'];
-//   const idx = Math.round(elongation / 45) % 8;
-//   return { elongation, illumination, phaseName: NAMES[idx], symbol: SYMBOLS[idx], ageDays };
-// }
 
 //===========================================================
 //  Moon Phase
@@ -1836,136 +2068,6 @@ function nextUSNOEvent(seasonsData, now) {
 //===========================================================
 //  Astro info state
 //===========================================================
-// const astroInfo = {
-//   rstt:     null,
-//   seasons:  [],
-//   lastKey:  null,
-//   fetching: false,
-
-//   /**
-//    * Fire-and-forget refresh. Uses REAL current date/location,
-//    * never the toffset-adjusted time. Calls redrawFn once on completion.
-//    */
-//   async refresh(lat, lon, redrawFn) {
-//     const key = `${dateStringReal()}|${lat.toFixed(1)}|${lon.toFixed(1)}`;
-//     if (key === this.lastKey || this.fetching) return;
-//     this.lastKey  = key;
-//     this.fetching = true;
-
-//     const [rstt, seasons] = await Promise.all([
-//       fetchUSNO_RSTT(lat, lon),
-//       fetchUSNO_Seasons(),
-//     ]);
-
-//     this.rstt     = rstt;       // may be null on failure
-//     this.seasons  = seasons;    // may be [] on failure
-//     this.fetching = false;
-//     redrawFn();
-//   },
-// };
-
-//===========================================================
-//  Astro Info Overlay
-//===========================================================
-
-// function drawAstroInfoOverlay(ctx, jd, lat, lon, now, W, H) {
-
-  // fire background refresh using real lat/lon, real time
-  // redraw is the global redraw function defined in wiring section
-  // astroInfo.refresh(lat, lon, redraw);
-
-  // // ── assemble display values ──
-  // let sunRise, sunSet, moonRise, moonSet, astroBegin, astroEnd, phaseDisp, nextEv;
-
-  // // FIX: check astroInfo.rstt (not null) AND that its .data is not null
-  // if (astroInfo.rstt !== null && astroInfo.rstt !== undefined) {
-  //   const d  = astroInfo.rstt;   // may be null if fetch failed
-  //   if (d && d.sundata) {
-  //     sunRise  = usnoTime(d.sundata, 'Rise');
-  //     sunSet   = usnoTime(d.sundata, 'Set');
-  //     moonRise = usnoTime(d.moondata, 'Rise');
-  //     moonSet  = usnoTime(d.moondata, 'Set');
-  //     phaseDisp = usnoPhaseDisplay(d);
-  //     // astronomical twilight always computed locally
-  //     const at = parseTwilightForDate(astroInfo.twilight, new Date());
-  //     astroBegin = at.begin;
-  //     astroEnd   = at.end;
-  //   } else {
-  //     // fetch completed but returned null — USNO unavailable
-  //     sunRise = sunSet = moonRise = moonSet = 'n/a';
-  //     phaseDisp = usnoPhaseDisplay(null);
-  //   }
-  // } else {
-  //   // not yet fetched — show local fallback
-  //   sunRise = sunSet = moonRise = moonSet = astroBegin = astroEnd = '…';
-  //   const lp  = moonPhaseInfo(jd);
-  //   phaseDisp = {
-  //     phaseName:    lp.phaseName,
-  //     symbol:       lp.symbol,
-  //     illumination: lp.illumination.toFixed(0) + '%',
-  //     nextPhase:    '(loading…)',
-  //   };
-  // }
-
-  // // countdown — use USNO seasons if available, else local Meeus
-  // nextEv = nextUSNOEvent(astroInfo.seasons, now);
-  // if (!nextEv) {
-  //   const ev = nextSeasonalEvent(jd);
-  //   nextEv = {
-  //     name:      ev.name,
-  //     dateStr:   '',
-  //     countdown: formatCountdown(ev.daysAway),
-  //   };
-  // }
-
-  // // ── build lines ──
-  // const lines = [
-  //   { label: 'Moon:',      value: `${phaseDisp.symbol} ${phaseDisp.phaseName}  ${phaseDisp.illumination}` },
-  //   { label: '',           value: phaseDisp.nextPhase },
-  //   { label: 'Moonrise:',  value: moonRise },
-  //   { label: 'Moonset:',   value: moonSet  },
-  //   { label: 'Sunrise:',   value: sunRise  },
-  //   { label: 'Sunset:',    value: sunSet   },
-  //   { label: 'Astro Dawn:', value: astroBegin },
-  //   { label: 'Astro Dusk:', value: astroEnd   }, 
-  //   { label: nextEv.name + ':', value: nextEv.countdown },
-  //   { label: '',           value: nextEv.dateStr },
-  // ].filter(l => l.label || l.value);
-
-  // if (astroInfo.fetching) lines.push({ label: '', value: '⟳ fetching USNO…' });
-
-  // ── draw box ──
-  // const pad  = 8;
-  // const lh   = 17;
-  // const boxW = 255;
-  // const boxH = lines.length * lh + pad * 2;
-  // const bx   = pad;
-  // const by   = H - boxH - pad;
-
-  // ctx.save();
-  // ctx.fillStyle = 'rgba(5, 5, 18, 0.70)';
-  // ctx.beginPath();
-  // ctx.roundRect(bx - pad / 2, by, boxW, boxH, 4);
-  // ctx.fill();
-
-  // ctx.font         = '11px monospace';
-  // ctx.textBaseline = 'middle';
-
-  // lines.forEach(({ label, value }, i) => {
-  //   const y = by + pad + i * lh + lh / 2;
-  //   if (label) {
-  //     ctx.fillStyle = darkRed;
-  //     ctx.textAlign = 'left';
-  //     ctx.fillText(label, bx, y);
-  //   }
-  //   ctx.fillStyle = lightRed;
-  //   ctx.textAlign = 'left';
-  //   ctx.fillText(value, bx + (label ? 135 : 4), y);
-  // });
-
-  // ctx.restore();
-// }
-
 function updateAstroInfoOverlay(jd, lat, lon, now) {
   astroInfo.refresh(lat, lon, redraw);
 
@@ -2004,6 +2106,22 @@ function updateAstroInfoOverlay(jd, lat, lon, now) {
     nextEv = { name: ev.name, dateStr: '', countdown: formatCountdown(ev.daysAway) };
   }
 
+  // const el = document.getElementById('moon_info');
+  // if (!el) return;
+  // el.innerHTML = `
+  //   <div><span class="info-label">Moon:</span>        <span class="info-value">${phaseDisp.symbol} ${phaseDisp.phaseName}  ${phaseDisp.illumination}</span></div>
+  //   <div><span class="info-label"></span>             <span class="info-value">${phaseDisp.nextPhase}</span></div>
+  //   <div><span class="info-label">Moonrise:</span>    <span class="info-value">${moonRise}</span></div>
+  //   <div><span class="info-label">Moonset:</span>     <span class="info-value">${moonSet}</span></div>
+  //   <div><span class="info-label">Sunrise:</span>     <span class="info-value">${sunRise}</span></div>
+  //   <div><span class="info-label">Sunset:</span>      <span class="info-value">${sunSet}</span></div>
+  //   <div><span class="info-label">Astro Dawn:</span>  <span class="info-value">${astroBegin}</span></div>
+  //   <div><span class="info-label">Astro Dusk:</span>  <span class="info-value">${astroEnd}</span></div>
+  //   <div><span class="info-label">${nextEv.name}:</span> <span class="info-value">${nextEv.countdown}</span></div>
+  //   <div><span class="info-label"></span>             <span class="info-value">${nextEv.dateStr}</span></div>
+  //   ${astroInfo.fetching ? '<div><span class="info-value">⟳ fetching USNO…</span></div>' : ''}
+  // `;
+
   const el = document.getElementById('moon_info');
   if (!el) return;
   el.innerHTML = `
@@ -2013,8 +2131,6 @@ function updateAstroInfoOverlay(jd, lat, lon, now) {
     <div><span class="info-label">Moonset:</span>     <span class="info-value">${moonSet}</span></div>
     <div><span class="info-label">Sunrise:</span>     <span class="info-value">${sunRise}</span></div>
     <div><span class="info-label">Sunset:</span>      <span class="info-value">${sunSet}</span></div>
-    <div><span class="info-label">Astro Dawn:</span>  <span class="info-value">${astroBegin}</span></div>
-    <div><span class="info-label">Astro Dusk:</span>  <span class="info-value">${astroEnd}</span></div>
     <div><span class="info-label">${nextEv.name}:</span> <span class="info-value">${nextEv.countdown}</span></div>
     <div><span class="info-label"></span>             <span class="info-value">${nextEv.dateStr}</span></div>
     ${astroInfo.fetching ? '<div><span class="info-value">⟳ fetching USNO…</span></div>' : ''}
@@ -2154,7 +2270,10 @@ function drawSkyPlot(canvas, params, hoveredStar = null, hoveredSat = null) {
     drawSolarSystem(ctx, jd, lst, lat, cx, cy, R);
 
     // after drawSolarSystem(ctx, jd, lst, lat, cx, cy, R);
-    drawPlanets(ctx, jd, lst, lat, cx, cy, R);
+    if (showPlanets) drawPlanets(ctx, jd, lst, lat, cx, cy, R);
+
+    //=== Messier Objects ===//
+    if (showMessier) drawMessierObjects(ctx, lst, lat, cx, cy, R);
 
     //===  Zodiac References ===//
 
@@ -2199,10 +2318,16 @@ function drawSkyPlot(canvas, params, hoveredStar = null, hoveredSat = null) {
 
     updateSatInfoOverlay(projSats);
 
+    //=== Draw Constellation Lines (if active) ===//
+    if (activeCatalog === 'constellation') {
+      drawConstellationLines(ctx, lst, lat, cx, cy, R);
+      drawConstellationNames(ctx, lst, lat, cx, cy, R);
+    }
+
     //=== Project & Draw Stars ===//
     const projected = [];
-  
-    STARS.forEach(star => {
+
+    getActiveCatalog().forEach(star => {
         const { alt, az } = equatorialToHorizontal(star.ra, star.dec, lst, lat);
         if (alt < 0) return;   // below horizon — skip
         const { x, y } = polarProject(az, alt, cx, cy, R);
@@ -2435,7 +2560,7 @@ document.querySelectorAll('#sat-group-options input[type=checkbox]').forEach(cb 
 // initial load — whatever is checked on page load (ISS by default)
 satManager.setGroups(getCheckedGroups()).then(redraw);
 
-//=== Night mode toggle ===//
+//=== Night mode Toggle ===//
 const nightBtn = document.getElementById('night-mode-btn');
 if (nightBtn) {
   nightBtn.addEventListener('click', () => {
@@ -2446,6 +2571,28 @@ if (nightBtn) {
     redraw();
   });
 }
+
+//=== Planet Toggle ===//
+document.getElementById('show-planets').addEventListener('change', e => {
+  showPlanets = e.target.checked;
+  redraw();
+});
+
+//=== Messier Toggle ===//
+document.getElementById('show-messier').addEventListener('change', e => {
+  showMessier = e.target.checked;
+  redraw();
+});
+
+//=== Star Toggle ===//
+document.querySelectorAll('input[name="star-catalog"]').forEach(rb => {
+  rb.addEventListener('change', e => {
+    activeCatalog = e.target.value;
+    if (activeCatalog === 'yale'          && !yaleStars)          loadYaleCatalog();
+    if (activeCatalog === 'constellation' && !constellationStars) loadConstellationData();
+    redraw();
+  });
+});
 
 // Refresher
 redraw();
