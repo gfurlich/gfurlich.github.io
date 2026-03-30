@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en"> <!--- Header --->
+<head>
+    <title>
+        
+        Greg Furlich
+    </title>
+    <meta itemprop="description" name="description" content="Personal Website of Greg Furlich, PhD" />
+    <meta name="author" content="Greg Furlich">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body><header>
+
+    <nav>
+       <div class="topnav">
+           <a href="/">
+               <p>
+                   <h> Greg Furlich</h>
+               </p>
+           </a>
+       </div>
+
+       <!-- Top Navigation Menu -->
+        <div class="topnav-app">
+
+            <!-- Navigation links (hidden by default) -->
+            <div id="myLinks">
+                <a href="/Research.html"><p>Research</p></a>
+                <a href="/Education.html"><p>Education</p></a>
+                <a href="/Projects.html"><p>Projects</p></a>
+                <a href="/Hobbies.html"><p>Hobbies</p></a>
+                <a href="/Photography.html"><p>Photography</p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich"><p><img id="CU" src="/assets/logos/cub.png" height=30></p></a>
+                <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/logos/github.png" height=30></p></a>
+                <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/logos/in.png" height=30></p></a>
+                <a href="mailto:greg.furlich@colorado.edu"><p><img id="mzil" src="/assets/logos/mail.png" height=30></p></a>
+            </div>
+
+            <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <i class="fa fa-bars" height=30></i>
+            </a>
+        </div>
+
+   </nav>
+
+   <script src="/assets/js/app_menu.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</header>
+
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <!--
+════════════════════════════════════════════════════════════════
+  GLOBAL SATELLITE FULL DISK VIEWER
+  Jekyll page — drop at root or in _pages/
+
+  All images are served as plain <img> tags (no canvas, no CORS).
+  Each satellite has a static "latest image" URL that the provider
+  updates in-place on their CDN, so no timestamp logic is needed.
+
+  SOURCES
+  ───────────────────────────────────────────────────────────────
+  GOES-19  (75.2°W  — Americas/Atlantic)
+    https://cdn.star.nesdis.noaa.gov/GOES19/ABI/FD/GEOCOLOR/1808x1808.jpg
+    Provider: NOAA/NESDIS · update cadence: ~10 min
+
+  GOES-18  (136.9°W — Pacific/Western US)
+    https://cdn.star.nesdis.noaa.gov/GOES18/ABI/FD/GEOCOLOR/1808x1808.jpg
+    Provider: NOAA/NESDIS · update cadence: ~10 min
+
+  Himawari-9  (140.7°E — Asia/Pacific)
+    https://www.ospo.noaa.gov/products/imagery/fulldisk.html
+    Provider: JMA via NOAA/NESDIS CDN · update cadence: ~10 min
+
+  Meteosat MSG  (0° — Europe/Africa)
+    https://eumetview.eumetsat.int/static-images/latestImages/EUMETSAT_MSG_RGBNatColourEnhncd_FullResolution.jpg
+    Provider: EUMETSAT · update cadence: ~15 min (free tier)
+
+  Meteosat IODC  (45.5°E — Indian Ocean/Middle East)
+    https://eumetview.eumetsat.int/static-images/latestImages/EUMETSAT_MSGIODC_RGBNatColourEnhncd_FullResolution.jpg
+    Provider: EUMETSAT · update cadence: ~15 min (free tier)
+
+  Cache-busting: each URL gets ?cb=<N> where N is Math.floor(Date.now()
+  / cadence_ms) — changes only when a new image should be available,
+  so the browser caches within the window but fetches fresh afterward.
+════════════════════════════════════════════════════════════════
+-->
+
+<div style="height: 5vh"></div>
+
+<!-- Satellite Viewer -->
+<div class="sv">
+
+    <header class="sv-head">
+      <h1>
+        Geostationary Satellite Fulldisk Viewer
+        <small>True Color / GeoColor</small>
+      </h1>
+      <div class="sv-now">
+        <div id="sv-utc">—</div>
+        <div id="sv-loaded">Last loaded: —</div>
+      </div>
+    </header>
+  
+    <nav class="sv-nav" role="group" aria-label="Select satellite">
+      <button class="sv-pill active"        data-sat="g18">GOES-18 West</button>
+      <button class="sv-pill" data-sat="g19">GOES-19 East</button>
+      <button class="sv-pill"        data-sat="msg">Meteosat-12</button>
+      <button class="sv-pill"        data-sat="iodc">Meteosat IODC</button>
+      <button class="sv-pill"        data-sat="h9">Himawari-9</button>
+    </nav>
+  
+    <div class="sv-card">
+      <div class="sv-info">
+        <div>
+          <div class="sv-sat-name"   id="sv-name">GOES-19</div>
+          <div class="sv-sat-detail" id="sv-detail">75.2°W · Americas &amp; Atlantic · NOAA/NESDIS</div>
+        </div>
+        <div class="sv-tags" id="sv-tags">
+          <span class="sv-tag">GeoColor</span>
+          <span class="sv-tag">~10 min</span>
+        </div>
+      </div>
+  
+      <div class="sv-stage" id="sv-stage">
+        <!-- Layer 1: plain image (GOES, Meteosat) -->
+        <img id="sv-img" src="" alt="Satellite full disk image" />
+  
+        <!-- Layer 2: stitched canvas (Himawari) -->
+        <canvas id="sv-canvas"></canvas>
+  
+        <!-- Spinner (shared) -->
+        <div class="sv-spin" id="sv-spin">
+          <div class="sv-ring"></div>
+          <div class="sv-spin-label" id="sv-spin-label">Loading…</div>
+          <div class="sv-tile-bar"   id="sv-tile-bar">
+            <div class="sv-tile-fill" id="sv-tile-fill"></div>
+          </div>
+        </div>
+  
+        <!-- Error overlay -->
+        <div class="sv-err" id="sv-err">
+          <strong>Image unavailable</strong>
+          <span id="sv-err-msg">Could not load from provider CDN.</span>
+        </div>
+      </div>
+  
+      <div class="sv-globe-strip" aria-hidden="true">
+        <button class="sv-globe-btn active" data-sat="g18"><span class="dot"></span>137°W GOES-18</button>
+        <button class="sv-globe-btn"        data-sat="g19"><span class="dot"></span>75°W GOES-19</button>
+        <button class="sv-globe-btn"        data-sat="msg"><span class="dot"></span>0° MSG</button>
+        <button class="sv-globe-btn"        data-sat="iodc"><span class="dot"></span>45.5°E IODC</button>
+        <button class="sv-globe-btn"        data-sat="h9"><span class="dot"></span>140.7°E Himawari</button>
+      </div>
+
+      <div class="sv-foot">
+        <div class="sv-foot-meta">
+          <div id="sv-credit">NOAA / NESDIS · GeoColor composite (CIRA)</div>
+          <div id="sv-note">Updates approximately every 10 minutes</div>
+        </div>
+        <div class="sv-foot-links">
+          <a id="sv-src-link"      href="#" target="_blank" rel="noopener">Source ↗</a>
+          <a id="sv-provider-link" href="#" target="_blank" rel="noopener">Provider ↗</a>
+        </div>
+      </div>
+    </div>
+  
+  </div><!-- /sv -->
+
+  <!-- Load Scripts -->
+<script src="/assets/js/satellite_fulldisk_viewer.js"></script>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+  <!--- Footer Content --->
+  	&copy Greg Furlich 2026 <br>
+  	All Rights Reserved<br>
+</footer>
+</body>
+
+</html>

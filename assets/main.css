@@ -1,4 +1,6 @@
+@charset "UTF-8";
 /** Reset some basic elements */
+@import url("https://fonts.googleapis.com/css2?family=Syne+Mono&family=Outfit:wght@300;400;500;600&display=swap");
 body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, hr, dl, dd, ol, ul, figure { margin: 0; padding: 0; }
 
 /** Basic styling */
@@ -320,3 +322,88 @@ footer { background-color: #0f3f63; font-family: 'Fira Sans', sans-serif; color:
 .active-app { background-color: #04AA6D; color: white; }
 
 .topnav-app img { height: 30px; width: auto; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.sv { --bg: #f7f6f2; --surface: #ffffff; --border: #e2e0d8; --text: #ffffff; --muted: #9b9890; --accent: #2a6ebb; --tag-bg: #edf2fb; --tag-text: #2a6ebb; --sans: 'Fira', sans-serif; --mono: 'Fira Code', monospace; --radius: 10px; background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 60vh; padding: 2.5rem 1.25rem 4rem; }
+
+/* ── Header ──────────────────────────────────── */
+.sv-head { max-width: 900px; margin: 0 auto 2rem; display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+
+.sv-head h1 { font-family: var(--sans); font-weight: 600; font-size: clamp(1.1rem, 3vw, 1.45rem); letter-spacing: -0.01em; line-height: 1.15; color: var(--text); }
+
+.sv-head h1 small { display: block; font-family: var(--mono); font-size: 0.65rem; font-weight: 400; color: var(--muted); letter-spacing: 0.05em; margin-top: 3px; text-transform: uppercase; }
+
+.sv-now { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); letter-spacing: 0.04em; text-align: right; line-height: 1.6; }
+
+/* ── Satellite nav pills ─────────────────────── */
+.sv-nav { max-width: 900px; margin: 0 auto 1.25rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; }
+
+.sv-pill { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.04em; padding: 0.4rem 1rem; border-radius: 999px; border: 1.5px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s; white-space: nowrap; line-height: 1; }
+
+.sv-pill:hover { border-color: var(--accent); color: var(--accent); }
+
+.sv-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ── Image card ──────────────────────────────── */
+.sv-card { max-width: 900px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+
+/* Info bar above image */
+.sv-info { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+
+.sv-sat-name { font-weight: 600; font-size: 0.9rem; color: var(--text); }
+
+.sv-sat-detail { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); letter-spacing: 0.04em; margin-top: 2px; }
+
+.sv-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+.sv-tag { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.04em; padding: 0.2rem 0.55rem; border-radius: 4px; background: var(--tag-bg); color: var(--tag-text); }
+
+/* Stage */
+.sv-stage { position: relative; background: #000; aspect-ratio: 1 / 1; overflow: hidden; }
+
+/* Both layers sit full-size; only the active one is visible */
+.sv-stage img, .sv-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; /* img only, harmless on canvas */ display: block; opacity: 0; transition: opacity 0.4s ease; }
+
+.sv-stage img.visible, .sv-stage canvas.visible { opacity: 1; }
+
+/* spinner */
+.sv-spin { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem; background: #000; z-index: 4; transition: opacity 0.3s; }
+
+.sv-spin.hidden { opacity: 0; pointer-events: none; }
+
+.sv-ring { width: 32px; height: 32px; border: 2px solid rgba(255, 255, 255, 0.1); border-top-color: rgba(255, 255, 255, 0.7); border-radius: 50%; animation: svSpin 0.8s linear infinite; }
+
+@keyframes svSpin { to { transform: rotate(360deg); } }
+/* error */
+.sv-err { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; background: #050505; z-index: 3; font-family: var(--mono); font-size: 0.7rem; color: rgba(255, 255, 255, 0.4); text-align: center; padding: 2rem; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+
+.sv-err.visible { opacity: 1; pointer-events: auto; }
+
+.sv-err strong { font-size: 0.85rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 0.25rem; }
+
+/* Footer bar below image */
+.sv-foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; padding: 0.65rem 1rem; border-top: 1px solid var(--border); }
+
+.sv-foot-meta { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); letter-spacing: 0.03em; line-height: 1.7; }
+
+.sv-foot-links { display: flex; gap: 1rem; }
+
+.sv-foot-links a { font-family: var(--mono); font-size: 0.65rem; color: var(--accent); text-decoration: none; letter-spacing: 0.03em; opacity: 0.8; transition: opacity 0.15s; }
+
+.sv-foot-links a:hover { opacity: 1; text-decoration: underline; }
+
+/* small world map strip */
+.sv-globe-strip { max-width: 900px; margin: 1.25rem auto 0; display: flex; gap: 0.4rem; }
+
+.sv-globe-btn { flex: 1; height: 40px; border: 1.5px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-family: var(--mono); font-size: 0.6rem; color: var(--muted); letter-spacing: 0.03em; transition: border-color 0.15s, color 0.15s, background 0.15s; padding: 0 0.5rem; white-space: nowrap; overflow: hidden; }
+
+.sv-globe-btn .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background 0.15s; }
+
+.sv-globe-btn:hover, .sv-globe-btn.active { border-color: var(--accent); color: var(--accent); }
+
+.sv-globe-btn.active .dot { background: var(--accent); }
+
+@media (max-width: 560px) { .sv-globe-strip { display: none; }
+  .sv-nav { gap: 0.35rem; }
+  .sv-pill { font-size: 0.65rem; padding: 0.35rem 0.75rem; } }
