@@ -407,3 +407,41 @@ footer { background-color: #0f3f63; font-family: 'Fira Sans', sans-serif; color:
 @media (max-width: 560px) { .sv-globe-strip { display: none; }
   .sv-nav { gap: 0.35rem; }
   .sv-pill { font-size: 0.65rem; padding: 0.35rem 0.75rem; } }
+.recipe-card { max-width: 720px; margin: 2rem auto; padding: 2rem 2.5rem; font-size: 15px; line-height: 1.7; }
+
+.recipe-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.25rem; }
+
+.recipe-title { font-size: 1.5rem; font-weight: 700; margin: 0; }
+
+.recipe-yield { font-size: 0.85rem; color: #666; white-space: nowrap; }
+
+.recipe-description { color: #555; font-style: italic; margin: 0.25rem 0 1.25rem; }
+
+.recipe-meta { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: #f0f0f0; border-radius: 4px; font-size: 0.85rem; }
+
+.recipe-meta-item { display: flex; flex-direction: column; gap: 2px; }
+
+.recipe-meta-label { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.7rem; color: #888; font-weight: 600; }
+
+.recipe-meta-value { color: #333; font-weight: 500; }
+
+.recipe-body { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; }
+@media (max-width: 560px) { .recipe-body { grid-template-columns: 1fr; } }
+
+.recipe-section-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #0f3f63; border-bottom: 1px solid #ddd; padding-bottom: 0.3rem; margin: 0 0 0.75rem; }
+
+.recipe-ingredients { list-style: none; padding: 0; margin: 0; }
+
+.recipe-ingredients li { padding: 0.3rem 0; border-bottom: 1px solid #ebebeb; color: #444; font-size: 0.9rem; }
+.recipe-ingredients li:last-child { border-bottom: none; }
+
+.recipe-ingredients .ingredient-amount { font-weight: 600; color: #222; margin-right: 4px; }
+
+.recipe-steps { list-style: none; padding: 0; margin: 0; counter-reset: step-counter; }
+
+.recipe-steps li { display: flex; gap: 0.85rem; margin-bottom: 1rem; font-size: 0.92rem; color: #444; counter-increment: step-counter; }
+.recipe-steps li::before { content: counter(step-counter); min-width: 24px; height: 24px; border-radius: 50%; background: #333; color: #fff; font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+.recipe-notes { margin-top: 1.5rem; padding: 0.75rem 1rem; border-left: 3px solid #ccc; background: #f7f7f7; font-size: 0.88rem; color: #555; font-style: italic; }
+
+.recipe-notes strong { font-style: normal; color: #333; }
