@@ -325,7 +325,7 @@ footer { background-color: #0f3f63; font-family: 'Fira Sans', sans-serif; color:
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.sv { --bg: #f7f6f2; --surface: #ffffff; --border: #e2e0d8; --text: #ffffff; --muted: #9b9890; --accent: #2a6ebb; --tag-bg: #edf2fb; --tag-text: #2a6ebb; --sans: 'Fira', sans-serif; --mono: 'Fira Code', monospace; --radius: 10px; background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 60vh; padding: 2.5rem 1.25rem 4rem; }
+.sv { --bg: #f7f6f2; --surface: #ffffff; --border: #e2e0d8; --text: #ffffff; --muted: #9b9890; --accent: #2a6ebb; --tag-bg: #edf2fb; --tag-text: #2a6ebb; --sans: 'Fira', sans-serif; --mono: 'Fira Code', monospace; --radius: 10px; color: var(--text); font-family: var(--sans); min-height: 60vh; padding: 2.5rem 1.25rem 4rem; }
 
 /* ── Header ──────────────────────────────────── */
 .sv-head { max-width: 900px; margin: 0 auto 2rem; display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
@@ -407,6 +407,67 @@ footer { background-color: #0f3f63; font-family: 'Fira Sans', sans-serif; color:
 @media (max-width: 560px) { .sv-globe-strip { display: none; }
   .sv-nav { gap: 0.35rem; }
   .sv-pill { font-size: 0.65rem; padding: 0.35rem 0.75rem; } }
+/* ── Layout ───────────────────────────────────────────────── */
+.gv { --bg: #f7f6f2; --surface: #ffffff; --border: #e2e0d8; --text: #1a1916; --muted: #9b9890; --accent: #2a6ebb; --sans: 'Fira', sans-serif; --mono: 'Fira Code', monospace; color: var(--text); font-family: var(--sans); padding: 2rem 1.25rem 4rem; }
+
+.gv-head { max-width: 860px; margin: 0 auto 1.5rem; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+
+.gv-head h1 { font-family: var(--sans); font-weight: 600; font-size: clamp(1rem, 2.5vw, 1.35rem); letter-spacing: -0.01em; margin: 0; }
+
+.gv-head h1 small { display: block; font-family: var(--mono); font-size: 0.62rem; font-weight: 400; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 3px; }
+
+.gv-status { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); letter-spacing: 0.04em; text-align: right; line-height: 1.7; }
+
+/* ── Globe card ───────────────────────────────────────────── */
+.gv-card { max-width: 860px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+
+.gv-globe-wrap { position: relative; background: #04080f; cursor: grab; user-select: none; touch-action: none; }
+
+.gv-globe-wrap:active { cursor: grabbing; }
+
+.gv-globe-wrap svg { display: block; width: 100%; height: auto; }
+
+/* ── Legend / footer ──────────────────────────────────────── */
+.gv-foot { padding: 0.65rem 1rem; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; }
+
+.gv-legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1.2rem; font-family: var(--mono); font-size: 0.62rem; color: var(--muted); letter-spacing: 0.04em; }
+
+.gv-legend-item { display: flex; align-items: center; gap: 0.35rem; }
+
+.gv-swatch { width: 22px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+.gv-fetch-status { font-family: var(--mono); font-size: 0.62rem; color: var(--muted); letter-spacing: 0.04em; }
+
+/* ── Meso table ───────────────────────────────────────────── */
+.gv-table-wrap { max-width: 860px; margin: 1.25rem auto 0; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+
+.gv-table-head { padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 0.68rem; font-weight: 600; color: var(--text); letter-spacing: 0.04em; }
+
+table.gv-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.02em; }
+
+table.gv-table th { text-align: left; padding: 0.4rem 0.8rem; color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 500; white-space: nowrap; }
+
+table.gv-table td { padding: 0.4rem 0.8rem; color: var(--text); border-bottom: 1px solid var(--border); vertical-align: top; }
+
+table.gv-table tr:last-child td { border-bottom: none; }
+
+table.gv-table tr:hover td { background: var(--bg); }
+
+.tag { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.58rem; font-weight: 600; letter-spacing: 0.06em; }
+
+.tag-east { background: #fef3e2; color: #b45309; }
+
+.tag-west { background: #eff6ff; color: #1d4ed8; }
+
+.tag-m1 { background: #fef9c3; color: #713f12; }
+
+.tag-m2 { background: #fef3e2; color: #92400e; }
+
+.tag-m1w { background: #dbeafe; color: #1e3a8a; }
+
+.tag-m2w { background: #ede9fe; color: #4c1d95; }
+
+@media (max-width: 560px) { table.gv-table th:nth-child(5), table.gv-table td:nth-child(5) { display: none; } }
 .recipe-card { max-width: 720px; margin: 2rem auto; padding: 2rem 2.5rem; font-size: 15px; line-height: 1.7; }
 
 .recipe-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.25rem; }

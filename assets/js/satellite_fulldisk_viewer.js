@@ -77,7 +77,7 @@
   var elLoaded   = document.getElementById('sv-loaded');
   var elUTC      = document.getElementById('sv-utc');
 
-  var current = 'g19';
+  var current = 'g18';
 
   /* ── Live UTC clock ───────────────────────────────────── */
   function fmtUTC(d) {
@@ -167,10 +167,15 @@
     el.addEventListener('click', function () { switchSat(el.dataset.sat); });
   });
 
-  /* ── Init with GOES-18 ────────────────────────────────── */
-  var initSat = SATS['g18'];
+  /* ── Init ─────────────────────────────────────────────── */
+  var INIT_KEY = 'g18';
+  current = INIT_KEY;
+  /* Sync button active states to match the init satellite */
+  document.querySelectorAll('[data-sat]').forEach(function (el) {
+    el.classList.toggle('active', el.dataset.sat === INIT_KEY);
+  });
+  var initSat = SATS[INIT_KEY];
   setMeta(initSat);
   loadImg(initSat);
 
 })();
-
