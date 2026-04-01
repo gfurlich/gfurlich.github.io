@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en"> <!--- Header --->
+<head>
+    <title>
+        
+        Greg Furlich
+    </title>
+    <meta itemprop="description" name="description" content="Personal Website of Greg Furlich, PhD" />
+    <meta name="author" content="Greg Furlich">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body><header>
+
+    <nav>
+       <div class="topnav">
+           <a href="/">
+               <p>
+                   <h> Greg Furlich</h>
+               </p>
+           </a>
+       </div>
+
+       <!-- Top Navigation Menu -->
+        <div class="topnav-app">
+
+            <!-- Navigation links (hidden by default) -->
+            <div id="myLinks">
+                <a href="/apps/starchart.html"><p>Star Chart</p></a>
+                <a href="/apps/fulldisk.html"><p>Fulldisk View</p></a>
+                <!-- <a href="/apps/mesoview.html"><p>Meso View</p></a> -->
+                <a href="/Research.html"><p>Research</p></a>
+                <a href="/Education.html"><p>Education</p></a>
+                <a href="/Projects.html"><p>Projects</p></a>
+                <a href="/Hobbies.html"><p>Hobbies</p></a>
+                <a href="/Photography.html"><p>Photography</p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="CU" src="/assets/logos/cub.png" height=30>
+                    </p>
+                </a>
+                <a href="https://github.com/gfurlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="github" src="/assets/logos/github.png" height=30>
+                    </p>
+                </a>
+                <a href="https://www.linkedin.com/in/greg-furlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="linkedin" src="/assets/logos/in.png" height=30>
+                    </p>
+                </a>
+                <a href="mailto:greg.furlich@colorado.edu">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="mzil" src="/assets/logos/mail.png" height=30>
+                    </p>
+                </a>
+            </div>
+
+            <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <i class="fa fa-bars" height=30></i>
+            </a>
+        </div>
+
+   </nav>
+
+   <script src="/assets/js/app_menu.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</header>
+
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div style="height: 5vh"></div>
+
+<!-- Time Display -->
+<div id="time-display" style="
+  text-align: center;
+  font-size: 15px;
+  /* padding: 6px 0 4px; */
+  letter-spacing: 0.05em;
+"></div>
+
+<!-- Night Mode -->
+<!-- <div style="float:right" class="row">
+  <button id="night-mode-btn">🌜︎︎ Night Mode</button>
+</div> -->
+
+<!-- <div id="lst-display" style="font-size:12px;color:grey;text-align:center;padding-bottom:4px"></div> -->
+<div class="canvas-container">
+
+  <!-- Night Mode Button-->
+  <button id="night-mode-btn">🌜︎︎ Night Mode</button>
+
+  <!-- Time Info - Upper Left-->
+  <div class='info_box' id="time_info" style="top: 30px;left: 40px">Time Info</div>
+
+  <!-- Moon and Sun Info - Lower Left-->
+  <div class='info_box' id="moon_info" style="bottom: 30px;left: 40px">Moon Info</div>
+
+  <!-- Sat Info - Lower Right-->
+  <div class='info_box' id="sat_info" style="bottom: 30px;right: 40px">Sat Info</div>
+
+  <!-- Star Chart Canvas -->
+  <canvas id="sky" width="1000" height="1000"></canvas>
+
+</div> 
+
+<!-- Star and Satellite Info -->
+<div id="info" style="
+  font-size:12px;
+  color:grey;
+  min-height:18px;
+  padding:2px 0;
+  text-align:center"></div>
+
+<!-- Display Controls -->
+<div class="ctrl">
+
+  <!-- Lat and Lon Inputs -->
+  <div class="row" style="
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+    align-items:center;
+    gap:24px">
+    <div style="display:flex;align-items:center;gap:6px">
+      <label>Lat [°]</label><input type="number" id="lat" value="40.0" step="0.1">
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <label>Lon [°]</label><input type="number" id="lon" value="-105.3" step="0.1">
+    </div>
+  </div>
+
+  <div class="row" style="flex-direction:column;gap:4px">
+
+  <!-- Time Offset Control-->
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center">
+    <label>Time Offset [hrs]</label>
+    <span id="toffset-display" style="font-size:12px;color:grey">0.0 hrs</span>
+  </div>
+  <input type="range" id="toffset" value="0" min="-24" max="24" step="0.5"
+          style="width:100%;cursor:pointer"
+          oninput="document.getElementById('toffset-display').textContent = (+this.value).toFixed(1) + ' hrs'">
+          <datalist id="toffset-ticks">
+          <option value="-24"></option>
+          <option value="-20"></option>
+          <option value="-16"></option>
+          <option value="-12"></option>
+          <option value="-8"></option>
+          <option value="-4"></option>
+          <option value="0"></option>
+          <option value="4"></option>
+          <option value="8"></option>
+          <option value="12"></option>
+          <option value="16"></option>
+          <option value="20"></option>
+          <option value="24"></option>
+        </datalist>
+        <div style="display:flex;
+          justify-content:space-between;
+          font-size:10px;
+          color:grey;
+          padding:0 1px">
+          <span>-24 hrs</span>
+          <span>-20</span>
+          <span>-16</span>
+          <span>-12</span>
+          <span>-8</span>
+          <span>-4</span>
+          <span>0</span>
+          <span>+4</span>
+          <span>+8</span>
+          <span>+12</span>
+          <span>+16</span>
+          <span>+20</span>
+          <span>+24 hrs</span>
+        </div>
+  </div>
+  <!-- Satellite Controls -->
+  <div class="row">
+    <label>Display Satellite Groups:</label>
+    <div id="sat-group-options" style="display:flex; flex-wrap:wrap; gap:6px;">
+      <label style="font-size:12px"><input type="checkbox" value="ISS" checked> ISS</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Brightest"> Brightest</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Earth Observing"> Earth Obs</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Weather"> Weather</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Comms"> Comms</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="GNSS"> GNSS</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Science"> Science</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Cubesat"> Cubesat</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Calibration"> Calibration</label><br>
+      <label style="font-size:12px"><input type="checkbox" value="Starlink"> Starlink</label><br>
+    </div>
+  </div>
+
+  <!-- Planet Controls -->
+  <div class="row">
+    Show Planets: 
+    <label><input type="checkbox" id="show-planets" checked></label>
+    Show Messier Objects:
+    <label><input type="checkbox" id="show-messier"></label>
+  </div>
+
+  <!-- Star Toggle -->
+  <div class="row">
+    <label>Star Catalogue:</label>
+    <label><input type="radio" name="star-catalog" value="usno" checked> USNO Nav (57)</label>
+    <label><input type="radio" name="star-catalog" value="yale"> Yale BSC (~9000)</label>
+    <label><input type="radio" name="star-catalog" value="constellation"> Constellation Stars</label>
+  </div>
+
+</div>
+
+<!-- Load Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/satellite.js/4.1.3/satellite.min.js"></script>
+<script src="/assets/js/starchart.js"></script>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+  <!--- Footer Content --->
+  	&copy Greg Furlich 2026 <br>
+  	All Rights Reserved<br>
+</footer>
+</body>
+
+</html>
