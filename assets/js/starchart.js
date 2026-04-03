@@ -1001,7 +1001,9 @@ function drawMoon(ctx, x, y, jd) {
   // Negative terminatorX means the ellipse bulges left (waxing), positive = right (waning)
   const terminatorX = Math.cos(toRad(elongation)) * r;  // -r...0...+r
   const waxing      = elongation < 180;
-  // console.log(terminatorX, elongation, waxing) Sanity Check
+  const isGibbous = terminatorX < 0;   // terminatorX < 0 when elongation > 90 (near full)
+
+  // console.log('Moon info',terminatorX, elongation, waxing, isGibbous) // Sanity Check
 
   ctx.fillStyle = 'rgba(5, 8, 20, 0.93)';
 
@@ -1018,7 +1020,7 @@ function drawMoon(ctx, x, y, jd) {
     // anticlockwise=false → concave, anticlockwise=true → convex
     // lit portion concave: New Moon → Waxing Cresent → First Quarter
     // lit portion convex: First Quarter → Waxing Gibbous → Full Moon
-    const isGibbous = terminatorX < 0;   // terminatorX < 0 when elongation > 90 (near full)
+    // const isGibbous = terminatorX < 0;   // terminatorX < 0 when elongation > 90 (near full)
     
     // terminator ellipse (bulges right when near new, left when near full)
     ctx.ellipse(x, y, Math.abs(terminatorX), r, 0, 3 * Math.PI / 2, Math.PI / 2, isGibbous);
@@ -1033,10 +1035,10 @@ function drawMoon(ctx, x, y, jd) {
     // anticlockwise=false → bulges right, anticlockwise=true → bulges left
     // lit portion convex: Full Moon → Waning Gibbous → Last Quarter
     // lit portion concave: Last Quarter → Waning Cresent → New Moon
-    const isCresent = terminatorX > 0;   // terminatorX < 0 when elongation > 90 (near full)
+    // const isCresent = terminatorX < 0;   // terminatorX < 0 when elongation > 90 (near full)
 
     // terminator ellipse
-    ctx.ellipse(x, y, Math.abs(terminatorX), r, 0, Math.PI / 2, -Math.PI / 2, isCresent);
+    ctx.ellipse(x, y, Math.abs(terminatorX), r, 0, Math.PI / 2, -Math.PI / 2, isGibbous);
   }
   ctx.fill(); // Fill Earth's Shadow on Moon
 
