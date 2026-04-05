@@ -506,3 +506,64 @@ table.gv-table tr:hover td { background: var(--bg); }
 .recipe-notes { margin-top: 1.5rem; padding: 0.75rem 1rem; border-left: 3px solid #ccc; background: #f7f7f7; font-size: 0.88rem; color: #555; font-style: italic; }
 
 .recipe-notes strong { font-style: normal; color: #333; }
+
+/* ── Featured Photo ───────────────────────────────────────── */
+.featured-wrap { position: relative; overflow: hidden; border-radius: 2px; border: 0.5px solid var(--border); cursor: pointer; }
+
+.featured-wrap img { width: 100%; display: block; filter: saturate(0.88) brightness(0.92); transition: transform 0.6s ease, filter 0.45s ease; }
+
+.featured-wrap:hover img { transform: scale(1.02); filter: saturate(1.05) brightness(1); }
+
+.featured-badge { position: absolute; top: 14px; left: 14px; background: var(--red); color: #f0e0d8; font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; padding: 5px 12px; border-radius: 1px; }
+
+.featured-meta { position: absolute; bottom: 0; left: 0; right: 0; padding: 48px 18px 16px; background: linear-gradient(to top, rgba(6, 5, 10, 0.9) 0%, transparent 100%); }
+
+.featured-meta .fc { font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--text); }
+
+.featured-meta .ft { font-size: 9px; color: var(--red-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 4px; }
+
+/* ── Masonry Grid ─────────────────────────────────────────── */
+.masonry { columns: 3; column-gap: 8px; }
+
+@media (max-width: 700px) { .masonry { columns: 2; } }
+@media (max-width: 420px) { .masonry { columns: 1; } }
+.m-item { break-inside: avoid; margin-bottom: 8px; position: relative; overflow: hidden; border-radius: 2px; border: 0.5px solid transparent; cursor: pointer; transition: border-color 0.3s ease; }
+
+.m-item:hover { border-color: var(--red-dim); }
+
+.m-item img { width: 100%; display: block; filter: saturate(0.85) brightness(0.9); transition: transform 0.5s ease, filter 0.4s ease; }
+
+.m-item:hover img { transform: scale(1.05); filter: saturate(1.05) brightness(1); }
+
+.m-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(6, 5, 10, 0.85) 0%, transparent 55%); opacity: 0; transition: opacity 0.35s ease; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px 10px 9px; }
+
+.m-item:hover .m-overlay { opacity: 1; }
+
+.m-caption { font-family: var(--serif); font-style: italic; font-size: 11.5px; color: var(--text); line-height: 1.45; }
+
+.m-tag { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--red-dim); margin-top: 3px; }
+
+/* ── Lightbox ─────────────────────────────────────────────── */
+.lb { display: none; position: fixed; inset: 0; background: rgba(4, 3, 8, 0.96); z-index: 9999; align-items: center; justify-content: center; flex-direction: column; padding: 1rem; }
+
+.lb.open { display: flex; }
+
+.lb-img-wrap { position: relative; max-width: min(92vw, 960px); max-height: 82vh; }
+
+.lb-img-wrap img { max-width: 100%; max-height: 78vh; display: block; border-radius: 2px; border: 0.5px solid var(--border); }
+
+.lb-close { position: absolute; top: -38px; right: 0; background: none; border: none; color: var(--text-dim); font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; cursor: pointer; text-transform: uppercase; padding: 4px 0; }
+
+.lb-close:hover { color: var(--red); }
+
+.lb-bottom { margin-top: 14px; width: 100%; max-width: min(92vw, 960px); display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; }
+
+.lb-cap { font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--text); line-height: 1.4; }
+
+.lb-tag { font-size: 9px; letter-spacing: 0.15em; color: var(--red-dim); text-transform: uppercase; margin-top: 4px; }
+
+.lb-nav { display: flex; gap: 8px; flex-shrink: 0; }
+
+.lb-nav button { background: none; border: 0.5px solid var(--border); color: var(--text-dim); font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 7px 14px; border-radius: 1px; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+
+.lb-nav button:hover { border-color: var(--red-dim); color: var(--text); }
