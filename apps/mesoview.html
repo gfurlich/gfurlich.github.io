@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en"> <!--- Header --->
+<head>
+    <title>
+        
+        Greg Furlich
+    </title>
+    <meta itemprop="description" name="description" content="Personal Website of Greg Furlich, PhD" />
+    <meta name="author" content="Greg Furlich">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body><header>
+
+    <nav>
+       <div class="topnav">
+           <a href="/">
+               <p>
+                   <h> Greg Furlich</h>
+               </p>
+           </a>
+       </div>
+
+       <!-- Top Navigation Menu -->
+        <div class="topnav-app">
+
+            <!-- Navigation links (hidden by default) -->
+            <div id="myLinks">
+                <a href="/apps/starchart.html"><p>Star Chart</p></a>
+                <a href="/apps/fulldisk.html"><p>Fulldisk View</p></a>
+                <!-- <a href="/apps/mesoview.html"><p>Meso View</p></a> -->
+                <a href="/Research.html"><p>Research</p></a>
+                <a href="/Education.html"><p>Education</p></a>
+                <a href="/Projects.html"><p>Projects</p></a>
+                <a href="/Hobbies.html"><p>Hobbies</p></a>
+                <a href="/Photography.html"><p>Photography</p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="CU" src="/assets/logos/cub.png" height=30>
+                    </p>
+                </a>
+                <a href="https://github.com/gfurlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="github" src="/assets/logos/github.png" height=30>
+                    </p>
+                </a>
+                <a href="https://www.linkedin.com/in/greg-furlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="linkedin" src="/assets/logos/in.png" height=30>
+                    </p>
+                </a>
+                <a href="mailto:greg.furlich@colorado.edu">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="mzil" src="/assets/logos/mail.png" height=30>
+                    </p>
+                </a>
+            </div>
+
+            <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <i class="fa fa-bars" height=30></i>
+            </a>
+        </div>
+
+   </nav>
+
+   <script src="/assets/js/app_menu.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</header>
+
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <!--
+════════════════════════════════════════════════════════════════
+  GOES MESOSCALE GLOBE VIEWER
+  Jekyll page
+
+  Renders a D3 orthographic globe showing:
+    · Land / country borders from world-atlas TopoJSON (CDN)
+    · GOES-19 (East, 75.2°W) and GOES-18 (West, 136.9°W) sub-satellite
+      points and visible-disk outlines
+    · Live GOES M1/M2 mesoscale sector boxes fetched from the NWS
+      ADMNES product via api.weather.gov
+    · Smooth mouse-drag (and touch) rotation with momentum
+
+  DATA SOURCE: NWS Administrative Messages (ADMNES)
+    https://api.weather.gov/products?type=ADM&location=NES
+    Each approved meso request is a structured text bulletin with
+    CENTER POINT in decimal lat/lon. We parse all products issued
+    in the past 24 h, deduplicate by SAT+MESO, and keep the most
+    recent active entry for each sector.
+
+  CORS: api.weather.gov sets Access-Control-Allow-Origin: *
+  TOPO: cdn.jsdelivr.net/npm/world-atlas@2 (also open CORS)
+════════════════════════════════════════════════════════════════
+-->
+
+<div style="height: 5vh"></div>
+
+<div class="gv">
+
+  <header class="gv-head">
+    <h1>
+      GOES Mesoscale Globe Viewer
+      <small>GOES East &amp; West · Live M1 &amp; M2 sector positions</small>
+    </h1>
+    <div class="gv-status">
+      <div id="gv-utc">—</div>
+      <div id="gv-hint">Drag to rotate</div>
+    </div>
+  </header>
+   
+    <!-- Latest scan activity -->
+     <!-- TODO: Make pretty -->
+    <!-- <div class="gv-scan-row" id="gv-scan-row">
+      <div class="gv-scan-card">
+        <div class="sc-label"><span class="sc-dot" style="background:var(--m1e)"></span>East M1</div>
+        <div class="sc-time" id="sc-e1-time">Loading…</div>
+        <div class="sc-pos"  id="sc-e1-pos">—</div>
+      </div>
+      <div class="gv-scan-card">
+        <div class="sc-label"><span class="sc-dot" style="background:var(--m2e)"></span>East M2</div>
+        <div class="sc-time" id="sc-e2-time">Loading…</div>
+        <div class="sc-pos"  id="sc-e2-pos">—</div>
+      </div>
+      <div class="gv-scan-card">
+        <div class="sc-label"><span class="sc-dot" style="background:var(--m1w)"></span>West M1</div>
+        <div class="sc-time" id="sc-w1-time">Loading…</div>
+        <div class="sc-pos"  id="sc-w1-pos">—</div>
+      </div>
+      <div class="gv-scan-card">
+        <div class="sc-label"><span class="sc-dot" style="background:var(--m2w)"></span>West M2</div>
+        <div class="sc-time" id="sc-w2-time">Loading…</div>
+        <div class="sc-pos"  id="sc-w2-pos">—</div>
+      </div>
+    </div> -->
+   
+    <!-- Globe -->
+    <div class="gv-card">
+      <div class="gv-globe-wrap" id="gv-wrap">
+        <svg id="gv-svg" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+   
+      <div class="gv-foot">
+        <div class="gv-legend">
+          <!-- <div class="gv-legend-item">
+            <div class="gv-swatch" style="background:#264f8c;border:1.5px solid #5b9bd5"></div> GOES-19 East disk
+          </div>
+          <div class="gv-legend-item">
+            <div class="gv-swatch" style="background:#1e4a3d;border:1.5px solid #4caf8a"></div> GOES-18 West disk
+          </div> -->
+          <div class="gv-legend-item">
+            <div class="gv-swatch" style="background:rgba(255,190,0,0.25);border:1.5px solid #ffbe00"></div> East M1
+          </div>
+          <div class="gv-legend-item">
+            <div class="gv-swatch" style="background:rgba(255,100,0,0.25);border:1.5px solid #ff6400"></div> East M2
+          </div>
+          <div class="gv-legend-item">
+            <div class="gv-swatch" style="background:rgba(80,180,255,0.25);border:1.5px solid #50b4ff"></div> West M1
+          </div>
+          <div class="gv-legend-item">
+            <div class="gv-swatch" style="background:rgba(180,100,255,0.25);border:1.5px solid #b464ff"></div> West M2
+          </div>
+          <div class="gv-legend-item">
+            <!-- TODO: Align up -->
+            <div style="color: #e8f060; font-size: 22px; vertical-align: top">&#9650</div> Launch site
+            <!-- <div class="gv-swatch" style="background:rgba(232,240,96,0.25);border:1.5px solid #e8f060">&#9650</div>  Launch site -->
+          </div>
+        </div>
+        <div class="gv-fetch-status" id="gv-fetch-status">Initializing…</div>
+      </div>
+    </div>
+   
+    <!-- Active meso table -->
+    <div class="gv-table-wrap" id="gv-table-wrap">
+      <div class="gv-table-head">Active Mesoscale Requests ( Source: <a href='https://forecast.weather.gov/product.php?site=NWS&issuedby=NES&product=ADM&format=CI&version=1&glossary=0'>NWS ADMNES</a>)</div>
+      <table class="gv-table">
+        <thead>
+          <tr>
+            <th>Sat</th><th>Meso</th><th>Center (Lat/Lon)</th>
+            <th>Start (UTC)</th><th>End (UTC)</th>
+            <th>Requester</th><th>Reason</th>
+          </tr>
+        </thead>
+        <tbody id="gv-tbody">
+          <tr><td colspan="7" style="color:var(--muted);text-align:center;padding:1rem">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+   
+
+    <!-- Upcoming meso table — hidden when empty -->
+    <div class="gv-table-wrap" id="gv-upcoming-wrap" style="margin-top:1rem;display:none">
+      <div class="gv-table-head">Upcoming Mesoscale Requests ( Source: <a href='https://forecast.weather.gov/product.php?site=NWS&issuedby=NES&product=ADM&format=CI&version=1&glossary=0'>NWS ADMNES</a>)</div>
+      <table class="gv-table">
+        <thead>
+          <tr>
+            <th>Sat</th><th>Meso</th><th>Center (Lat/Lon)</th>
+            <th>Start (UTC)</th><th>End (UTC)</th>
+            <th>Requester</th><th>Reason</th>
+          </tr>
+        </thead>
+        <tbody id="gv-upcoming-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Data Sources box -->
+    <div style="height: 5vh"></div>
+    <div class="gv-info">
+      <strong>Data Sources:</strong><br>
+      <a href='https://forecast.weather.gov/product.php?site=NWS&issuedby=NES&product=ADM&format=CI&version=1&glossary=0'>NWS ADMNES</a> for requested meso positions.<br>
+      <a href="https://registry.opendata.aws/noaa-goes/">NOAA GOES S3 bucket</a> listing to confirm active scans &amp; last scan time<br>
+      <a href='https://www.ospo.noaa.gov/operations/messages.html'>NOAA Office of Satellite and Prodcut Operations Atellite Alert Messages</a>
+    </div>
+
+    <div id="gv-tooltip" style="
+    position: fixed;
+    display: none;
+    pointer-events: none;
+    background: rgba(4,8,15,0.92);
+    border: 1px solid rgba(232,240,96,0.5);
+    color: #e8f060;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    padding: 0.3rem 0.65rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 100;
+  "></div>
+  
+  </div><!-- /gv -->
+
+<!-- Load Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+
+<script src="/assets/js/mesoviewer.js"></script>
+
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+  <!--- Footer Content --->
+  	&copy Greg Furlich 2026 <br>
+  	All Rights Reserved<br>
+</footer>
+</body>
+
+</html>

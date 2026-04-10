@@ -453,19 +453,22 @@ table.gv-table tr:last-child td { border-bottom: none; }
 
 table.gv-table tr:hover td { background: var(--bg); }
 
-.tag { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.58rem; font-weight: 600; letter-spacing: 0.06em; }
+.tag { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 3px; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.09em; border: 1px solid; font-family: var(--font-mono); }
 
-.tag-east { background: #fef3e2; color: #b45309; }
+.tag-east { color: var(--accent1); border-color: var(--accent1); background: rgba(91, 155, 213, 0.1); }
 
-.tag-west { background: #eff6ff; color: #1d4ed8; }
+.tag-west { color: var(--accent2); border-color: var(--accent2); background: rgba(76, 175, 138, 0.1); }
 
-.tag-m1 { background: #fef9c3; color: #713f12; }
+.tag-m1 { color: var(--m1e); border-color: var(--m1e); background: rgba(255, 190, 0, 0.1); }
 
-.tag-m2 { background: #fef3e2; color: #92400e; }
+.tag-m2 { color: var(--m2e); border-color: var(--m2e); background: rgba(255, 100, 0, 0.1); }
 
-.tag-m1w { background: #dbeafe; color: #1e3a8a; }
+.tag-m1w { color: var(--m1w); border-color: var(--m1w); background: rgba(80, 180, 255, 0.1); }
 
-.tag-m2w { background: #ede9fe; color: #4c1d95; }
+.tag-m2w { color: var(--m2w); border-color: var(--m2w); background: rgba(180, 100, 255, 0.1); }
+
+/* ── data source info box ── */
+.gv-info { margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); font-size: 0.72rem; line-height: 1.7; color: var(--muted); font-family: var(--font-mono); }
 
 @media (max-width: 560px) { table.gv-table th:nth-child(5), table.gv-table td:nth-child(5) { display: none; } }
 .recipe-card { max-width: 720px; margin: 2rem auto; padding: 2rem 2.5rem; font-size: 15px; line-height: 1.7; }
