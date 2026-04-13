@@ -36,7 +36,7 @@
             <div id="myLinks">
                 <a href="/apps/starchart.html"><p>Star Chart</p></a>
                 <a href="/apps/fulldisk.html"><p>Fulldisk View</p></a>
-                <!-- <a href="/apps/mesoview.html"><p>Meso View</p></a> -->
+                <a href="/apps/mesoview.html"><p>Meso View</p></a>
                 <a href="/Research.html"><p>Research</p></a>
                 <a href="/Education.html"><p>Education</p></a>
                 <a href="/Projects.html"><p>Projects</p></a>
@@ -118,6 +118,22 @@
     https://eumetview.eumetsat.int/static-images/latestImages/EUMETSAT_MSGIODC_RGBNatColourEnhncd_FullResolution.jpg
     Provider: EUMETSAT · update cadence: ~15 min (free tier)
 
+  GK2A AMI  (128.2°E — Asia-Pacific) - Not Functional
+  Raw NetCDF4 L1B from noaa-gk2a-pds S3 bucket, decoded in-browser
+  via h5wasm (WebAssembly HDF5 reader). GeoColor composite built from:
+    VI006 (red  0.64µm 0.5km)  fd005ge  11000×11000 px native
+    VI005 (green 0.51µm 1km)   fd010ge   5500×5500  px native
+    VI004 (blue  0.47µm 1km)   fd010ge   5500×5500  px native
+  Provider: KMA / NOAA NODD · update cadence: ~10 min
+  ⚠ CORS: noaa-gk2a-pds S3 does not send Access-Control-Allow-Origin.
+    Set gk2a.corsProxy in the JS, or pre-render server-side.
+
+  DSCOVR EPIC (Deep Space Climate Observatory — Sun Earth L1 orbit)
+    https://epic.gsfc.nasa.gov/about/api
+    https://epic.gsfc.nasa.gov/
+    https://www.nesdis.noaa.gov/our-satellites/currently-flying/dscovr-deep-space-climate-observatory
+    Provider: NOAA/NASA · update cadence: ~2hrs
+
   Cache-busting: each URL gets ?cb=<N> where N is Math.floor(Date.now()
   / cadence_ms) — changes only when a new image should be available,
   so the browser caches within the window but fetches fresh afterward.
@@ -145,7 +161,9 @@
       <button class="sv-pill"         data-sat="g19">GOES-19 East</button>
       <button class="sv-pill"         data-sat="msg">Meteosat-12</button>
       <button class="sv-pill"         data-sat="iodc">Meteosat IODC</button>
+      <!-- <button class="sv-pill"         data-sat="gk2a">GK2A</button> -->
       <button class="sv-pill"         data-sat="h9">Himawari-9</button>
+      <button class="sv-pill"         data-sat="epic">DSCOVR EPIC</button>
     </nav>
   
     <div class="sv-card">
@@ -188,7 +206,9 @@
         <button class="sv-globe-btn"        data-sat="g19"><span class="dot"></span>75°W GOES-19</button>
         <button class="sv-globe-btn"        data-sat="msg"><span class="dot"></span>0° MSG</button>
         <button class="sv-globe-btn"        data-sat="iodc"><span class="dot"></span>45.5°E IODC</button>
+        <!-- <button class="sv-globe-btn"        data-sat="gk2a"><span class="dot"></span>128.2°E GK2A</button> -->
         <button class="sv-globe-btn"        data-sat="h9"><span class="dot"></span>140.7°E Himawari</button>
+        <button class="sv-globe-btn"        data-sat="epic"><span class="dot"></span>L1 EPIC</button>
       </div>
 
       <div class="sv-foot">
