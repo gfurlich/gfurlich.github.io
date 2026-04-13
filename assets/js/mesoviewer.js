@@ -2,26 +2,6 @@
   'use strict';
  
   /* ── Satellite definitions ── */
-  // var SATS = {
-  //   east: { key:'east', name:'GOES-19 East', lon:-75.2,  
-  //     diskColor:'#ffffff', diskFill:'rgba(30,60,120,0.18)', 
-  //     s3Bucket:'noaa-goes19' },
-  //   west: { key:'west', name:'GOES-18 West', lon:-136.9, 
-  //     diskColor:'#ffffff', diskFill:'rgba(20,80,60,0.18)',  
-  //     s3Bucket:'noaa-goes18' },
-  //   msat9: { key:'msat9', name:'Meteosat-9', lon:45.5, 
-  //     diskColor:'#ffffff', diskFill:'rgba(80, 64, 20, 0.18)',  
-  //     s3Bucket:'noaa-goes18' },
-  //   msat12: { key:'msat12', name:'Meteosat-12', lon:0, 
-  //     diskColor:'#ffffff', diskFill:'rgba(80, 42, 20, 0.18)',  
-  //     s3Bucket:'noaa-goes18' },
-  //   h9: { key:'himawari', name:'Himawari 9', lon:140.7, 
-  //     diskColor:'#ffffff', diskFill:'rgba(80, 24, 20, 0.18)',  
-  //     s3Bucket:'noaa-goes18' },
-  //   gk2a: { key:'gk2a', name:'GEO-KOMPSAT-2A', lon:128, 
-  //     diskColor:'#ffffff', diskFill:'rgba(78, 20, 80, 0.18)',  
-  //     s3Bucket:'noaa-goes18' },
-  // };
   var SATS = {
     east:   { key:'east',    name:'GOES-19 East',     lon:-75.2,
       diskColor:'#5b9bd5', diskFill:'rgba(91,155,213,0.15)',
@@ -43,6 +23,9 @@
       s3Bucket:'noaa-goes18' },
   };
  
+  /* Height-width of a meso sector in degrees latitude (fixed). The lon
+    half-width is derived per-box via mesoPolygon() to account for
+    the east-west stretching that occurs away from the sub-satellite point. */
   var MESO_HW = 4.5;
  
   var MESO_STYLE = {
@@ -60,11 +43,17 @@
   var SIZE = 800, CX = 400, CY = 400, R = 370;
   var CLIP_ANGLE = 81.3;
  
+  /* ── Zoom state ── */
+  var scale     = R;           /* current projection scale */
+  var MIN_SCALE = R;           /* fully zoomed out = whole globe */
+  var MAX_SCALE = R * 6;       /* ~6× zoom */
+
   // Render Order
   var svg      = d3.select('#gv-svg');
   var gSphere  = svg.append('g'); // Globe
   var gGrat    = svg.append('g'); // Graticule grid (Lat and Lon)
   var gLand    = svg.append('g'); // Landmass
+  var gStates  = svg.append('g'); // State/Province borders
   var gBorders = svg.append('g'); // Country Borders
   var gDisk    = svg.append('g'); // GOES Field of Regards
   var gNight   = svg.append('g'); // Terminator
@@ -123,6 +112,7 @@
       lat: 34.431, lon: 127.535 },
   ];
 
+    // Globe
   gSphere.append('circle').attr('cx',CX).attr('cy',CY).attr('r',R).attr('fill','#04080f');
   gSphere.append('circle').attr('cx',CX).attr('cy',CY).attr('r',R)
     .attr('fill','none').attr('stroke','rgba(100,160,255,0.12)').attr('stroke-width',2);
@@ -140,8 +130,227 @@
   // var rotation = [0, -20, 0];
   var rotation = [103, -38, 0];
  
+/* ══════════════════════════════════════════════════════════
+     GOES-R ABI FIXED GRID PROJECTION  (GOES-R PUG Vol.3 §5.1.2.8)
+
+     A GOES meso sector is 1000 × 1000 km in satellite scan-angle
+     space. We convert the center (lat, lon) → scan angles (λ, φ),
+     offset ±DELTA radians along each axis to get corners + edge
+     points, then invert each point back to (lat, lon). This gives
+     the correct asymmetric trapezoid shape at any position within
+     the field of regard.
+
+     Winding order: GeoJSON exterior rings must be CLOCKWISE when
+     viewed from outside the sphere so D3 fills the interior
+     (small) region rather than the complement hemisphere.
+  ══════════════════════════════════════════════════════════ */
+  var _GRS = (function() {
+    var a_e  = 6378137.0;
+    var f    = 1 / 298.257222101;
+    var e2   = 2*f - f*f;
+    var a_p  = a_e * Math.sqrt(1 - e2);
+    var H    = 42164160.0;       /* satellite distance from Earth centre, m */
+    // var DELTA = 500000.0 / H;   /* half-angle for 500 km at sub-sat point, rad */
+    var DELTA = 500000.0 / 35786000.0;  // = 0.01397 rad
+    var D2R  = Math.PI / 180;
+
+    /* Forward: geographic → scan angles (lam, phi) in rad.
+       Returns null if the point is behind the Earth. */
+    function fwd(lat_deg, lon_deg, lon_sat_deg) {
+      var lat     = lat_deg * D2R;
+      var lon     = lon_deg * D2R;
+      var lon_sat = lon_sat_deg * D2R;
+      var lat_c   = Math.atan((a_p*a_p) / (a_e*a_e) * Math.tan(lat));
+      var cos_lc  = Math.cos(lat_c), sin_lc = Math.sin(lat_c);
+      var r_c     = a_p / Math.sqrt(1 - (a_e*a_e - a_p*a_p)/(a_e*a_e) * cos_lc*cos_lc);
+      var dlon    = lon - lon_sat;
+      var sx = H - r_c * cos_lc * Math.cos(dlon);
+      var sy = -r_c * cos_lc * Math.sin(dlon);
+      var sz =  r_c * sin_lc;
+      if (sx < 0) return null;  /* point on far side */
+      return [
+        Math.atan(-sy / sx),
+        Math.asin(sz / Math.sqrt(sx*sx + sy*sy + sz*sz))
+      ];
+    }
+
+    /* Inverse: scan angles → geographic [lon_deg, lat_deg].
+       Returns null if the angle points into space. */
+    function inv(lam, phi, lon_sat_deg) {
+      var lon_sat = lon_sat_deg * D2R;
+      var cl = Math.cos(lam), sl = Math.sin(lam);
+      var cp = Math.cos(phi), sp = Math.sin(phi);
+      var r  = a_e / a_p;
+      var a  = sl*sl + cl*cl*(cp*cp + r*r*sp*sp);
+      var b  = -2 * H * cl * cp;
+      var c  = H*H - a_e*a_e;
+      var disc = b*b - 4*a*c;
+      if (disc < 0) return null;
+      var rs = (-b - Math.sqrt(disc)) / (2*a);
+      var sx =  rs * cl * cp;
+      var sy = -rs * sl;
+      var sz =  rs * cl * sp;
+      var lat = Math.atan(r*r * sz / Math.sqrt((H-sx)*(H-sx) + sy*sy));
+      var lon = lon_sat + Math.atan2(-sy, H - sx);
+      return [lon / D2R, lat / D2R];
+    }
+
+    return { fwd: fwd, inv: inv, DELTA: DELTA };
+  })();
+
+  /* Build a GeoJSON polygon for a meso sector using the PUG projection.
+     Returns { polygon, labelLat } or null if center is not visible. */
+  function mesoPolygon(lat, lon, satLon) {
+    var c = _GRS.fwd(lat, lon, satLon);
+    // var roundtrip = _GRS.inv(c[0], c[1], satLon);
+    // console.log('input:', lat, lon, '→ scan:', c, '→ roundtrip:', roundtrip);
+    if (!c) return null;
+    var lam_c = c[0], phi_c = c[1];
+    var D = _GRS.DELTA;
+    var N = 24;  /* samples per edge */
+
+    function pt(lam, phi) { return _GRS.inv(lam, phi, satLon); }
+
+    /* Sample one edge in scan-angle space, returning geo [lon,lat] points.
+       includeFirst=true adds the first point, false skips it (shared corner). */
+    function edge(lam0, phi0, lam1, phi1, includeFirst) {
+      var out = [];
+      for (var i = includeFirst ? 0 : 1; i <= N; i++) {
+        var t = i / N;
+        var p = pt(lam0 + (lam1-lam0)*t, phi0 + (phi1-phi0)*t);
+        if (p) out.push(p);
+      }
+      return out;
+    }
+
+    /* Check Geodetic Span */
+    // var nw_geo = _GRS.inv(lam_c - D, phi_c + D, satLon);
+    // var ne_geo = _GRS.inv(lam_c + D, phi_c + D, satLon);
+    // var se_geo = _GRS.inv(lam_c + D, phi_c - D, satLon);
+    // var sw_geo = _GRS.inv(lam_c - D, phi_c - D, satLon);
+    // console.log('center:', lat, lon);
+    // console.log('NW:', nw_geo, 'NE:', ne_geo, 'SE:', se_geo, 'SW:', sw_geo);
+    // console.log('lat span:', nw_geo[1] - se_geo[1], 'lon span:', nw_geo[0] - se_geo[0]);
+
+    var nw = [lam_c - D, phi_c + D];
+    var ne = [lam_c + D, phi_c + D];
+    var se = [lam_c + D, phi_c - D];
+    var sw = [lam_c - D, phi_c - D];
+
+    var pts = [];
+    /* Counter-clockwise winding (GeoJSON right-hand rule): NW→SW→SE→NE */
+    // pts = pts.concat(edge(nw[0],nw[1], sw[0],sw[1], true));   // left side down
+    // pts = pts.concat(edge(sw[0],sw[1], se[0],se[1], false));   // bottom
+    // pts = pts.concat(edge(se[0],se[1], ne[0],ne[1], false));   // right side up
+    // pts = pts.concat(edge(ne[0],ne[1], nw[0],nw[1], false));   // top
+    /* Clockwise winding (D3 right-hand rule): NW→NE→SE→SW */
+    pts = pts.concat(edge(nw[0],nw[1], ne[0],ne[1], true));   // top left→right
+    pts = pts.concat(edge(ne[0],ne[1], se[0],se[1], false));   // right side down
+    pts = pts.concat(edge(se[0],se[1], sw[0],sw[1], false));   // bottom right→left
+    pts = pts.concat(edge(sw[0],sw[1], nw[0],nw[1], false));   // left side up
+    pts.push(pts[0]);
+
+    if (pts.length < 4) return null;
+
+    /* Label anchor: geographic position of the top-centre of the box */
+    var topCentre = pt(lam_c, phi_c + D);
+    var labelLat  = topCentre ? topCentre[1] : lat + 6;
+
+    return {
+      polygon:  { type:'Feature', geometry:{ type:'Polygon', coordinates:[pts] } },
+      labelLat: labelLat
+    };
+  }
+
+  /* ── Look up the sat longitude for east/west keys ── */
+  function satLonForKey(satKey) {
+    if (satKey === 'east') return SATS.east.lon;
+    if (satKey === 'west') return SATS.west.lon;
+    return 0;
+  }
+ 
+    /* ══════════════════════════════════════════════════════════
+     GEOCOLOR IMAGE URL HELPERS
+ 
+     NESDIS STAR hosts meso geocolor imagery at:
+       https://cdn.star.nesdis.noaa.gov/GOES{nn}/ABI/MESO/{lat}{NS}-{lon}{EW}/GEOCOLOR/
+     The directory label rounds lat/lon to the nearest degree.
+     A "latest.jpg" symlink is always present in each directory.
+ 
+     We also build a link to the NESDIS viewer page for that meso
+     so users can browse the animation loop.
+  ══════════════════════════════════════════════════════════ */
+ 
+  /**
+   * Convert a float lat/lon to the NESDIS directory label component.
+   *   lat=42.3, lon=-115.7  →  "42N-115W"
+   *   lat=-5.1, lon=80.4    →  "5S-80E"
+   * Rounds to the nearest integer degree (matching NESDIS naming).
+   */
+  function mesoDirectoryLabel(lat, lon) {
+    var latAbs = Math.round(Math.abs(lat));
+    var lonAbs = Math.round(Math.abs(lon));
+    var latDir = lat >= 0 ? 'N' : 'S';
+    var lonDir = lon >= 0 ? 'E' : 'W';
+    return latAbs + latDir + '-' + lonAbs + lonDir;
+  }
+ 
+  /**
+   * Returns a URL to the NESDIS STAR CDN directory for the geocolor
+   * imagery of this meso slot. The "latest.jpg" in that dir is the
+   * most recent 1000×1000 px geocolor composite (updated every ~1 min).
+   */
+  function mesoGeocolorDirUrl(satKey, lat, lon) {
+    var goesNum = (satKey === 'east') ? '19' : '18';
+    var label   = mesoDirectoryLabel(lat, lon);
+    return 'https://cdn.star.nesdis.noaa.gov/GOES' + goesNum +
+           '/ABI/MESO/' + label + '/GEOCOLOR/';
+  }
+ 
+  /**
+   * Returns the direct URL to the latest 1000×1000 geocolor image.
+   * NESDIS maintains a "latest.jpg" symlink in each MESO directory.
+   */
+  function mesoGeocolorImgUrl(satKey, lat, lon) {
+    return mesoGeocolorDirUrl(satKey, lat, lon) + 'latest.jpg';
+  }
+ 
+  /**
+   * Returns a link to the NESDIS GOES imagery viewer for this meso slot.
+   * Uses the viewer's meso_geocolor.php page which shows the animation.
+   * sat param: G19 for east, G18 for west.
+   * lat/lon formatted as e.g. "42N", "115W".
+   */
+  function mesoViewerUrl(satKey, lat, lon) {
+    var satId = (satKey === 'east') ? 'G19' : 'G18';
+    var latAbs = Math.round(Math.abs(lat));
+    var lonAbs = Math.round(Math.abs(lon));
+    var latStr = latAbs + (lat >= 0 ? 'N' : 'S');
+    var lonStr = lonAbs + (lon >= 0 ? 'E' : 'W');
+    return 'https://www.star.nesdis.noaa.gov/goes/meso_geocolor.php' +
+           '?sat=' + satId + '&lat=' + latStr + '&lon=' + lonStr;
+  }
+ 
+  /**
+   * Build a small HTML snippet with both image and viewer links for a
+   * meso slot given its sat key, lat, and lon.
+   */
+  function mesoGeocolorLinks(satKey, lat, lon) {
+    var imgUrl    = mesoGeocolorImgUrl(satKey, lat, lon);
+    var viewerUrl = mesoViewerUrl(satKey, lat, lon);
+    var dirUrl    = mesoGeocolorDirUrl(satKey, lat, lon);
+    var linkStyle = 'font-family:var(--mono);font-size:0.6rem;color:var(--accent);' +
+                    'opacity:0.8;text-decoration:none;letter-spacing:0.03em';
+    return '<a href="' + viewerUrl + '" target="_blank" rel="noopener" ' +
+           'style="' + linkStyle + '" title="View GeoColor animation on NESDIS STAR">GeoColor ↗</a>';
+  }
+
   function makeProjection() {
-    return d3.geoOrthographic().scale(R).translate([CX,CY]).rotate(rotation).clipAngle(90);
+    return d3.geoOrthographic()
+      .scale(scale)          /* uses zoom-aware scale, not hardcoded R */
+      .translate([CX, CY])
+      .rotate(rotation)
+      .clipAngle(90);
   }
  
   var gratData    = d3.geoGraticule().step([15,15])();
@@ -149,6 +358,7 @@
  
   /* ── State ── */
   var worldTopo  = null;
+  var stateLines = null;   /* Natural Earth Admin 1 boundary lines */
   var mesoBoxes  = [];   /* from ADMNES */
   var scanTimes  = {};   /* {east_M1, east_M2, west_M1, west_M2} → {time, lat, lon} */
  
@@ -204,6 +414,19 @@
         .attr('stroke-width',0.3).attr('stroke-dasharray','2 2');
     }
 
+    /* State / Province borders (Admin 1) */
+    gStates.selectAll('path').remove();
+    if (stateLines) {
+      gStates.append('path')
+        .datum(stateLines)
+        .attr('d', path)
+        .attr('fill', 'none')
+        .attr('stroke', '#3a5c3a')
+        .attr('stroke-width', 1.25)
+        // .attr('stroke-width', 0.25)
+        .attr('stroke-dasharray', '1.5 2');
+    }
+
     /* Night shadow + terminator */
     gNight.selectAll('*').remove();
     var sol = solarPosition(Date.now());
@@ -228,29 +451,26 @@
         .attr('stroke-width',1.2).attr('stroke-dasharray','4 3').attr('opacity',0.9);
     });
  
-    /* Meso boxes */
+    /* ── Meso boxes (ADMNES / NetCDF sourced) ── */
     gMeso.selectAll('*').remove();
     mesoBoxes.forEach(function(box) {
-      var hw = MESO_HW;
-      var poly = { type:'Feature', geometry:{ type:'Polygon', coordinates:[[
-        [box.lon-hw, box.lat-hw],[box.lon-hw, box.lat+hw],
-        [box.lon+hw, box.lat+hw],[box.lon+hw, box.lat-hw],
-        [box.lon-hw, box.lat-hw]
-      ]]}};
       var center = proj([box.lon, box.lat]);
       if (!center) return;
-      // TODO Fix inside fill not outside
-      gMeso.append('path').datum(poly).attr('d',path)
+ 
+      var sLon   = satLonForKey(box.sat);
+      console.log('drawing box:', box.sat, box.meso, 'center:', box.lat, box.lon, 'satLon:', sLon);
+      var result = mesoPolygon(box.lat, box.lon, sLon);
+      if (!result) return;
+ 
+      gMeso.append('path').datum(result.polygon).attr('d',path)
         .attr('fill',box.style.fill).attr('stroke',box.style.stroke).attr('stroke-width',1.8);
  
-      var labelPt = proj([box.lon, box.lat + hw + 1.8]);
+      var labelPt = proj([box.lon, result.labelLat]);
       if (labelPt) {
         if (d3.geoDistance([box.lon, box.lat], visibleCenter) >= Math.PI / 2) return;
         var g = gMeso.append('g');
         var label = box.sat.toUpperCase() + ' ' + box.meso;
         var tw = label.length * 6.5 + 10;
-        // g.append('rect').attr('x',labelPt[0]-tw/2).attr('y',labelPt[1]-9)
-        //   .attr('width',tw).attr('height',14).attr('rx',3);
         g.append('rect').attr('x',labelPt[0]-tw/2).attr('y',labelPt[1]-9)
           .attr('width',tw).attr('height',14).attr('rx',3).attr('fill','rgba(4,8,15,0.82)');
         g.append('text').attr('x',labelPt[0]).attr('y',labelPt[1]+1)
@@ -261,31 +481,28 @@
       }
     });
  
-    /* Also draw boxes for scan-detected positions (if no ADMNES entry for that slot) */
+    /* Scan-detected fallback boxes (no ADMNES entry for that slot) */
     var admnesKeys = {};
     mesoBoxes.forEach(function(b){ admnesKeys[b.sat+'_'+b.meso] = true; });
     Object.keys(scanTimes).forEach(function(key) {
       if (admnesKeys[key]) return;
       var info = scanTimes[key];
       if (!info || info.lat == null || info.lon == null) return;
-      var parts  = key.split('_');   /* east_M1 */
+      var parts  = key.split('_');
       var sat    = parts[0], meso = parts[1];
       var style  = MESO_STYLE[sat] && MESO_STYLE[sat][meso] ? MESO_STYLE[sat][meso] : MESO_STYLE.east.M1;
-      var hw = MESO_HW;
-      var poly = { type:'Feature', geometry:{ type:'Polygon', coordinates:[[
-        [info.lon-hw, info.lat-hw],[info.lon+hw, info.lat-hw],
-        [info.lon+hw, info.lat+hw],[info.lon-hw, info.lat+hw],
-        [info.lon-hw, info.lat-hw]
-      ]]}};
+      var sLon   = satLonForKey(sat);
+      var result = mesoPolygon(info.lat, info.lon, sLon);
+      if (!result) return;
       var center = proj([info.lon, info.lat]);
       if (!center) return;
-      gMeso.append('path').datum(poly).attr('d',path)
+      gMeso.append('path').datum(result.polygon).attr('d',path)
         .attr('fill',style.fill).attr('stroke',style.stroke)
         .attr('stroke-width',1.2).attr('stroke-dasharray','5 3').attr('opacity',0.7);
-      var labelPt = proj([info.lon, info.lat + hw + 1.8]);
+      var labelPt = proj([info.lon, result.labelLat]);
       if (labelPt) {
         var g2 = gMeso.append('g');
-        var lbl2 = sat.toUpperCase() + ' ' + meso + ' (default)';
+        var lbl2 = sat.toUpperCase() + ' ' + meso + ' (S3)';
         var tw2 = lbl2.length * 5.8 + 10;
         g2.append('rect').attr('x',labelPt[0]-tw2/2).attr('y',labelPt[1]-9)
           .attr('width',tw2).attr('height',14).attr('rx',3).attr('fill','rgba(4,8,15,0.75)');
@@ -415,26 +632,6 @@
         .attr('fill', '#ffe050')
         .attr('stroke', '#ffaa00')
         .attr('stroke-width', 1.2);
-      /* Cross hairs */
-      // [[-14,0],[-14,0],[0,-14],[0,-14]].forEach(function(d) {
-      //   gSolar.append('line')
-      //     .attr('x1', solPt[0] + d[0]*0.25).attr('y1', solPt[1] + d[1]*0.25)
-      //     .attr('x2', solPt[0] + d[0]).attr('y2', solPt[1] + d[1])
-      //     .attr('stroke', '#ffe050').attr('stroke-width', 1).attr('opacity', 0.7);
-      // });
-      // Solar Rays
-      // const r = 10;
-      // [0,1,2,3,4,5,6,7].forEach(function(d) {
-      //   const angle  = (d / 8) * Math.PI * 2;
-      //   const inner  = r + 3;
-      //   const outer  = r + 8;
-      //   gSolar.append('line')
-      //     ctx.moveTo(x + inner * Math.cos(angle), y + inner * Math.sin(angle));
-      //     ctx.lineTo(x + outer * Math.cos(angle), y + outer * Math.sin(angle));
-      //     .attr('x1', solPt[0] + inner * Math.cos(angle)).attr('y1', solPt[1] + d[1]*0.25)
-      //     .attr('x2', solPt[0] + d[0]).attr('y2', solPt[1] + d[1])
-      //     .attr('stroke', '#ffe050').attr('stroke-width', 1).attr('opacity', 0.7);
-      // });
 
       /* Label */
       var latStr = sol.lat >= 0
@@ -513,6 +710,16 @@
   document.addEventListener('mouseup',onDragEnd);
   document.addEventListener('touchend',onDragEnd);
  
+  var scale = R; // current scale, starts at full-globe
+  var MIN_SCALE = R, MAX_SCALE = R * 6;
+
+  wrap.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    var factor = e.deltaY < 0 ? 1.1 : 0.91;
+    scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale * factor));
+    draw();
+  }, { passive: false });
+
   /* ── UTC clock ── */
   function tickClock(){ document.getElementById('gv-utc').textContent=new Date().toUTCString().replace(' GMT',' UTC'); }
   tickClock(); setInterval(tickClock,1000);
@@ -1005,11 +1212,16 @@
    
     /* Merge a NetCDF-sourced position into mesoBoxes */
     function updateMesoBox(slot, lat, lon, source) {
-      /* Remove any existing entry for this slot */
+      /* Don't overwrite a higher-priority ADMNES entry with a NetCDF default */
+      var existing = mesoBoxes.filter(function(b) {
+        return b.sat === slot.sat && b.meso === slot.meso;
+      })[0];
+      if (existing && existing.source === 'admnes') return;
+    
       mesoBoxes = mesoBoxes.filter(function(b){
         return !(b.sat === slot.sat && b.meso === slot.meso);
       });
-   
+    
       var style = MESO_STYLE[slot.sat][slot.meso];
       mesoBoxes.push({
         sat:    slot.sat,
@@ -1019,7 +1231,7 @@
         style:  style,
         source: source,
       });
-   
+    
       draw();
       updateTable();
       updateStatusBar();
@@ -1208,49 +1420,57 @@
    * source='netcdf' rows are shown as DEFAULT with muted styling.
    * Slots not yet loaded show a Loading placeholder.
    */
+  var LINK_STYLE = 'font-family:var(--mono);font-size:0.6rem;color:var(--accent);' +
+                   'opacity:0.8;text-decoration:none;letter-spacing:0.03em';
+  
   function updateTable() {
     var tbody = document.getElementById('gv-tbody');
     if (!tbody) return;
- 
+
     var SLOTS = [
       { sat:'east', meso:'M1' },
       { sat:'east', meso:'M2' },
       { sat:'west', meso:'M1' },
       { sat:'west', meso:'M2' },
     ];
- 
+
     tbody.innerHTML = SLOTS.map(function(slot) {
       var r = null;
       for (var i = 0; i < mesoBoxes.length; i++) {
         if (mesoBoxes[i].sat === slot.sat && mesoBoxes[i].meso === slot.meso) { r = mesoBoxes[i]; break; }
       }
- 
+
       var satTag = slot.sat === 'east'
         ? '<span class="tag tag-east">EAST</span>'
         : '<span class="tag tag-west">WEST</span>';
       var mc   = slot.sat==='east' ? (slot.meso==='M1'?'tag-m1':'tag-m2') : (slot.meso==='M1'?'tag-m1w':'tag-m2w');
       var mTag = '<span class="tag '+mc+'">'+slot.meso+'</span>';
- 
+
       if (!r) {
         return '<tr style="opacity:0.45"><td>'+satTag+'</td><td>'+mTag+'</td>'+
           '<td colspan="5" style="color:var(--muted);font-style:italic">Loading…</td></tr>';
       }
- 
+
       var latS = r.lat >= 0 ? r.lat.toFixed(1)+'N' : Math.abs(r.lat).toFixed(1)+'S';
       var lonS = r.lon >= 0 ? r.lon.toFixed(1)+'E' : Math.abs(r.lon).toFixed(1)+'W';
- 
+
+      /* GeoColor link — always built from the known lat/lon */
+      var gcLink = '<a href="' + mesoViewerUrl(r.sat, r.lat, r.lon) + '" target="_blank" rel="noopener" ' +
+                    'style="' + LINK_STYLE + '" title="View GeoColor animation on NESDIS STAR">GeoColor ↗</a>';
+
       if (r.source === 'admnes') {
         var admnesUrl = ADMNES_BASE + (r.admnesVersion || 1);
-        var link = '<a href="'+admnesUrl+'" target="_blank" rel="noopener" '+
-          'style="font-family:var(--mono);font-size:0.6rem;color:var(--accent);opacity:0.8;text-decoration:none;letter-spacing:0.03em" '+
-          'title="View NWS Alert Administrative Message">ADM ↗</a>';
+        var admLink = '<a href="'+admnesUrl+'" target="_blank" rel="noopener" ' +
+          'style="' + LINK_STYLE + '" title="View NWS Alert Administrative Message">ADM ↗</a>';
         return '<tr><td>'+satTag+'</td><td>'+mTag+'</td><td>'+latS+' / '+lonS+'</td>'+
-          '<td>'+r.startTime+'</td><td>'+r.endTime+'</td><td>'+r.requester+'</td><td>'+r.reason+' '+link+'</td></tr>';
+          '<td>'+r.startTime+'</td><td>'+r.endTime+'</td><td>'+r.requester+'</td>'+
+          '<td>'+r.reason+'&nbsp; '+admLink+'&nbsp; '+gcLink+'</td></tr>';
       } else {
         return '<tr style="opacity:0.65"><td>'+satTag+'</td><td>'+mTag+'</td><td>'+latS+' / '+lonS+'</td>'+
-          '<td colspan="4" style="color:var(--muted)">' +
+          '<td colspan="3" style="color:var(--muted)">' +
           '<span class="tag" style="color:var(--muted);border-color:var(--muted);background:transparent">DEFAULT</span>' +
-          ' &nbsp;No active repositioning request</td></tr>';
+          '&nbsp; No active repositioning request</td>' +
+          '<td>'+gcLink+'</td></tr>';
       }
     }).join('');
   }
@@ -1283,7 +1503,7 @@
     .then(function(r){ return r.json(); })
     .then(function(topo){
       worldTopo = topo;
-      draw();
+    draw();
       /* Fetch all 4 meso slots from NetCDF headers */
       MESO_SLOTS.forEach(fetchMesoSlot);
       /* Also fetch ADMNES for active repositioning requests */
@@ -1292,11 +1512,15 @@
       setInterval(function(){ MESO_SLOTS.forEach(fetchMesoSlot); }, 2*60*1000);
       setInterval(fetchAdmnes, 5*60*1000);
     })
-    .catch(function(err){
-      console.error('TopoJSON load failed:', err);
-      draw();
-      MESO_SLOTS.forEach(fetchMesoSlot);
-      fetchAdmnes();
-    });
+    .catch(function(err){ console.error('world-atlas load failed:', err); });
+
+  // State/province lines — optional layer, failure is non-fatal
+  fetch('https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@master/geojson/ne_50m_admin_1_states_provinces_lakes.geojson')
+    .then(function(r){
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(geojson){ stateLines = geojson; draw(); })
+    .catch(function(err){ console.warn('State lines load failed:', err.message); });
 
 })();
