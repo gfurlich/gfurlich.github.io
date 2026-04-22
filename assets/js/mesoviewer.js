@@ -1,7 +1,7 @@
 (function () {
   'use strict';
  
-  /* ── Satellite definitions ── */
+  /* == Satellite definitions == */
   var SATS = {
     east:   { key:'east',    name:'GOES-19 East',     lon:-75.2,
       diskColor:'#5b9bd5', diskFill:'rgba(91,155,213,0.15)',
@@ -39,11 +39,11 @@
     },
   };
  
-  /* ── SVG setup ── */
+  /* == SVG setup == */
   var SIZE = 800, CX = 400, CY = 400, R = 370;
   var CLIP_ANGLE = 81.3;
  
-  /* ── Zoom state ── */
+  /* == Zoom state == */
   var scale     = R;           /* current projection scale */
   var MIN_SCALE = R;           /* fully zoomed out = whole globe */
   var MAX_SCALE = R * 6;       /* ~6× zoom */
@@ -62,7 +62,7 @@
   var gSubsat  = svg.append('g'); // Satellite Subpoints
   var gSolar   = svg.append('g'); // Solar Subpoint
  
-  /* ── Launch sites ── */
+  /* == Launch sites == */
   // https://en.wikipedia.org/wiki/List_of_rocket_launch_sites
   // https://en.wikipedia.org/wiki/Spaceport
   var LAUNCH_SITES = [
@@ -126,7 +126,7 @@
     return d3.geoDistance([lon, lat], [centerLon, centerLat]) < Math.PI / 2;
   }
 
-  /* ── Initial View Point (Over CONUS) ── */
+  /* == Initial View Point (Over CONUS) == */
   // var rotation = [0, -20, 0];
   var rotation = [103, -38, 0];
  
@@ -262,88 +262,50 @@
     };
   }
 
-  /* ── Look up the sat longitude for east/west keys ── */
+  /* == Look up the sat longitude for east/west keys == */
   function satLonForKey(satKey) {
     if (satKey === 'east') return SATS.east.lon;
     if (satKey === 'west') return SATS.west.lon;
     return 0;
   }
  
-    /* ══════════════════════════════════════════════════════════
-     GEOCOLOR IMAGE URL HELPERS
- 
-     NESDIS STAR hosts meso geocolor imagery at:
-       https://cdn.star.nesdis.noaa.gov/GOES{nn}/ABI/MESO/{lat}{NS}-{lon}{EW}/GEOCOLOR/
-     The directory label rounds lat/lon to the nearest degree.
-     A "latest.jpg" symlink is always present in each directory.
- 
-     We also build a link to the NESDIS viewer page for that meso
-     so users can browse the animation loop.
+  /* ══════════════════════════════════════════════════════════
+     IMAGE URL HELPERS
   ══════════════════════════════════════════════════════════ */
  
   /**
-   * Convert a float lat/lon to the NESDIS directory label component.
-   *   lat=42.3, lon=-115.7  →  "42N-115W"
-   *   lat=-5.1, lon=80.4    →  "5S-80E"
-   * Rounds to the nearest integer degree (matching NESDIS naming).
-   */
-  function mesoDirectoryLabel(lat, lon) {
-    var latAbs = Math.round(Math.abs(lat));
-    var lonAbs = Math.round(Math.abs(lon));
-    var latDir = lat >= 0 ? 'N' : 'S';
-    var lonDir = lon >= 0 ? 'E' : 'W';
-    return latAbs + latDir + '-' + lonAbs + lonDir;
-  }
- 
-  /**
-   * Returns a URL to the NESDIS STAR CDN directory for the geocolor
-   * imagery of this meso slot. The "latest.jpg" in that dir is the
-   * most recent 1000×1000 px geocolor composite (updated every ~1 min).
-   */
-  function mesoGeocolorDirUrl(satKey, lat, lon) {
-    var goesNum = (satKey === 'east') ? '19' : '18';
-    var label   = mesoDirectoryLabel(lat, lon);
-    return 'https://cdn.star.nesdis.noaa.gov/GOES' + goesNum +
-           '/ABI/MESO/' + label + '/GEOCOLOR/';
-  }
- 
-  /**
-   * Returns the direct URL to the latest 1000×1000 geocolor image.
-   * NESDIS maintains a "latest.jpg" symlink in each MESO directory.
-   */
-  function mesoGeocolorImgUrl(satKey, lat, lon) {
-    return mesoGeocolorDirUrl(satKey, lat, lon) + 'latest.jpg';
-  }
- 
-  /**
    * Returns a link to the NESDIS GOES imagery viewer for this meso slot.
-   * Uses the viewer's meso_geocolor.php page which shows the animation.
-   * sat param: G19 for east, G18 for west.
-   * lat/lon formatted as e.g. "42N", "115W".
+   * Grabs the latest GEOCOLOR of sat and meso.
    */
-  function mesoViewerUrl(satKey, lat, lon) {
-    var satId = (satKey === 'east') ? 'G19' : 'G18';
-    var latAbs = Math.round(Math.abs(lat));
-    var lonAbs = Math.round(Math.abs(lon));
-    var latStr = latAbs + (lat >= 0 ? 'N' : 'S');
-    var lonStr = lonAbs + (lon >= 0 ? 'E' : 'W');
-    return 'https://www.star.nesdis.noaa.gov/goes/meso_geocolor.php' +
-           '?sat=' + satId + '&lat=' + latStr + '&lon=' + lonStr;
+  function mesoViewerUrl(satKey, lat, lon, meso) {
+    // mesoSlot: 'M1' or 'M2'
+    // channel:  'GEOCOLOR', '07', '13', '02', '09', etc.
+    var goesNum = (satKey === 'east') ? '19' : '18';
+    var mesoNum = (meso === 'M2') ? 'M2' : 'M1';
+    return 'https://cdn.star.nesdis.noaa.gov/GOES' + goesNum +
+           '/ABI/MESO/' + mesoNum + '/GEOCOLOR/latest.jpg';
   }
  
   /**
-   * Build a small HTML snippet with both image and viewer links for a
-   * meso slot given its sat key, lat, and lon.
+   * Build image URL by meso slot (M1/M2) and channel.
+   * Full-res: /GOES19/ABI/MESO/M1/GEOCOLOR/latest.jpg
    */
-  function mesoGeocolorLinks(satKey, lat, lon) {
-    var imgUrl    = mesoGeocolorImgUrl(satKey, lat, lon);
-    var viewerUrl = mesoViewerUrl(satKey, lat, lon);
-    var dirUrl    = mesoGeocolorDirUrl(satKey, lat, lon);
-    var linkStyle = 'font-family:var(--mono);font-size:0.6rem;color:var(--accent);' +
-                    'opacity:0.8;text-decoration:none;letter-spacing:0.03em';
-    return '<a href="' + viewerUrl + '" target="_blank" rel="noopener" ' +
-           'style="' + linkStyle + '" title="View GeoColor animation on NESDIS STAR">GeoColor ↗</a>';
+  function mesoImgUrl(satKey, mesoSlot, channel) {
+    var goesNum = (satKey === 'east') ? '19' : '18';
+    return 'https://cdn.star.nesdis.noaa.gov/GOES' + goesNum +
+           '/ABI/MESO/' + mesoSlot + '/' + channel + '/latest.jpg';
   }
+ 
+  /**
+   * Low-res thumbnail variant (250×250).
+   */
+  function mesoLowResImgUrl(satKey, mesoSlot, channel) {
+    var goesNum = (satKey === 'east') ? '19' : '18';
+    return 'https://cdn.star.nesdis.noaa.gov/GOES' + goesNum +
+           '/ABI/MESO/' + mesoSlot + '/' + channel + '/500x500.jpg';
+          //  '/ABI/MESO/' + mesoSlot + '/' + channel + '/250x250.jpg';
+  }
+
 
   function makeProjection() {
     return d3.geoOrthographic()
@@ -356,12 +318,40 @@
   var gratData    = d3.geoGraticule().step([15,15])();
   var equatorData = { type:'LineString', coordinates: d3.range(-180,181).map(function(d){ return [d,0]; }) };
  
-  /* ── State ── */
+  /* == State == */
   var worldTopo  = null;
   var stateLines = null;   /* Natural Earth Admin 1 boundary lines */
   var mesoBoxes  = [];   /* from ADMNES */
   var scanTimes  = {};   /* {east_M1, east_M2, west_M1, west_M2} → {time, lat, lon} */
- 
+
+  /* == Active imagery channel selection == */
+  var activeImgChannel = 'GEOCOLOR'; // or '07', '02', etc.
+
+  /* == ABI channel catalogue (for the channel picker) == */
+  var IMG_CHANNELS = [
+    { id: 'GEOCOLOR', label: 'GeoColor',  desc: 'True color / multispectral IR' },
+    { id: 'FireTemperature', label: 'Fire Temperature',   desc: 'Multispectral RGB for Fires' },
+    { id: 'Sandwich', label: 'Sandwich',  desc: 'Multispectral IR band 13 with Vis 3' },
+    { id: 'Dust',     label: 'Dust',      desc: 'Tropospheric Dust' },
+    { id: 'DayNightCloudMicroCombo',     label: 'Day Night Cloud Micro Combo',      desc: 'Day: Show cloud-top phase; Night: distinguish clouds/fog' },
+    { id: '01',       label: 'CH01',      desc: '0.47 µm Visible - Blue Band' },
+    { id: '02',       label: 'CH02',      desc: '0.64 µm Visible - Red Band' },
+    { id: '03',       label: 'CH03',      desc: '0.86 µm Veggie - Near IR' },
+    { id: '04',       label: 'CH04',      desc: '1.37 µm Cirrus - Near IR' },
+    { id: '05',       label: 'CH05',      desc: '1.6 µm Snow/Ice - Near IR' },
+    { id: '06',       label: 'CH06',      desc: '2.2 µm Cloud Particle - Near IR' },
+    { id: '07',       label: 'CH07',      desc: '3.9 µm Shortwave Window - IR' },
+    { id: '08',       label: 'CH08',      desc: '6.2 µm Upper Water Vapor - IR' },
+    { id: '09',       label: 'CH09',      desc: '6.9 µm Mid Water Vapor - IR' },
+    { id: '10',       label: 'CH10',      desc: '7.3 µm Lower Water Vapor - IR' },
+    { id: '11',       label: 'CH11',      desc: '8.4 µm Cloud Top - IR' },
+    { id: '12',       label: 'CH12',      desc: '9.6 µm Ozone - IR' },
+    { id: '13',       label: 'CH13',      desc: '10.3 µm Clean Longwave - IR' },
+    { id: '14',       label: 'CH14',      desc: '11.2 µm Longwave - IR' },
+    { id: '15',       label: 'CH15',      desc: '12.3 µm Dirty Longwave - IR' },
+    { id: '16',       label: 'CH16',      desc: '13.3 µm CO2 Longwave - IR' },
+  ];
+    
   /* ══════════════════════════════════════════════════════════
      SOLAR POSITION — returns { lat, lon } of subsolar point
      Uses low-precision solar coordinates (accuracy ~0.01°).
@@ -388,7 +378,7 @@
     return { lat: subLat, lon: subLon };
   }
 
-  /* ── Draw ── */
+  /* == Draw == */
   function draw() {
     var proj = makeProjection();
     var path = d3.geoPath().projection(proj);
@@ -411,7 +401,7 @@
       gBorders.append('path')
         .datum(topojson.mesh(worldTopo, worldTopo.objects.countries, function(a,b){ return a!==b; }))
         .attr('d',path).attr('fill','none').attr('stroke','#4a6b4a')
-        .attr('stroke-width',0.3).attr('stroke-dasharray','2 2');
+        .attr('stroke-width',1).attr('stroke-dasharray','2 2');
     }
 
     /* State / Province borders (Admin 1) */
@@ -422,7 +412,7 @@
         .attr('d', path)
         .attr('fill', 'none')
         .attr('stroke', '#3a5c3a')
-        .attr('stroke-width', 1.25)
+        .attr('stroke-width', 1)
         // .attr('stroke-width', 0.25)
         .attr('stroke-dasharray', '1.5 2');
     }
@@ -451,7 +441,7 @@
         .attr('stroke-width',1.2).attr('stroke-dasharray','4 3').attr('opacity',0.9);
     });
  
-    /* ── Meso boxes (ADMNES / NetCDF sourced) ── */
+    /* == Meso boxes (ADMNES / NetCDF sourced) == */
     gMeso.selectAll('*').remove();
     mesoBoxes.forEach(function(box) {
       var center = proj([box.lon, box.lat]);
@@ -720,7 +710,7 @@
     draw();
   }, { passive: false });
 
-  /* ── UTC clock ── */
+  /* == UTC clock == */
   function tickClock(){ document.getElementById('gv-utc').textContent=new Date().toUTCString().replace(' GMT',' UTC'); }
   tickClock(); setInterval(tickClock,1000);
   /* Redraw every 60 s so terminator + solar subpoint drift correctly */
@@ -769,7 +759,7 @@
        geospatial_lon_center   float32, degrees_east
        time_coverage_start     ISO-8601 string
  
-     ── HDF5 Attribute Message layout ─────────────────────────
+     == HDF5 Attribute Message layout ========================─
      Version 1 (8-byte header, padded sections):
        [0]     uint8   version (1)
        [1]     uint8   reserved
@@ -796,7 +786,6 @@
      Float32 values are little-endian (x86 architecture).
      NetCDF-3 (legacy, big-endian floats) is also handled as fallback.
   ══════════════════════════════════════════════════════════ */
- 
  
   /**
    * Scan a raw ArrayBuffer for an HDF5 attribute message by name.
@@ -926,7 +915,7 @@
     return null;
   }
  
-  /* ── NetCDF-3 fallback (big-endian, CDF magic) ─────────────
+  /* == NetCDF-3 fallback (big-endian, CDF magic) ============─
      Kept for any legacy files that still use classic format.   */
   function findNc3FloatAttr(buf, attrName) {
     var bytes   = new Uint8Array(buf);
@@ -1034,7 +1023,7 @@
    */
   function parseGoesHeader(buf) {
     var b = new Uint8Array(buf, 0, Math.min(buf.byteLength, 8));
-    /* ── HDF5 / NetCDF-4 (magic: 89 48 44 46) ── */
+    /* == HDF5 / NetCDF-4 (magic: 89 48 44 46) == */
     if (b[0] === 0x89 && b[1] === 0x48 && b[2] === 0x44 && b[3] === 0x46) {
       // console.debug('HDF5 / NetCDF-4')
       // console.log('buffer',buf)
@@ -1049,7 +1038,7 @@
       return { lat: lat, lon: lon, time: time, fmt: 'hdf5' };
     }
  
-    /* ── NetCDF-3 classic (magic: CDF\x01 or CDF\x02) ── */
+    /* == NetCDF-3 classic (magic: CDF\x01 or CDF\x02) == */
     if (b[0] === 0x43 && b[1] === 0x44 && b[2] === 0x46) {
       console.debug('NetCDF-3 classic')
       var lat  = findNc3FloatAttr(buf, 'geospatial_lat_center');
@@ -1112,140 +1101,140 @@
   /* startAfterTag uses S3's &start-after= to jump past M1 files for M2 slots.
      The S3 folder is always ABI-L2-CMIPM/ — meso number is filename-only.
      Without start-after, max-keys=50 returns only M1 files (CMIPM1 < CMIPM2). */
-     var MESO_SLOTS = [
-      { sat:'east', meso:'M1', mesoTag:'CMIPM1', startAfterTag:'',                bucket:'noaa-goes19', product:'ABI-L2-CMIPM', timeId:'sc-e1-time', posId:'sc-e1-pos' },
-      { sat:'east', meso:'M2', mesoTag:'CMIPM2', startAfterTag:'OR_ABI-L2-CMIPM2', bucket:'noaa-goes19', product:'ABI-L2-CMIPM', timeId:'sc-e2-time', posId:'sc-e2-pos' },
-      { sat:'west', meso:'M1', mesoTag:'CMIPM1', startAfterTag:'',                bucket:'noaa-goes18', product:'ABI-L2-CMIPM', timeId:'sc-w1-time', posId:'sc-w1-pos' },
-      { sat:'west', meso:'M2', mesoTag:'CMIPM2', startAfterTag:'OR_ABI-L2-CMIPM2', bucket:'noaa-goes18', product:'ABI-L2-CMIPM', timeId:'sc-w2-time', posId:'sc-w2-pos' },
+  var MESO_SLOTS = [
+    { sat:'east', meso:'M1', mesoTag:'CMIPM1', startAfterTag:'',                bucket:'noaa-goes19', product:'ABI-L2-CMIPM', timeId:'sc-e1-time', posId:'sc-e1-pos' },
+    { sat:'east', meso:'M2', mesoTag:'CMIPM2', startAfterTag:'OR_ABI-L2-CMIPM2', bucket:'noaa-goes19', product:'ABI-L2-CMIPM', timeId:'sc-e2-time', posId:'sc-e2-pos' },
+    { sat:'west', meso:'M1', mesoTag:'CMIPM1', startAfterTag:'',                bucket:'noaa-goes18', product:'ABI-L2-CMIPM', timeId:'sc-w1-time', posId:'sc-w1-pos' },
+    { sat:'west', meso:'M2', mesoTag:'CMIPM2', startAfterTag:'OR_ABI-L2-CMIPM2', bucket:'noaa-goes18', product:'ABI-L2-CMIPM', timeId:'sc-w2-time', posId:'sc-w2-pos' },
+  ];
+   
+  /* Fetch one meso slot: list → pick latest file → parse header */
+  function fetchMesoSlot(slot) {
+    var parts  = getS3PathParts(0);
+    var pparts = getS3PathParts(-1);
+  
+    /* Build listing URLs for current + previous hour.
+        start-after skips M1 files for M2 slots (CMIPM1 < CMIPM2 lexicographically). */
+    function makeListUrl(bucket, prefix, startAfterTag) {
+      var sa = startAfterTag ? '&start-after=' + prefix + startAfterTag : '';
+      return 'https://' + bucket + '.s3.amazonaws.com/?list-type=2&prefix=' + prefix + sa + '&max-keys=20';
+    }
+    var prefix  = slot.product + '/' + parts.year  + '/' + parts.jday  + '/' + parts.hour  + '/';
+    var pprefix = slot.product + '/' + pparts.year + '/' + pparts.jday + '/' + pparts.hour + '/';
+    var listUrls = [
+      makeListUrl(slot.bucket, prefix,  slot.startAfterTag),
+      makeListUrl(slot.bucket, pprefix, slot.startAfterTag),
     ];
-   
-    /* Fetch one meso slot: list → pick latest file → parse header */
-    function fetchMesoSlot(slot) {
-      var parts  = getS3PathParts(0);
-      var pparts = getS3PathParts(-1);
-   
-      /* Build listing URLs for current + previous hour.
-         start-after skips M1 files for M2 slots (CMIPM1 < CMIPM2 lexicographically). */
-      function makeListUrl(bucket, prefix, startAfterTag) {
-        var sa = startAfterTag ? '&start-after=' + prefix + startAfterTag : '';
-        return 'https://' + bucket + '.s3.amazonaws.com/?list-type=2&prefix=' + prefix + sa + '&max-keys=20';
+  
+    // console.log(listUrls)
+
+    function tryList(idx) {
+      if (idx >= listUrls.length) {
+        setCardStatus(slot, null, null, 'No data');
+        return;
       }
-      var prefix  = slot.product + '/' + parts.year  + '/' + parts.jday  + '/' + parts.hour  + '/';
-      var pprefix = slot.product + '/' + pparts.year + '/' + pparts.jday + '/' + pparts.hour + '/';
-      var listUrls = [
-        makeListUrl(slot.bucket, prefix,  slot.startAfterTag),
-        makeListUrl(slot.bucket, pprefix, slot.startAfterTag),
-      ];
-   
-      // console.log(listUrls)
+      fetch(listUrls[idx])
+        .then(function(r) { return r.ok ? r.text() : Promise.reject('HTTP '+r.status); })
+        .then(function(xml) {
+          // console.log(xml)
+          var keys = parseS3Keys(xml);
 
-      function tryList(idx) {
-        if (idx >= listUrls.length) {
-          setCardStatus(slot, null, null, 'No data');
-          return;
-        }
-        fetch(listUrls[idx])
-          .then(function(r) { return r.ok ? r.text() : Promise.reject('HTTP '+r.status); })
-          .then(function(xml) {
-            // console.log(xml)
-            var keys = parseS3Keys(xml);
+          // console.log(keys)
+          /* Filter to this specific meso sector (M1- or M2- in filename), single channel C01 */
+          var slotKeys = keys.filter(function(k){
+            return k.indexOf(slot.mesoTag) !== -1 && k.indexOf('C01') !== -1;
+          });
+          /* Fallback: any file for this meso sector */
+          if (!slotKeys.length) {
+            slotKeys = keys.filter(function(k){ return k.indexOf(slot.mesoTag) !== -1; });
+          }
+          // console.log('Slot Keys:',slotKeys)
+          var key = slotKeys[slotKeys.length - 1];
 
-            // console.log(keys)
-            /* Filter to this specific meso sector (M1- or M2- in filename), single channel C01 */
-            var slotKeys = keys.filter(function(k){
-              return k.indexOf(slot.mesoTag) !== -1 && k.indexOf('C01') !== -1;
+          // if (slot.sat === 'west' && slot.meso === 'M2') {
+          //   console.log('West M2 raw XML:', xml);
+          //   console.log('West M2 keys:', keys);
+          //   console.log('West M2 slotKeys after filter:', slotKeys);
+          // }
+
+          if (!key) { tryList(idx+1); return; }
+  
+          /* Parse scan time from filename for card display */
+          var t = parseScanTime(key);
+          setCardStatus(slot, t, null, 'Reading position…');
+  
+          /* Fetch NetCDF header for lat/lon */
+          fetchNetcdfMeta(key, slot.bucket)
+            .then(function(meta) {
+              if (!meta) {
+                setCardStatus(slot, t, null, 'Position unavailable');
+                return;
+              }
+              setCardStatus(slot, meta.time || t, meta, null);
+              updateMesoBox(slot, meta.lat, meta.lon, 'netcdf');
+            })
+            .catch(function(err) {
+              console.warn('NetCDF parse failed for '+key+':', err.message);
+              setCardStatus(slot, t, null, 'Parse error');
             });
-            /* Fallback: any file for this meso sector */
-            if (!slotKeys.length) {
-              slotKeys = keys.filter(function(k){ return k.indexOf(slot.mesoTag) !== -1; });
-            }
-            // console.log('Slot Keys:',slotKeys)
-            var key = slotKeys[slotKeys.length - 1];
-
-            // if (slot.sat === 'west' && slot.meso === 'M2') {
-            //   console.log('West M2 raw XML:', xml);
-            //   console.log('West M2 keys:', keys);
-            //   console.log('West M2 slotKeys after filter:', slotKeys);
-            // }
-
-            if (!key) { tryList(idx+1); return; }
-   
-            /* Parse scan time from filename for card display */
-            var t = parseScanTime(key);
-            setCardStatus(slot, t, null, 'Reading position…');
-   
-            /* Fetch NetCDF header for lat/lon */
-            fetchNetcdfMeta(key, slot.bucket)
-              .then(function(meta) {
-                if (!meta) {
-                  setCardStatus(slot, t, null, 'Position unavailable');
-                  return;
-                }
-                setCardStatus(slot, meta.time || t, meta, null);
-                updateMesoBox(slot, meta.lat, meta.lon, 'netcdf');
-              })
-              .catch(function(err) {
-                console.warn('NetCDF parse failed for '+key+':', err.message);
-                setCardStatus(slot, t, null, 'Parse error');
-              });
-          })
-          .catch(function() { tryList(idx+1); });
-      }
-   
-      tryList(0);
+        })
+        .catch(function() { tryList(idx+1); });
     }
-   
-    function setCardStatus(slot, time, meta, msg) {
-      var timeEl = document.getElementById(slot.timeId);
-      var posEl  = document.getElementById(slot.posId);
-      if (timeEl) timeEl.textContent = time ? fmtUTC(time) : (msg || '—');
-      if (posEl) {
-        if (meta) {
-          var latStr = meta.lat >= 0 ? meta.lat.toFixed(1)+'°N' : Math.abs(meta.lat).toFixed(1)+'°S';
-          var lonStr = meta.lon >= 0 ? meta.lon.toFixed(1)+'°E' : Math.abs(meta.lon).toFixed(1)+'°W';
-          posEl.textContent = latStr+' / '+lonStr;
-        } else {
-          posEl.textContent = msg || '—';
-        }
+  
+    tryList(0);
+  }
+  
+  function setCardStatus(slot, time, meta, msg) {
+    var timeEl = document.getElementById(slot.timeId);
+    var posEl  = document.getElementById(slot.posId);
+    if (timeEl) timeEl.textContent = time ? fmtUTC(time) : (msg || '—');
+    if (posEl) {
+      if (meta) {
+        var latStr = meta.lat >= 0 ? meta.lat.toFixed(1)+'°N' : Math.abs(meta.lat).toFixed(1)+'°S';
+        var lonStr = meta.lon >= 0 ? meta.lon.toFixed(1)+'°E' : Math.abs(meta.lon).toFixed(1)+'°W';
+        posEl.textContent = latStr+' / '+lonStr;
+      } else {
+        posEl.textContent = msg || '—';
       }
     }
-   
-    /* Merge a NetCDF-sourced position into mesoBoxes */
-    function updateMesoBox(slot, lat, lon, source) {
-      /* Don't overwrite a higher-priority ADMNES entry with a NetCDF default */
-      var existing = mesoBoxes.filter(function(b) {
-        return b.sat === slot.sat && b.meso === slot.meso;
-      })[0];
-      if (existing && existing.source === 'admnes') return;
-    
-      mesoBoxes = mesoBoxes.filter(function(b){
-        return !(b.sat === slot.sat && b.meso === slot.meso);
-      });
-    
-      var style = MESO_STYLE[slot.sat][slot.meso];
-      mesoBoxes.push({
-        sat:    slot.sat,
-        meso:   slot.meso,
-        lat:    lat,
-        lon:    lon,
-        style:  style,
-        source: source,
-      });
-    
-      draw();
-      updateTable();
-      updateStatusBar();
-    }
-   
-    function updateStatusBar() {
-      var el = document.getElementById('gv-fetch-status');
-      if (!el) return;
-      var n = mesoBoxes.length;
-      el.textContent = n
-        ? n + ' meso position'+(n===1?'':'s')+' loaded from S3/NetCDF · '+new Date().toUTCString().replace(' GMT',' UTC')
-        : 'Fetching meso positions…';
-    }
- 
+  }
+  
+  /* Merge a NetCDF-sourced position into mesoBoxes */
+  function updateMesoBox(slot, lat, lon, source) {
+    /* Don't overwrite a higher-priority ADMNES entry with a NetCDF default */
+    var existing = mesoBoxes.filter(function(b) {
+      return b.sat === slot.sat && b.meso === slot.meso;
+    })[0];
+    if (existing && existing.source === 'admnes') return;
+  
+    mesoBoxes = mesoBoxes.filter(function(b){
+      return !(b.sat === slot.sat && b.meso === slot.meso);
+    });
+  
+    var style = MESO_STYLE[slot.sat][slot.meso];
+    mesoBoxes.push({
+      sat:    slot.sat,
+      meso:   slot.meso,
+      lat:    lat,
+      lon:    lon,
+      style:  style,
+      source: source,
+    });
+  
+    draw();
+    updateTable();
+    updateStatusBar();
+    renderMesoImagery();
+  }
+  
+  function updateStatusBar() {
+    var el = document.getElementById('gv-fetch-status');
+    if (!el) return;
+    var n = mesoBoxes.length;
+    el.textContent = n
+      ? n + ' meso position'+(n===1?'':'s')+' loaded from S3/NetCDF · '+new Date().toUTCString().replace(' GMT',' UTC')
+      : 'Fetching meso positions…';
+  }
 
   /* ══════════════════════════════════════════════════════════
      ADMNES — NWS administrative bulletins for meso repositioning.
@@ -1408,6 +1397,8 @@
       updateUpcomingTable(upcomingRows);
       draw();
       updateStatusBar();
+      renderMesoImagery();
+
     })
     .catch(function(err) {
       console.warn('ADMNES fetch error:', err.message);
@@ -1455,7 +1446,7 @@
       var lonS = r.lon >= 0 ? r.lon.toFixed(1)+'E' : Math.abs(r.lon).toFixed(1)+'W';
 
       /* GeoColor link — always built from the known lat/lon */
-      var gcLink = '<a href="' + mesoViewerUrl(r.sat, r.lat, r.lon) + '" target="_blank" rel="noopener" ' +
+      var gcLink = '<a href="' + mesoViewerUrl(r.sat, r.lat, r.lon, r.meso) + '" target="_blank" rel="noopener" ' +
                     'style="' + LINK_STYLE + '" title="View GeoColor animation on NESDIS STAR">GeoColor ↗</a>';
 
       if (r.source === 'admnes') {
@@ -1464,13 +1455,13 @@
           'style="' + LINK_STYLE + '" title="View NWS Alert Administrative Message">ADM ↗</a>';
         return '<tr><td>'+satTag+'</td><td>'+mTag+'</td><td>'+latS+' / '+lonS+'</td>'+
           '<td>'+r.startTime+'</td><td>'+r.endTime+'</td><td>'+r.requester+'</td>'+
-          '<td>'+r.reason+'&nbsp; '+admLink+'&nbsp; '+gcLink+'</td></tr>';
+          // '<td>'+r.reason+'&nbsp; '+admLink+'&nbsp; '+gcLink+'</td></tr>';
+          '<td>'+r.reason+'&nbsp; '+admLink+'</td></tr>';
       } else {
         return '<tr style="opacity:0.65"><td>'+satTag+'</td><td>'+mTag+'</td><td>'+latS+' / '+lonS+'</td>'+
           '<td colspan="3" style="color:var(--muted)">' +
           '<span class="tag" style="color:var(--muted);border-color:var(--muted);background:transparent">DEFAULT</span>' +
-          '&nbsp; No active repositioning request</td>' +
-          '<td>'+gcLink+'</td></tr>';
+          '&nbsp; No active repositioning request</td></tr>';
       }
     }).join('');
   }
@@ -1498,7 +1489,178 @@
     }).join('');
   }
 
-  /* ── Boot ── */
+   /* ══════════════════════════════════════════════════════════
+     MESO IMAGERY PANEL
+     2×2 grid of ABI images. The footEl for each card owns both
+     the <img> and the label/link bar via innerHTML — no separate
+     stage element needed.
+  ══════════════════════════════════════════════════════════ */
+ 
+  var MESO_SLOT_ORDER = [
+    { sat:'east', meso:'M1', label:'GOES-19 East M1' },
+    { sat:'east', meso:'M2', label:'GOES-19 East M2' },
+    { sat:'west', meso:'M1', label:'GOES-18 West M1' },
+    { sat:'west', meso:'M2', label:'GOES-18 West M2' },
+  ];
+ 
+  /** Build the card HTML for a slot (image + label bar all inside footEl). */
+  function buildCardHtml(slot, box) {
+    var cardId    = 'gv-imgcard-' + slot.sat + '-' + slot.meso;
+    var satClass  = slot.sat === 'east' ? 'tag-east' : 'tag-west';
+    var mesoClass = slot.sat === 'east'
+      ? (slot.meso === 'M1' ? 'tag-m1' : 'tag-m2')
+      : (slot.meso === 'M1' ? 'tag-m1w' : 'tag-m2w');
+    var posHtml = box
+      ? '<span class="gv-img-card-pos" id="' + cardId + '-pos">'
+        + (box.lat >= 0 ? box.lat.toFixed(1)+'°N' : Math.abs(box.lat).toFixed(1)+'°S') + ' / '
+        + (box.lon >= 0 ? box.lon.toFixed(1)+'°E' : Math.abs(box.lon).toFixed(1)+'°W')
+        + '</span>'
+      : '<span class="gv-img-card-pos" id="' + cardId + '-pos"></span>';
+ 
+    return '<div id="' + cardId + '" class="gv-img-card">' +
+      '<div class="gv-img-card-head">' +
+        '<span class="tag ' + satClass + '">' + (slot.sat === 'east' ? 'EAST' : 'WEST') + '</span>' +
+        '&nbsp;<span class="tag ' + mesoClass + '">' + slot.meso + '</span>' +
+        posHtml +
+      '</div>' +
+      '<div class="gv-img-card-foot" id="' + cardId + '-foot">' +
+        footContent(slot, box) +
+      '</div>' +
+    '</div>';
+  }
+ 
+  /** innerHTML for the foot div: image + label bar, or placeholder. */
+  function footContent(slot, box) {
+    if (!box) {
+      return '<span style="font-family:var(--mono);font-size:0.65rem;color:var(--muted);padding:0.5rem">Waiting for position\u2026</span>';
+    }
+    var imgUrl    = mesoLowResImgUrl(box.sat, box.meso, activeImgChannel);
+    var cacheBust = Math.floor(Date.now() / 120000);
+    var chInfo    = IMG_CHANNELS.filter(function(c){ return c.id === activeImgChannel; })[0];
+    return '<div style="padding-bottom:0.5rem;"><img src="' + imgUrl + '?t=' + cacheBust + '" style="width:100%;display:block;" alt="' + slot.label + '"></div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;' +
+      'padding:0.35rem 0.75rem;font-family:var(--mono);font-size:0.6rem;color:var(--muted);' +
+      'border-top:1px solid var(--border)">' +
+      '<span>' + (chInfo ? chInfo.desc : activeImgChannel) + '</span>' +
+      '<a href="' + mesoImgUrl(box.sat, box.meso, activeImgChannel) + '" target="_blank" rel="noopener" ' +
+      'style="color:var(--accent);text-decoration:none;opacity:0.8;">Open ↗</a>' +
+      '</div>';
+  }
+ 
+  /** Build/update the imagery section. Rebuilds grid innerHTML each call for simplicity. */
+  function renderMesoImagery() {
+    var wrap = document.getElementById('gv-imagery-wrap');
+    if (!wrap) return;
+ 
+    /* == Channel picker - Pill Button Version (render once) == */
+    // if (!document.getElementById('gv-img-channel-picker')) {
+    //   var picker = document.createElement('div');
+    //   picker.id = 'gv-img-channel-picker';
+    //   picker.className = 'gv-img-picker';
+    //   IMG_CHANNELS.forEach(function(ch) {
+    //     var btn = document.createElement('button');
+    //     btn.className = 'gv-img-pill' + (ch.id === activeImgChannel ? ' active' : '');
+    //     btn.dataset.channel = ch.id;
+    //     btn.title = ch.desc;
+    //     btn.textContent = ch.label;
+    //     btn.addEventListener('click', function() {
+    //       activeImgChannel = ch.id;
+    //       document.querySelectorAll('.gv-img-pill').forEach(function(b) {
+    //         b.classList.toggle('active', b.dataset.channel === ch.id);
+    //       });
+    //       refreshImageSrcs();
+    //     });
+    //     picker.appendChild(btn);
+    //   });
+    //   /* Insert picker after the table-head div */
+    //   var tableHead = wrap.querySelector('.gv-table-head');
+    //   if (tableHead && tableHead.nextSibling) {
+    //     wrap.insertBefore(picker, tableHead.nextSibling);
+    //   } else {
+    //     wrap.appendChild(picker);
+    //   }
+    // }
+ 
+    /* == Channel picker - Toggle Version (render once) == */
+    if (!document.getElementById('gv-img-channel-picker')) {
+      var picker = document.createElement('div');
+      picker.id = 'gv-img-channel-picker';
+      picker.className = 'gv-img-picker';
+
+      var label = document.createElement('label');
+      label.textContent = 'Channel: ';
+      label.style.cssText = 'font-family:var(--mono);font-size:0.68rem;color:var(--muted);letter-spacing:0.04em;';
+
+      var select = document.createElement('select');
+      select.id = 'gv-img-channel-select';
+      select.style.cssText = 'font-family:var(--mono);font-size:0.68rem;color:var(--text);' +
+        'background:var(--surface);border:1.5px solid var(--border);border-radius:6px;' +
+        'padding:0.3rem 0.5rem;cursor:pointer;letter-spacing:0.03em;';
+
+      IMG_CHANNELS.forEach(function(ch) {
+        var opt = document.createElement('option');
+        opt.value = ch.id;
+        opt.textContent = ch.label + ' — ' + ch.desc;
+        if (ch.id === activeImgChannel) opt.selected = true;
+        select.appendChild(opt);
+      });
+
+      select.addEventListener('change', function() {
+        activeImgChannel = select.value;
+        refreshImageSrcs();
+      });
+
+      label.appendChild(select);
+      picker.appendChild(label);
+
+      var tableHead = wrap.querySelector('.gv-table-head');
+      if (tableHead && tableHead.nextSibling) {
+        wrap.insertBefore(picker, tableHead.nextSibling);
+      } else {
+        wrap.appendChild(picker);
+      }
+    }
+
+    /* == Image grid == */
+    var grid = document.getElementById('gv-img-grid');
+    if (!grid) {
+      grid = document.createElement('div');
+      grid.id = 'gv-img-grid';
+      grid.className = 'gv-img-grid';
+      wrap.appendChild(grid);
+    }
+ 
+    /* Rebuild each card — simple and reliable */
+    grid.innerHTML = MESO_SLOT_ORDER.map(function(slot) {
+      var box = null;
+      for (var i = 0; i < mesoBoxes.length; i++) {
+        if (mesoBoxes[i].sat === slot.sat && mesoBoxes[i].meso === slot.meso) { box = mesoBoxes[i]; break; }
+      }
+      return buildCardHtml(slot, box);
+    }).join('');
+ 
+    wrap.style.display = '';
+  }
+ 
+  /** Refresh only the foot content on channel switch or 2-min timer. */
+  function refreshImageSrcs() {
+    MESO_SLOT_ORDER.forEach(function(slot) {
+      var box = null;
+      for (var i = 0; i < mesoBoxes.length; i++) {
+        if (mesoBoxes[i].sat === slot.sat && mesoBoxes[i].meso === slot.meso) { box = mesoBoxes[i]; break; }
+      }
+      var cardId = 'gv-imgcard-' + slot.sat + '-' + slot.meso;
+      var footEl = document.getElementById(cardId + '-foot');
+      if (!footEl) return;
+      footEl.innerHTML = footContent(slot, box);
+    });
+  }
+
+
+  /* Refresh imagery every 1 minutes */
+  setInterval(refreshImageSrcs, 1 * 60 * 1000);
+  
+  /* == Boot == */
   fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
     .then(function(r){ return r.json(); })
     .then(function(topo){
