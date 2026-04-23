@@ -11,16 +11,27 @@
       s3Bucket:'noaa-goes18' },
     msat9:  { key:'msat9',   name:'Meteosat-9',       lon:45.5,
       diskColor:'#e8a030', diskFill:'rgba(232,160,48,0.15)',
-      s3Bucket:'noaa-goes18' },
+      s3Bucket:'n/a' },
     msat12: { key:'msat12',  name:'Meteosat-12',      lon:0,
       diskColor:'#e05c5c', diskFill:'rgba(224,92,92,0.15)',
-      s3Bucket:'noaa-goes18' },
+      s3Bucket:'n/a' },
     h9:     { key:'himawari',name:'Himawari 9',        lon:140.7,
       diskColor:'#c47ed4', diskFill:'rgba(196,126,212,0.15)',
-      s3Bucket:'noaa-goes18' },
-    gk2a:   { key:'gk2a',   name:'GEO-KOMPSAT-2A',   lon:128,
+      s3Bucket:'noaa-himawari9' },
+    gk2a:   { key:'gk2a',   name:'GEO-KOMPSAT-2A',   lon:128.2,
       diskColor:'#4dd0e1', diskFill:'rgba(77,208,225,0.15)',
-      s3Bucket:'noaa-goes18' },
+      s3Bucket:'noaa-gk2a',
+      // LA sector corners from actual la020ge file (geostationary fixed-grid, 500×500 px)
+      // Source: gk2a_ami_le1b_ir096_la020ge_202604230344.nc global attributes
+      laSector: {
+        nw: [119.914, 44.175],   // [lon, lat]
+        ne: [133.123, 44.114],
+        sw: [121.398, 31.138],
+        se: [132.206, 31.115],
+      },
+      laColor: '#4dd0e1',
+      laFill:  'rgba(77,208,225,0.15)', 
+    },
   };
  
   /* Height-width of a meso sector in degrees latitude (fixed). The lon
@@ -56,6 +67,7 @@
   var gStates  = svg.append('g'); // State/Province borders
   var gBorders = svg.append('g'); // Country Borders
   var gDisk    = svg.append('g'); // GOES Field of Regards
+  var gGK2A    = svg.append('g'); // GK2A AMI LA sector footprint
   var gNight   = svg.append('g'); // Terminator
   var gMeso    = svg.append('g'); // Meso Boxes
   var gLaunch  = svg.append('g'); // Launch Site Markers
@@ -66,7 +78,7 @@
   // https://en.wikipedia.org/wiki/List_of_rocket_launch_sites
   // https://en.wikipedia.org/wiki/Spaceport
   var LAUNCH_SITES = [
-    // USA
+    // USA and ESA
     { name: 'Vandenberg SFB', country: 'USSF',
       lat: 34.632, lon: -120.611},
     { name: 'Cape Canaveral', country: 'NASA/USSF',
@@ -75,7 +87,14 @@
       lat: 37.843, lon: -75.478 },
     { name: 'Starbase', country: 'SpaceX',
       lat: 25.997, lon: -97.155 },
-    { name: 'Guiana Space Centre', country: 'ESA', lat: 5.169, lon: -52.6903 },
+    { name: 'Guiana Space Centre', country: 'ESA',
+      lat: 5.169, lon: -52.6903 },
+    { name: 'Keweenaw Rocket Range', country: 'NASA',
+      lat: 47.43, lon: -87.7170 },
+    { name: 'Poker Flat Research Range', country: 'UAF',
+      lat: 65.12, lon: -147.47 },
+    { name: 'Pacific Spaceport Complex – Alaska (PSCA)', country: 'Alaska',
+      lat: 57.4353, lon: -152.34 },
     // China
     { name: 'Jiuquan Satellite Launch Center', country: 'CHN',
        lat: 40.961, lon: 100.298 },
@@ -113,9 +132,9 @@
   ];
 
     // Globe
-  gSphere.append('circle').attr('cx',CX).attr('cy',CY).attr('r',R).attr('fill','#04080f');
-  gSphere.append('circle').attr('cx',CX).attr('cy',CY).attr('r',R)
-    .attr('fill','none').attr('stroke','rgba(100,160,255,0.12)').attr('stroke-width',2);
+  // gSphere.append('circle').attr('cx',CX).attr('cy',CY).attr('r',R).attr('fill','#04080f');
+  // gSphere.append('circle').attr('cx',CX).attr('cy',CY).attr('r',R)
+    // .attr('fill','none').attr('stroke','rgba(100,160,255,0.12)').attr('stroke-width',2);
 
   // Check if the Site is Visible
   function isVisible(lon, lat) {
@@ -297,7 +316,7 @@
   }
  
   /**
-   * Low-res thumbnail variant (250×250).
+   * Low-res thumbnail variant (250×250), now 500x500.
    */
   function mesoLowResImgUrl(satKey, mesoSlot, channel) {
     var goesNum = (satKey === 'east') ? '19' : '18';
@@ -306,10 +325,9 @@
           //  '/ABI/MESO/' + mesoSlot + '/' + channel + '/250x250.jpg';
   }
 
-
   function makeProjection() {
     return d3.geoOrthographic()
-      .scale(scale)          /* uses zoom-aware scale, not hardcoded R */
+      .scale(scale)          
       .translate([CX, CY])
       .rotate(rotation)
       .clipAngle(90);
@@ -384,6 +402,12 @@
     var path = d3.geoPath().projection(proj);
     var visibleCenter = [-rotation[0], -rotation[1]];
     
+    /* Globe background — redrawn every frame so it tracks zoom */
+    gSphere.selectAll('*').remove();
+    gSphere.append('circle').attr('cx',CX).attr('cy',CY).attr('r',scale).attr('fill','#04080f');
+    gSphere.append('circle').attr('cx',CX).attr('cy',CY).attr('r',scale)
+      .attr('fill','none').attr('stroke','rgba(100,160,255,0.12)').attr('stroke-width',2);
+
     /* Lat and Lon Grid */
     gGrat.selectAll('path').remove();
     gGrat.append('path').datum(gratData).attr('d',path)
@@ -503,7 +527,41 @@
           .text(lbl2);
       }
     });
- 
+
+    /* GK2A AMI Local Area sector footprint (static, from la020ge file header) */
+    gGK2A.selectAll('*').remove();
+    (function() {
+      var la = SATS.gk2a.laSector;
+      // Build a GeoJSON polygon from the four geodetic corners (clockwise)
+      var coords = [la.nw, la.ne, la.se, la.sw, la.nw];
+      var feature = { type:'Feature', geometry:{ type:'Polygon', coordinates:[coords] } };
+      var centerLon = (la.nw[0]+la.ne[0]+la.se[0]+la.sw[0])/4;
+      var centerLat = (la.nw[1]+la.ne[1]+la.se[1]+la.sw[1])/4;
+      if (d3.geoDistance([centerLon, centerLat], visibleCenter) >= Math.PI/2) return;
+      gGK2A.append('path').datum(feature).attr('d', path)
+        .attr('fill', SATS.gk2a.laFill)
+        .attr('stroke', SATS.gk2a.laColor)
+        .attr('stroke-width', 1.4)
+        .attr('stroke-dasharray', '5 3')
+        .attr('opacity', 0.85);
+      // Label at top-center
+      var labelPt = proj([centerLon, la.nw[1]]);
+      if (labelPt) {
+        var lbl = 'GK2A LA';
+        var tw = lbl.length * 6 + 10;
+        gGK2A.append('rect')
+          .attr('x', labelPt[0]-tw/2).attr('y', labelPt[1]-9)
+          .attr('width', tw).attr('height', 14).attr('rx', 3)
+          .attr('fill', 'rgba(4,8,15,0.82)');
+        gGK2A.append('text')
+          .attr('x', labelPt[0]).attr('y', labelPt[1]+1)
+          .attr('text-anchor','middle').attr('dominant-baseline','middle')
+          .attr('fill', SATS.gk2a.laColor).attr('font-size', 9)
+          .attr('font-family','Share Tech Mono, monospace').attr('font-weight','600')
+          .attr('letter-spacing','0.06em').text(lbl);
+      }
+    })();
+
     /* Launch sites */
     gLaunch.selectAll('*').remove();
     LAUNCH_SITES.forEach(function(site) {
@@ -524,8 +582,11 @@
         .attr('data-name', site.name)
         .on('mouseenter', function(event) {
           var tip = document.getElementById('gv-tooltip');
-          tip.textContent = site.name + ' (' + site.country + ')';
-          tip.textContent += '\r\n' + site.lat + ', ' + site.lon;
+          // tip.textContent = site.name + ' (' + site.country + ')';
+          // tip.textContent += '\r\n' + site.lat + ', ' + site.lon;
+          tip.innerHTML = site.name + '<br>' +
+          'Operator: ' + site.country + '<br>' +
+          'Location: ' + site.lat + ', ' + site.lon;
           tip.style.display = 'block';
           tip.style.left = (event.clientX + 14) + 'px';
           tip.style.top  = (event.clientY - 10) + 'px';
@@ -539,28 +600,6 @@
           document.getElementById('gv-tooltip').style.display = 'none';
         });
 
-      // /* Label */
-      // var label = site.name;
-      // var tw = label.length * 5.5 + 8;
-      // var lx = pt[0] + 11;
-      // var ly = pt[1] - 1;
-      // gLaunch.append('rect')
-      //   .attr('x', lx - 2)
-      //   .attr('y', ly - 9)
-      //   .attr('width', tw)
-      //   .attr('height', 13)
-      //   .attr('rx', 2)
-      //   .attr('fill', 'rgba(4,8,15,0.78)');
-      // gLaunch.append('text')
-      //   .attr('x', lx + tw/2 - 2)
-      //   .attr('y', ly + 1)
-      //   .attr('text-anchor', 'middle')
-      //   .attr('dominant-baseline', 'middle')
-      //   .attr('fill', '#e8f060')
-      //   .attr('font-size', 8.5)
-      //   .attr('font-family', 'Share Tech Mono, monospace')
-      //   .attr('letter-spacing', '0.05em')
-      //   .text(label);
     });
 
     /* Satellite Sub-points */
@@ -570,9 +609,6 @@
       if (d3.geoDistance([sat.lon, 0], visibleCenter) >= Math.PI / 2) return;
       
         /* Label */
-        // var latStr = sol.lat >= 0
-        //   ? sol.lat.toFixed(1) + '°N'
-        //   : Math.abs(sol.lat).toFixed(1) + '°S';
         var lonStr = sat.lon >= 0
           ? sat.lon.toFixed(1) + '°E'
           : Math.abs(sat.lon).toFixed(1) + '°W';
