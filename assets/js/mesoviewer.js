@@ -15,9 +15,14 @@
     msat12: { key:'msat12',  name:'Meteosat-12',      lon:0,
       diskColor:'#e05c5c', diskFill:'rgba(224,92,92,0.15)',
       s3Bucket:'n/a' },
-    h9:     { key:'himawari',name:'Himawari 9',        lon:140.7,
+    h9: { key:'himawari', name:'Himawari 9', lon:140.7,
       diskColor:'#c47ed4', diskFill:'rgba(196,126,212,0.15)',
-      s3Bucket:'noaa-himawari9' },
+      s3Bucket:'noaa-himawari9',
+      // jpCenter: [145, 34], // TODO: Update
+      jpCenter: [137, 49], // TODO: Update
+      jpColor: '#c47ed4',
+      jpFill:  'rgba(196,126,212,0.18)',
+    },
     gk2a:   { key:'gk2a',   name:'GEO-KOMPSAT-2A',   lon:128.2,
       diskColor:'#4dd0e1', diskFill:'rgba(77,208,225,0.15)',
       s3Bucket:'noaa-gk2a',
@@ -68,6 +73,7 @@
   var gBorders = svg.append('g'); // Country Borders
   var gDisk    = svg.append('g'); // GOES Field of Regards
   var gGK2A    = svg.append('g'); // GK2A AMI LA sector footprint
+  var gH9JP    = svg.append('g'); // Himawari-9 JP01 sector footprint
   var gNight   = svg.append('g'); // Terminator
   var gMeso    = svg.append('g'); // Meso Boxes
   var gLaunch  = svg.append('g'); // Launch Site Markers
@@ -78,7 +84,7 @@
   // https://en.wikipedia.org/wiki/List_of_rocket_launch_sites
   // https://en.wikipedia.org/wiki/Spaceport
   var LAUNCH_SITES = [
-    // USA and ESA
+    // USA
     { name: 'Vandenberg SFB', country: 'USSF',
       lat: 34.632, lon: -120.611},
     { name: 'Cape Canaveral', country: 'NASA/USSF',
@@ -87,15 +93,28 @@
       lat: 37.843, lon: -75.478 },
     { name: 'Starbase', country: 'SpaceX',
       lat: 25.997, lon: -97.155 },
-    { name: 'Guiana Space Centre', country: 'ESA',
-      lat: 5.169, lon: -52.6903 },
     { name: 'Keweenaw Rocket Range', country: 'NASA',
       lat: 47.43, lon: -87.7170 },
     { name: 'Poker Flat Research Range', country: 'UAF',
       lat: 65.12, lon: -147.47 },
-    { name: 'Pacific Spaceport Complex – Alaska (PSCA)', country: 'Alaska',
+    { name: 'Pacific Spaceport Complex - Alaska (PSCA)', country: 'Alaska',
       lat: 57.4353, lon: -152.34 },
-    // China
+
+    // European Space Agency, ESA
+    { name: 'Guiana Space Centre', country: 'ESA',
+      lat: 5.169, lon: -52.6903 },
+    { name: 'Alcântara Space Center', country: 'Brasil (AEB)',
+      lat: -2.3394, lon: -44.4175 },
+
+    // Middle East
+    { name: 'Palmachim Airbase', country: 'Isreal (ISA/IAF)',
+      lat: 31.8977, lon: 34.6905 },
+    { name: 'Shahroud Space Center', country: 'Iran (ISA/IRGCASF)',
+      lat: 36.2009, lon: 55.3339 },
+    { name: 'Semnan Space Center', country: 'Iran (ISA/IRGCASF)',
+      lat: 35.2346, lon: 53.9221 },
+
+    // China, CNSA
     { name: 'Jiuquan Satellite Launch Center', country: 'CHN',
        lat: 40.961, lon: 100.298 },
     { name: 'Taiyuan Satellite Launch Center', country: 'CHN',
@@ -106,11 +125,13 @@
        lat: 19.6144, lon: 110.951 },
     { name: 'DongFang Maritime Launch Center', country: 'CHN',
        lat: 36.779, lon: 121.168 },
-    // JAXA
+
+    // Japan, Japan Aerospace Exploration Agency, JAXA
     { name: 'Uchinoura Space Center', country: 'JAXA',
        lat: 31.251, lon: 131.081 },
     { name: 'Tanegashima Space Center', country: 'JAXA',
        lat: 30.4, lon: 130.97 },
+
     // Russia, CIS
     { name: 'Baikonur Cosmodrome', country: 'CIS', 
       lat: 45.965, lon: 63.305 },
@@ -118,7 +139,10 @@
       lat: 51.884, lon: 128.334 },
     { name: 'Plesetsk Cosmodrome', country: 'CIS', 
       lat: 62.925, lon: 40.577 },
-    // Other
+    { name: 'Yasny Launch Base', country: 'CIS', 
+      lat: 51.0488, lon: 59.8533 },
+
+    // Asia and Oceania
     { name: 'Mahia Launch Complex 1', country: 'Rocket Lab',
        lat: -39.260, lon: 177.865 },
     { name: 'Satish Dhawan Space Centre', country: 'ISRO', 
@@ -288,6 +312,20 @@
     return 0;
   }
  
+  /* == HimawariJP GEOJSON */
+  let himawariJP = null;
+
+  function loadHimawari() {
+    if (himawariJP) return Promise.resolve(himawariJP);
+
+    return fetch('/assets/js/himawari_japan.json')
+      .then(res => res.json())
+      .then(data => {
+        himawariJP = data;
+        return data;
+      });
+  }
+
   /* ══════════════════════════════════════════════════════════
      IMAGE URL HELPERS
   ══════════════════════════════════════════════════════════ */
@@ -562,6 +600,38 @@
       }
     })();
 
+    /* Himawari-9 JP sector footprint (static, GEOJSON file) */
+    gH9JP.selectAll('*').remove();
+    (function() {
+      loadHimawari().then(data => {
+        gH9JP.append('path')
+          .datum(data)
+          .attr('d', path)
+          .attr('fill', SATS.h9.jpFill)
+          .attr('stroke', SATS.h9.jpColor)
+          .attr('stroke-width', 1.4)
+          .attr('stroke-dasharray', '5 3')
+          .attr('opacity', 0.85);
+        });
+      var labelPt = proj([SATS.h9.jpCenter[0], SATS.h9.jpCenter[1]]);
+      // console.log('JPN Vis:', SATS.h9.jpCenter, visibleCenter)
+      if (d3.geoDistance(SATS.h9.jpCenter, visibleCenter) >= Math.PI/2) return;
+      if (labelPt) {
+        var lbl = 'H9 JPN';
+        var tw = lbl.length * 6 + 10;
+        gH9JP.append('rect')
+          .attr('x', labelPt[0]-tw/2).attr('y', labelPt[1]-9)
+          .attr('width', tw).attr('height', 14).attr('rx', 3)
+          .attr('fill', 'rgba(4,8,15,0.82)');
+        gH9JP.append('text')
+          .attr('x', labelPt[0]).attr('y', labelPt[1]+1)
+          .attr('text-anchor','middle').attr('dominant-baseline','middle')
+          .attr('fill', SATS.h9.jpColor).attr('font-size', 9)
+          .attr('font-family','Share Tech Mono, monospace').attr('font-weight','600')
+          .attr('letter-spacing','0.06em').text(lbl);
+      };
+    })();
+
     /* Launch sites */
     gLaunch.selectAll('*').remove();
     LAUNCH_SITES.forEach(function(site) {
@@ -666,7 +736,8 @@
       var lonStr = sol.lon >= 0
         ? sol.lon.toFixed(1) + '°E'
         : Math.abs(sol.lon).toFixed(1) + '°W';
-      var slabel = '☀ Solar Subpoint';
+      // var slabel = '☀ Solar Subpoint';
+      var slabel = 'Solar Subpoint';
       var sinfo = latStr + ' ' + lonStr;
       var stw = slabel.length * 6 + 10;
       gSolar.append('rect')
