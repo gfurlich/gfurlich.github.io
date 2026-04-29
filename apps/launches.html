@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en"> <!--- Header --->
+<head>
+    <title>
+        
+        Upcoming Space Launches
+    </title>
+    <meta itemprop="description" name="description" content="Upcoming orbital space launches this week, powered by Launch Library 2." />
+    <meta name="author" content="Greg Furlich">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body><header>
+
+    <nav>
+       <div class="topnav">
+           <a href="/">
+               <p>
+                   <h> Greg Furlich</h>
+               </p>
+           </a>
+       </div>
+
+       <!-- Top Navigation Menu -->
+        <div class="topnav-app">
+
+            <!-- Navigation links (hidden by default) -->
+            <div id="myLinks">
+                <a href="/apps/starchart.html"><p>Star Chart</p></a>
+                <a href="/apps/fulldisk.html"><p>Fulldisk View</p></a>
+                <a href="/apps/mesoview.html"><p>Meso View</p></a>
+                <a href="/apps/launches.html"><p>Launches</p></a>
+                <a href="/Research.html"><p>Research</p></a>
+                <a href="/Education.html"><p>Education</p></a>
+                <a href="/Projects.html"><p>Projects</p></a>
+                <a href="/Hobbies.html"><p>Hobbies</p></a>
+                <a href="/Photography.html"><p>Photography</p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="CU" src="/assets/logos/cub.png" height=30>
+                    </p>
+                </a>
+                <a href="https://github.com/gfurlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="github" src="/assets/logos/github.png" height=30>
+                    </p>
+                </a>
+                <a href="https://www.linkedin.com/in/greg-furlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="linkedin" src="/assets/logos/in.png" height=30>
+                    </p>
+                </a>
+                <a href="mailto:greg.furlich@colorado.edu">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="mzil" src="/assets/logos/mail.png" height=30>
+                    </p>
+                </a>
+            </div>
+
+            <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <i class="fa fa-bars" height=30></i>
+            </a>
+        </div>
+
+   </nav>
+
+   <script src="/assets/js/app_menu.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</header>
+
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div style="height: 5vh"></div>
+
+<div class="gv">
+
+  <header class="gv-head">
+    <h1>
+      Upcoming Space Launches
+      <p class="lp__subtitle">Launch schedule over the coming week</p>
+    </h1>
+    <div class="lp__meta">
+      <div class="lp__count" id="launch-count">—</div>
+      <span class="lp__count-label">launches found</span>
+      <span class="lp__updated" id="fetch-time"></span><br>
+      <small>Data Source: Launch Library 2 · TheSpaceDevs</small>
+    </div>
+  </header>
+
+ 
+
+<section class="lp">
+  <div class="lp__inner">
+
+    <!-- <header class="lp__header">
+      <div>
+        <p class="lp__kicker">// Launch Library 2 · TheSpaceDevs</p>
+        <h1 class="lp__title">Upcoming Launches</h1>
+        <p class="lp__subtitle">NEXT 7 DAYS &nbsp;·&nbsp; ALL OPERATORS &nbsp;·&nbsp; ORBITAL + SUBORBITAL</p>
+      </div>
+      <div class="lp__meta">
+        <div class="lp__count" id="launch-count">—</div>
+        <span class="lp__count-label">launches found</span>
+      </div>
+    </header> -->
+
+    <div id="launch-container">
+      <div class="lp__loading">
+        <div class="lp__loading-spinner"></div>
+        <p>Querying launch manifest for Launch Library 2…</p>
+      </div>
+    </div>
+
+    <footer class="lp__footer">
+      <p class="lp__footer-note">
+        Data Source: <a href="https://thespacedevs.com/llapi" target="_blank" rel="noopener">Launch Library 2</a>
+        by TheSpaceDevs
+        <a href="https://ll.thespacedevs.com/docs/" target="_blank" rel="noopener">API docs</a>
+      </p>
+    </footer>
+
+  </div>
+</section>
+
+<!-- Load Scripts -->
+<script src="/assets/js/launches.js"></script>
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+  <!--- Footer Content --->
+  	&copy Greg Furlich 2026 <br>
+  	All Rights Reserved<br>
+</footer>
+</body>
+
+</html>
