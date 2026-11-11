@@ -1,7 +1,9 @@
 @charset "UTF-8";
-/** Reset some basic elements */
 @import url("https://fonts.googleapis.com/css2?family=Syne+Mono&family=Outfit:wght@300;400;500;600&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Chakra+Petch:wght@400;600;700&display=swap");
+:root { color-scheme: only light; }
+
+/** Reset some basic elements */
 body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, hr, dl, dd, ol, ul, figure { margin: 0; padding: 0; }
 
 /** Basic styling */
@@ -27,12 +29,10 @@ hsblue { font-family: "Georgia"; font-size: 0.75em; font-weight: bold; }
 /* Subtitles */
 t { color: white; background-color: #0f3f63; font-weight: 400; font-size: 150%; padding: 1.5vh 1vw; margin-left: 5vw; text-align: center; }
 
-h1 { color: white; background-color: #0f3f63; font-weight: bold; font-size: 150%; padding: 1.5vh 1vw; margin-left: 5vw; text-align: center; }
-
-H1 { color: white; background-color: #0f3f63; font-weight: bold; font-size: 150%; padding: 1.5vh 1vw; max-width: 20vw; margin-left: 5vw; text-align: center; }
+h1 { color: white; background-color: #0f3f63; font-weight: bold; font-size: 150%; padding: 1.5vh 1vw; max-width: 20vw; margin-left: 5vw; text-align: center; }
 
 /* Paragraphs */
-p { color: #blue; font-size: 125%; margin: .5em .75em .5em .75em; }
+p { color: inherit; font-size: 125%; margin: .5em .75em .5em .75em; }
 
 bp { font-size: 120%; text-align: justify; text-align-last: center; /* for IE9 */ -ms-text-align-last: center; }
 
@@ -48,7 +48,7 @@ img { max-width: 100%; vertical-align: middle; }
 /** Figures */
 figure > img { display: block; }
 
-figcaption { font-size: 0.75em; color: #blue; font-size: 105%; text-align: center; font-style: italic; }
+figcaption { font-size: 0.75em; color: #0f3f63; font-size: 105%; text-align: center; font-style: italic; }
 
 #logo-container { display: flex; align-items: center; justify-content: center; }
 
@@ -56,6 +56,7 @@ figcaption { font-size: 0.75em; color: #blue; font-size: 105%; text-align: cente
 
 /** Lists */
 ul, ol { text-align: justify; padding-left: 30px; }
+@media screen and (max-width: 600px) { ul, ol { text-align: left; } }
 
 .menu { display: flex; justify-content: space-between; }
 
@@ -81,9 +82,11 @@ pre { padding: .5em; background-color: #e8e8e8; }
 pre > code { font-size: 1.2em; background-color: #ddeefa; overflow-x: scroll; overflow-y: hidden; display: block; }
 
 /** Wrapper */
-.wrapper { max-width: -webkit-calc(80vw - (1em * 2)); max-width: calc(80vw - (1em * 2)); margin-right: auto; margin-left: auto; padding-right: 1em; padding-left: 1em; }
-@media screen and (max-width: 80vw) { .wrapper { max-width: -webkit-calc(80vw - (1em)); max-width: calc(80vw - (1em)); padding-right: 0.5em; padding-left: 0.5em; } }
+.wrapper { box-sizing: border-box; max-width: -webkit-calc(80vw - (1em * 2)); max-width: calc(80vw - (1em * 2)); margin-right: auto; margin-left: auto; padding-right: 1em; padding-left: 1em; }
+@media screen and (max-width: 800px) { .wrapper { max-width: -webkit-calc(80vw - (1em)); max-width: calc(80vw - (1em)); padding-right: 0.5em; padding-left: 0.5em; } }
+@media screen and (max-width: 600px) { .wrapper { max-width: 100%; padding-right: 1em; padding-left: 1em; } }
 
+@media screen and (max-width: 600px) { h1 { width: fit-content; max-width: calc(100% - 5vw); } }
 /** Clearfix */
 .wrapper:after, .footer-col-wrapper:after { content: ""; display: table; clear: both; }
 
@@ -150,7 +153,7 @@ body.night-mode #info { color: #aa0000; }
 .site-nav .menu-icon { display: none; }
 .site-nav .page-link { color: #0f3f63; line-height: 1.5; }
 .site-nav .page-link:not(:last-child) { margin-right: 20px; }
-@media screen and (max-width: 95vw) { .site-nav { position: absolute; top: 9px; right: 0.5em; background-color: #c5cedd; border: 1px solid #e8e8e8; border-radius: 5px; text-align: right; }
+@media screen and (max-width: 600px) { .site-nav { position: absolute; top: 9px; right: 0.5em; background-color: #c5cedd; border: 1px solid #e8e8e8; border-radius: 5px; text-align: right; }
   .site-nav label[for="nav-trigger"] { display: block; float: right; width: 36px; height: 36px; z-index: 2; cursor: pointer; }
   .site-nav .menu-icon { display: block; float: right; width: 36px; height: 26px; line-height: 0; padding-top: 10px; text-align: center; }
   .site-nav .menu-icon > svg { fill: #424242; }
@@ -176,9 +179,9 @@ body.night-mode #info { color: #aa0000; }
 
 .footer-col-3 { width: -webkit-calc(45% - (1em / 2)); width: calc(45% - (1em / 2)); }
 
-@media screen and (max-width: 80vw) { .footer-col-1, .footer-col-2 { width: -webkit-calc(50% - (1em / 2)); width: calc(50% - (1em / 2)); }
+@media screen and (max-width: 800px) { .footer-col-1, .footer-col-2 { width: -webkit-calc(50% - (1em / 2)); width: calc(50% - (1em / 2)); }
   .footer-col-3 { width: -webkit-calc(100% - (1em / 2)); width: calc(100% - (1em / 2)); } }
-@media screen and (max-width: 95vw) { .footer-col { float: none; width: -webkit-calc(100% - (1em / 2)); width: calc(100% - (1em / 2)); } }
+@media screen and (max-width: 600px) { .footer-col { float: none; width: -webkit-calc(100% - (1em / 2)); width: calc(100% - (1em / 2)); } }
 /** Page content */
 .page-content { padding: 1em 0; flex: 1; }
 
@@ -197,15 +200,15 @@ body.night-mode #info { color: #aa0000; }
 .post-header { margin-bottom: 1em; }
 
 .post-title { font-size: 2.625em; letter-spacing: -1px; line-height: 1; }
-@media screen and (max-width: 80vw) { .post-title { font-size: 2.25em; } }
+@media screen and (max-width: 800px) { .post-title { font-size: 2.25em; } }
 
 .post-content { margin-bottom: 1em; }
 .post-content h2 { font-size: 2em; }
-@media screen and (max-width: 80vw) { .post-content h2 { font-size: 1.75em; } }
+@media screen and (max-width: 800px) { .post-content h2 { font-size: 1.75em; } }
 .post-content h3 { font-size: 1.625em; }
-@media screen and (max-width: 80vw) { .post-content h3 { font-size: 1.375em; } }
+@media screen and (max-width: 800px) { .post-content h3 { font-size: 1.375em; } }
 .post-content h4 { font-size: 1.25em; }
-@media screen and (max-width: 80vw) { .post-content h4 { font-size: 1.125em; } }
+@media screen and (max-width: 800px) { .post-content h4 { font-size: 1.125em; } }
 
 /** Syntax highlighting styles */
 .highlight { background: #ddeefa; }
@@ -277,6 +280,8 @@ body.night-mode #info { color: #aa0000; }
 /* Style the links inside the navigation bar */
 .topnav a { float: left; color: white; text-align: center; text-decoration: none; vertical-align: center; }
 
+.topnav .title { text-align: center; vertical-align: center; font-size: 156%; padding: .5em .75em; }
+
 .topnav b { float: left; padding: 0px 0px 10px 10px; vertical-align: text-bottom; }
 
 /* Change the color of links on hover */
@@ -285,6 +290,16 @@ body.night-mode #info { color: #aa0000; }
 /* Right-aligned section inside the top navigation */
 .topnav-right { float: right; bottom: 0; }
 
+.topnav-right img { height: 30px; width: auto; }
+
+.nav-toggle { display: none; }
+
+@media screen and (max-width: 1000px) { .topnav { overflow: visible; height: 56px; }
+  .topnav .title { line-height: 56px; padding: 0 1em; font-size: 130%; }
+  .nav-toggle { display: block; position: absolute; top: 0; right: 0; width: 56px; height: 56px; background: none; border: 0; color: white; font-size: 26px; cursor: pointer; }
+  .topnav-right { display: none; float: none; clear: both; background: #0f3f63; max-height: calc(100vh - 56px); overflow-y: auto; }
+  .topnav.open .topnav-right { display: block; }
+  .topnav-right a { float: none; display: block; text-align: left; } }
 /* Footer Style */
 footer { background-color: #0f3f63; font-family: 'Fira Sans', sans-serif; color: white; clear: both; text-align: center; font-size: .9em; padding: 15px; }
 
@@ -756,7 +771,7 @@ table.gv-table tr:hover td { background: var(--bg); }
 
 @media (max-width: 640px) { .lc__lower { grid-template-columns: 1fr; }
   .lc__map-pane { border-right: none; border-bottom: 1px solid var(--border); } }
-.recipe-card { max-width: 720px; margin: 2rem auto; padding: 2rem 2.5rem; font-size: 15px; line-height: 1.7; }
+.recipe-card { margin: 2rem auto; padding: 2rem 2.5rem; font-size: 15px; line-height: 1.7; }
 
 .recipe-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.25rem; }
 

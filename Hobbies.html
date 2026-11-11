@@ -14,19 +14,19 @@
     <link rel="icon" href="/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
-    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bing Webmaster tools -->
+    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" /> 
+    <meta name="color-scheme" content="only light">
 
 </head>
 <body><header>
 
     <nav>
        <div class="topnav">
-           <a href="/">
-               <p>
-                   <h> Greg Furlich</h>
-               </p>
-           </a>
+           <a href="/" class="title">Greg Furlich</a>
+
+           <button type="button" class="nav-toggle" aria-label="Menu"
+                aria-expanded="false" aria-controls="site-links">&#9776;</button>
 
            <div class="topnav-right">
                 <a href="/Research.html"><p>Research</p></a>
@@ -34,15 +34,23 @@
                 <a href="/Projects.html"><p>Projects</p></a>
                 <a href="/Hobbies.html"><p>Hobbies</p></a>
                 <a href="/Photography.html"><p>Photography</p></a>
-                <a href="https://www.colorado.edu/center/nsi/greg-furlich"><p><img id="CU" src="/assets/logos/cub.png" height=30vw></p></a>
-                <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/logos/github.png" height=30vw></p></a>
-                <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/logos/in.png" height=30vw></p></a>
-                <a href="mailto:greg.furlich@colorado.edu"><p><img id="mzil" src="/assets/logos/mail.png" height=30vw></p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich"><p><img id="CU" src="/assets/logos/cub.png"></p></a>
+                <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/logos/github.png"></p></a>
+                <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/logos/in.png"></p></a>
+                <a href="mailto:greg.furlich@colorado.edu"><p><img id="mzil" src="/assets/logos/mail.png"></p></a>
            </div>
 
        </div>
    </nav>
 
+   <script>
+    document.querySelector('.nav-toggle').addEventListener('click', function () {
+      var nav = this.closest('.topnav');
+      var open = nav.classList.toggle('open');
+      this.setAttribute('aria-expanded', open);
+    });
+  </script>
+  
 </header>
 <main class="page-content" aria-label="Content">
       <div class="wrapper">
@@ -89,7 +97,7 @@
 
 <p>I also love tinkering with Linux systems and had 2 years experience as a linux system administrator for Telescope Array’s Data Server and Computational Clusters. I used to even host this very website on a Raspberry Pi (Until I thought that was an unwanted cybersecurity risk for my home network)!</p>
 
-<p>Here are some javascript applications I have been developing, assisted by agentic AI (Claude and some ChatGPT), to host on my website:</p>
+<p>Here are some javascript applications I have been developing, assisted by agentic AI (mostly Claude and a bit of ChatGPT), to host on my website:</p>
 
 <ul>
     <li style="list-style-type: none"><a href="apps/starchart.html">Star Chart</a>: A Starchart display that takes a geolocation and projects stars, planets, deep space objects, and satellites into the topocentric frame of the observers position. User can toggle +/- 24 hrs to see these objects progress across the sky.</li>
@@ -100,7 +108,7 @@
     <div style="height: 2vh"></div>
     <li style="list-style-type: none"><a href="apps/launches.html">Space Launch List</a>: A display the upcoming space launch schedule for the week with useful information on the launch. Primary source was Launch Library 2 by TheSpaceDevs. </li>
     <div style="height: 2vh"></div>
-    <li style="list-style-type: none"><b>*AI Disclosure:</b> Claude and some ChatGPT was used to assist in the generation of the javascript, style, and visualization in these applications under my direction. These GPT models made mistakes in these codes, which were identified and addressed. If any errors remain, please let me know!</li>
+    <li style="list-style-type: none"><b>AI Disclosure:</b> Claude and a bit of ChatGPT was used to assist in the generation of the javascript, css style, and visualization in these applications under my direction and prompting. These GPT models made mistakes in the initial codes, which were identified and addressed. If any errors remain, please let me know!</li>
 </ul>
 
 <div id="hiking" style="height: 10vh"></div>
@@ -207,7 +215,7 @@ I love the steam bounce and crumb from baking these breads!
 <img src="assets/hobbies/deepdishpizza.jpg" alt="crumbshot" style="height:25vw;padding: 0vh 1vw;" />
 </center>
 <figcaption>
-Suggest Toppings: Pepperoni, Jalepeno, and Fresh Sliced Pineapple!
+Suggest Pizza Toppings (My Favorite!): Pepperoni, Jalepeno, and Fresh Sliced Pineapple!
 </figcaption>
 
 <!-- Todo -->

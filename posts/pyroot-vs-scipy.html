@@ -14,19 +14,19 @@
     <link rel="icon" href="/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
-    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bing Webmaster tools -->
+    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" /> 
+    <meta name="color-scheme" content="only light">
 
 </head>
 <body><header>
 
     <nav>
        <div class="topnav">
-           <a href="/">
-               <p>
-                   <h> Greg Furlich</h>
-               </p>
-           </a>
+           <a href="/" class="title">Greg Furlich</a>
+
+           <button type="button" class="nav-toggle" aria-label="Menu"
+                aria-expanded="false" aria-controls="site-links">&#9776;</button>
 
            <div class="topnav-right">
                 <a href="/Research.html"><p>Research</p></a>
@@ -34,15 +34,23 @@
                 <a href="/Projects.html"><p>Projects</p></a>
                 <a href="/Hobbies.html"><p>Hobbies</p></a>
                 <a href="/Photography.html"><p>Photography</p></a>
-                <a href="https://www.colorado.edu/center/nsi/greg-furlich"><p><img id="CU" src="/assets/logos/cub.png" height=30vw></p></a>
-                <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/logos/github.png" height=30vw></p></a>
-                <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/logos/in.png" height=30vw></p></a>
-                <a href="mailto:greg.furlich@colorado.edu"><p><img id="mzil" src="/assets/logos/mail.png" height=30vw></p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich"><p><img id="CU" src="/assets/logos/cub.png"></p></a>
+                <a href="https://github.com/gfurlich/"><p><img id="github" src="/assets/logos/github.png"></p></a>
+                <a href="https://www.linkedin.com/in/greg-furlich/"><p><img id="linkedin" src="/assets/logos/in.png"></p></a>
+                <a href="mailto:greg.furlich@colorado.edu"><p><img id="mzil" src="/assets/logos/mail.png"></p></a>
            </div>
 
        </div>
    </nav>
 
+   <script>
+    document.querySelector('.nav-toggle').addEventListener('click', function () {
+      var nav = this.closest('.topnav');
+      var open = nav.classList.toggle('open');
+      this.setAttribute('aria-expanded', open);
+    });
+  </script>
+  
 </header>
 <main class="page-content" aria-label="Content">
       <div class="wrapper">

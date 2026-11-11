@@ -44,6 +44,18 @@
       + ' – ' + e.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',timeZoneName:'short'});
   }
  
+  function fmtCountdown(iso, tbd) {
+    if (!iso || tbd) return null;
+    const diff = new Date(iso) - Date.now();
+    if (diff <= 0) return 'T-0';
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    if (d > 0) return `T-${d}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m`;
+    return `T-${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+ 
   function fmtDayKey(iso) {
     if (!iso) return 'TBD';
     return new Date(iso).toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
@@ -254,7 +266,7 @@
  
     return `
     <article class="lc lc--${st.cls}" id="${cardId}"
-             data-lat="${lat ?? ''}" data-lon="${lon ?? ''}" data-mapid="${mapId}">
+             data-lat="${lat ?? ''}" data-lon="${lon ?? ''}" data-mapid="${mapId}" data-net="${l.net || ''}">
       <div class="lc__strip"></div>
  
       <div class="lc__top" onclick="toggleCard('${cardId}')">
@@ -268,6 +280,7 @@
           </div>
         </div>
         <div class="lc__time-block">
+          <div class="lc__countdown"></div>
           <div class="lc__date">${date}${precLabel}</div>
           <div class="lc__time">${time}</div>
           ${win  ? `<div class="lc__window-txt">Window: ${esc(win)}</div>` : ''}
@@ -369,8 +382,43 @@
     }
  
     container.innerHTML = html;
+    startCountdowns();
   }
  
+  /* == Countdown ticker ========================== */
+  let countdownInterval = null;
+
+  function startCountdowns() {
+    if (countdownInterval) clearInterval(countdownInterval);
+  
+    function tick() {
+      document.querySelectorAll('.lc__countdown').forEach(el => {
+        const card = el.closest('[data-net]');
+        const net  = card && card.dataset.net;
+        if (!net) { el.textContent = ''; return; }
+        const diff = new Date(net) - Date.now();
+        if (diff <= 0) {
+          el.textContent = 'T-0';
+          el.className = 'lc__countdown lc__countdown--launched';
+          return;
+        }
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        el.textContent = d > 0
+          ? `T-${d}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m`
+          : `T-${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        el.className = d === 0 && h === 0
+          ? 'lc__countdown lc__countdown--soon'
+          : 'lc__countdown';
+      });
+    }
+  
+    tick(); // run immediately
+    countdownInterval = setInterval(tick, 1000);
+  }
+
   /* == Fetch ===================================== */
   fetch(`${API}?${params}`)
     .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
