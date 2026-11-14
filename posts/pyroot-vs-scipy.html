@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en"> <!--- Header --->
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
         
         PyRoot vs. SciPy Fitting in Python
     </title>
     <meta itemprop="description" name="description" content="Python example comparing python modules SciPy and PyRoot in fitting a gaussian sampled distribution. SciPy is a popular python module for scientific computing. PyRoot is a python interface to the CERN ROOT C++ program which is a robust data analysis framework used by many in fundamental physics research. However there is not much documentation on how to use PyRoot. This is an example of using PyRoot to fit a distribution in Python and comparing it to SciPy." />
     <meta name="author" content="Greg Furlich">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/assets/main.css">
     <link rel="icon" href="/favicon.png" type="image/png">
-    <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
-    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    
+
+    <!-- Color and Font Schemes -->
+    <meta name="color-scheme" content="only light">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
     <!-- Bing Webmaster tools -->
     <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" /> 
-    <meta name="color-scheme" content="only light">
+
 
 </head>
 <body><header>
@@ -54,7 +59,7 @@
 </header>
 <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <script src="https://kit.fontawesome.com/5289f3dc42.js" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/5289f3dc42.js" crossorigin="anonymous" defer></script>
 
 <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
@@ -69,7 +74,7 @@
         <i class="fas fa-user-astronaut"></i> <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Greg Furlich</span></span></p>
 
 
-    <p style="color=$blue"><i class="fas fa-tags"></i>
+    <p><i class="fas fa-tags"></i>
         
             PyRoot,
         
@@ -85,9 +90,7 @@
 
   </header>
 
-  <!-- <div class="post-content e-content" itemprop="articleBody"> -->
-  <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
-  text-justify: inter-word;">
+  <div class="post-content e-content project-content" itemprop="articleBody">
     <p>CERN <a href="https://root.cern.ch/">ROOT</a> is a powerful object oriented program in C++ data analysis framework with statistical and fitting methods used by many physicists in fundamental research. It developed and is maintained by the European Organization for Nuclear Research, known as <a href="https://home.cern/">CERN</a>. The CERN ROOT analysis framework was used the analysis and figures presented in the <a href="https://atlas.cern/updates/atlas-feature/higgs-boson">discovery of the Higgs Boson</a>.</p>
 
 <p>I used ROOT in my own graduate research in astroparticle physics given the amount of particle physicist in my community. While I started my graduate research using ROOT in C/C++, I found Python to be a powerful interpreter and transitioned away from C/C++ in my analysis. Luckily, ROOT can now be imported into Python as <a href="https://root.cern.ch/pyroot">PyRoot</a>. Python also has the module SciPy (<a href="https://www.scipy.org/">Scientific Python</a>) with fitting and statistical methods for scientific computing. This is an example of how to use PyRoot and comparing it to SciPy by fitting a Gaussian distribution. A link to the raw codes and outputs in this example is in a <a href="https://github.com/gfurlich/Projects/blob/master/pyroot/pyroot_fit.ipynb">Jupyter python notebook</a> on my Github profile.</p>
@@ -255,7 +258,6 @@ Degrees of Freedom =	48
   </div><top id="go-to-top" title="Go to top"><a href="#" >&#9650;<br>Back to Top</a></top>
   <a class="u-url" href="/posts/pyroot-vs-scipy.html" hidden></a>
 </article>
-
       </div>
     </main><footer class="site-footer h-card">
   <data class="u-url" href="/"></data>

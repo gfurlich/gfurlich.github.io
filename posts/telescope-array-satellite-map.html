@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en"> <!--- Header --->
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
         
         Telescope Array Composite Satellite Map using Landsat Data
     </title>
     <meta itemprop="description" name="description" content="Created a composite satellite map of the Telescope Array Cosmic Ray Observatory using data from the LandSat 8. The Telescope Array Cosmic Ray Observatory is located in the Sevier Desert of Millard County, Utah. The Landsat 8 data was pulled from Amazon Web Services (AWS). The red, green, and blue bands were combined into a composite image using NumPy. Site information and points of interest were overlayed on the composite satellite image. The Haversine formula was used to calculate the great-circle distance between sites given their GPS location to place the sites relative on the satellite image." />
     <meta name="author" content="Greg Furlich">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/assets/main.css">
     <link rel="icon" href="/favicon.png" type="image/png">
-    <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
-    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    
+
+    <!-- Color and Font Schemes -->
+    <meta name="color-scheme" content="only light">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
     <!-- Bing Webmaster tools -->
     <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" /> 
-    <meta name="color-scheme" content="only light">
+
 
 </head>
 <body><header>
@@ -54,7 +59,7 @@
 </header>
 <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <script src="https://kit.fontawesome.com/5289f3dc42.js" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/5289f3dc42.js" crossorigin="anonymous" defer></script>
 
 <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
@@ -69,7 +74,7 @@
         <i class="fas fa-user-astronaut"></i> <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Greg Furlich</span></span></p>
 
 
-    <p style="color=$blue"><i class="fas fa-tags"></i>
+    <p><i class="fas fa-tags"></i>
         
             GIS,
         
@@ -93,9 +98,7 @@
 
   </header>
 
-  <!-- <div class="post-content e-content" itemprop="articleBody"> -->
-  <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
-  text-justify: inter-word;">
+  <div class="post-content e-content project-content" itemprop="articleBody">
     <p>The <a href="http://www.telescopearray.org/">Telescope Array Cosmic Ray Observatory (TA)</a> is the largest cosmic ray detector in the northern hemisphere. To better illustrate the observatory’s location and size for presentations and papers, I created my own composite satellite map. The python <a href="https://pypi.org/project/GDAL/">GDAL module</a> was used to import the rasters of the different bands, <a href="https://rasterio.readthedocs.io/en/latest/index.html">rasterio module</a> was used to set the window on the raster, and NumPy (Numerical Python) was used to create a composite color image using the RGB bands. The satellite image was centered on the central laser facility (CLF) at the observatory. The satellite image below was created in this <a href="https://github.com/gfurlich/Research/blob/master/TAmap/TA_satellite_map.ipynb">Jupyter python notebook</a> on my Github profile.</p>
 
 <div style="height: 5vh"></div>
@@ -729,7 +732,6 @@ def CLF_coord(longitude, latitude):
   </div><top id="go-to-top" title="Go to top"><a href="#" >&#9650;<br>Back to Top</a></top>
   <a class="u-url" href="/posts/telescope-array-satellite-map.html" hidden></a>
 </article>
-
       </div>
     </main><footer class="site-footer h-card">
   <data class="u-url" href="/"></data>

@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en"> <!--- Header --->
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
         
         Telescope Array Weather Classification and Other Interesting Pedestal  Animations
     </title>
     <meta itemprop="description" name="description" content="Research project to classify the weather in the Fluorescence Detector's field of view using machine learning. A series of snapshots of the night's progression using the baseline values of each photomultiplier tube and using it's nominal position on the night sky to reconstruct the detector's full field of view. These snapshots were feed into a Recurrent Convolution Neural Network (RCNN) for classification. Other interesting transient luminous events were seen in these snapshots." />
     <meta name="author" content="Greg Furlich">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/assets/main.css">
     <link rel="icon" href="/favicon.png" type="image/png">
-    <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
-    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    
+
+    <!-- Color and Font Schemes -->
+    <meta name="color-scheme" content="only light">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
     <!-- Bing Webmaster tools -->
     <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" /> 
-    <meta name="color-scheme" content="only light">
+
 
 </head>
 <body><header>
@@ -54,7 +59,7 @@
 </header>
 <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <script src="https://kit.fontawesome.com/5289f3dc42.js" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/5289f3dc42.js" crossorigin="anonymous" defer></script>
 
 <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
@@ -69,7 +74,7 @@
         <i class="fas fa-user-astronaut"></i> <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Greg Furlich</span></span></p>
 
 
-    <p style="color=$blue"><i class="fas fa-tags"></i>
+    <p><i class="fas fa-tags"></i>
         
             Telescope Array,
         
@@ -83,9 +88,7 @@
 
   </header>
 
-  <!-- <div class="post-content e-content" itemprop="articleBody"> -->
-  <div class="post-content e-content" itemprop="articleBody" style="text-align: justify;
-  text-justify: inter-word;">
+  <div class="post-content e-content project-content" itemprop="articleBody">
     <!-- <div style="text-align:justifty;display:inline-block;"> -->
 <p>In order to determine the weather of the field of view (FOV) of the array of telescopes at a Fluorescence Detector (FD) site at the <a href="http://telescopearray.org/">Telescope Array Cosmic Ray Observatory</a>, false color snapshots of the night sky were created using the minute average pedestal for each photomultiplier tube (PMT) in the whole array at the night sky and then classified using a trained neural network. More information on how the snapshots were created and results of the different neural network used for classification can be found in <bp style="font-size: 1em"><i><a href="https://pos.sissa.it/358/261/pdf">Telescope Array FD Weather Classification using Machine Learning</a></i>, <b>Greg Furlich</b>, Proceedings of Science (ICRC2019) 261, 36th International Cosmic Ray Conference, Madison, WI, July 2019</bp>.
 <br />
@@ -219,7 +222,6 @@ designed to capture the temporal features of the data. Lastly combing a the RNN 
   </div><top id="go-to-top" title="Go to top"><a href="#" >&#9650;<br>Back to Top</a></top>
   <a class="u-url" href="/posts/telescope-array-machine-learing-weather-classification.html" hidden></a>
 </article>
-
       </div>
     </main><footer class="site-footer h-card">
   <data class="u-url" href="/"></data>
