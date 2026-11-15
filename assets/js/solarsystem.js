@@ -167,6 +167,47 @@ const PLANETS_WITH_ORBITERS = new Set(['Earth', 'Mars', 'Jupiter']);   // get a 
 const planetCraftText = name => `Spacecraft: ${PLANET_SPACECRAFT[name]}`;
 
 //===========================================================
+//  Extra-solar probes (Voyagers, Pioneers, New Horizons)
+//
+//  Direction = fixed sky position (RA/Dec, Sky & Telescope, Dec 2018);
+//  distance = value at the epoch below + constant radial speed.
+//  Distances/speeds follow NASA/JPL and Wikipedia figures (Nov 2026);
+//  a straight-line extrapolation, good to a few AU and ~1° in direction.
+//===========================================================
+const PROBE_EPOCH_MS      = Date.UTC(2026, 10, 14);
+const AU_PER_YR_PER_KMS   = 0.21095;
+
+const PROBES = [
+  { name:'Voyager 1',    ra:258.263, dec: 11.972, r0:171.8, kms:16.92, showFrom:1990, rgb:[120,200,255],
+    note:'NASA · interstellar since Aug 2012 · toward Ophiuchus' },
+  { name:'Voyager 2',    ra:300.738, dec:-57.620, r0:144.4, kms:15.27, showFrom:1990, rgb:[120,200,255],
+    note:'NASA · interstellar since Nov 2018 · toward Telescopium' },
+  { name:'Pioneer 10',   ra: 78.396, dec: 26.040, r0:142.1, kms:11.8,  showFrom:1990, rgb:[120,200,255],
+    note:'NASA · silent since 2003 · toward Taurus (Aldebaran)' },
+  { name:'Pioneer 11',   ra:282.990, dec: -8.924, r0:119.4, kms:11.1,  showFrom:1990, rgb:[120,200,255],
+    note:'NASA · silent since 1995 · toward Scutum' },
+  { name:'New Horizons', ra:286.800, dec:-20.690, r0: 65.8, kms:13.5,  showFrom:2016, rgb:[120,200,255],
+    note:'NASA · Pluto flyby 2015, extended mission · toward Sagittarius' },
+];
+PROBES.forEach(p => { p.ecl = equatorialToEcliptic(p.ra, p.dec); });
+
+/** Heliocentric ecliptic position (AU) of a probe at time ms. */
+function probeState(pr, ms) {
+  const yrs = (ms - PROBE_EPOCH_MS) / (365.25 * 86400000);
+  const r   = Math.max(1, pr.r0 + pr.kms * AU_PER_YR_PER_KMS * yrs);
+  const lon = toRad(pr.ecl.lon), lat = toRad(pr.ecl.lat);
+  return { r, X: r * Math.cos(lat) * Math.cos(lon), Y: r * Math.cos(lat) * Math.sin(lon), Z: r * Math.sin(lat) };
+}
+
+function probeText(pr, st) {
+  return `${pr.name} (${pr.note})  |  ~${st.r.toFixed(1)} AU from Sun (${(st.r * LIGHT_MIN_PER_AU / 60).toFixed(1)} light-hours), `
+       + `${pr.kms} km/s (${(pr.kms * AU_PER_YR_PER_KMS).toFixed(2)} AU/yr)  |  `
+       + `Heading ecl. lon ${pr.ecl.lon.toFixed(1)}°, lat ${pr.ecl.lat.toFixed(1)}°  |  position approximate (straight-line extrapolation)`;
+}
+
+const angDiff = (a, b) => { const d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d; };
+
+//===========================================================
 //  Minor bodies (dwarf planets, asteroids, comets)
 //
 //  Elements are fetched live from the JPL Small-Body Database API
@@ -276,8 +317,8 @@ function orbitPoints(el, N = 180) {
   for (let k = 0; k <= N; k++) {
     const u = k / N;
     const E = hi ? Math.PI * Math.pow(2 * u - 1, 3) : 2 * Math.PI * u;
-    const { X, Y } = posFromE(el, E);
-    pts.push([X, Y]);
+    const { X, Y, Z } = posFromE(el, E);
+    pts.push([X, Y, Z]);
   }
   return pts;
 }
@@ -776,7 +817,7 @@ const state = {
   lastTs:  null,
   show: { planetOrbits:true, minor:true, minorOrbits:true, belt:true, trojans:true, kuiper:true, labels:true,
           lagrange:true, earthInset:true, emLagrange:true,
-          galactic:true, spacecraft:true },
+          galactic:true, spacecraft:true, probes:true },
   insetView: 'sunEarth',   // 'sunEarth' | 'earthMoon' (click the enlarged Earth view to toggle)
   swapped:   false,        // true: Earth–Moon view is the large panel, solar system is the inset
 };
@@ -904,7 +945,7 @@ function render() {
   //=== Viewports: the solar map and the Earth–Moon inset can swap places ===//
   const insetOn = state.show.earthInset;
   const swapped = state.swapped && insetOn;
-  const BIG   = { cx: W / 2, cy: H / 2, R: Math.min(W, H) / 2 - 36, small: false };
+  const BIG   = { cx: W / 2, cy: H / 2, R: Math.min(W, H) / 2 - 62, small: false };   // margin for outside labels
   const SMALL = { cx: 96,    cy: H - 96, R: 90,                     small: true  };
   const solarVp = swapped ? SMALL : BIG;
   const earthVp = swapped ? BIG   : SMALL;
@@ -952,14 +993,68 @@ function render() {
                    text: lagrangeText(name, pos, earthPos) });
     });
   }
-  // Direction to the Galactic Center: hoverable marker at the edge of the solar map
-  const gcTh = toRad(GC_ECL.lon), gcC = Math.cos(gcTh), gcS = -Math.sin(gcTh);   // screen unit vector
-  let gcItem = null;
+  // Direction markers on the ring: Galactic Center + extra-solar probes that lie beyond the view
+  const edgeMarkers = [], probeDots = [];
   if (state.show.galactic) {
-    gcItem = { body:{ name:'Galactic Center', kind:'galactic' }, px: cx + gcC * R * 0.94, py: cy + gcS * R * 0.94,
-               text: galacticCenterText() };
-    drawn.push(gcItem);
+    edgeMarkers.push({ name:'Galactic Center', lon:GC_ECL.lon, rgb:[235, 150, 255], text:galacticCenterText() });
   }
+  if (state.show.probes) {
+    const yr = new Date(state.simMs).getUTCFullYear();
+    PROBES.forEach(pr => {
+      if (yr < pr.showFrom) return;                 // extrapolation not meaningful before this
+      const st = probeState(pr, state.simMs), rho = Math.hypot(st.X, st.Y), text = probeText(pr, st);
+      if (rho <= Rv * 0.98) {                       // inside the view: plot the true position
+        const [x, y] = proj(st.X, st.Y);
+        const it = { body:{ name:pr.name, kind:'probe', rgb:pr.rgb }, px:x, py:y, text };
+        drawn.push(it); probeDots.push(it);
+      } else {                                      // beyond the view: just note the direction at the edge
+        edgeMarkers.push({ name:pr.name, lon:mod360(toDeg(Math.atan2(st.Y, st.X))), rgb:pr.rgb, text });
+      }
+    });
+  }
+  // Where each marker's direction crosses the ring (screen unit vector)
+  edgeMarkers.forEach(m => { m.c = Math.cos(toRad(m.lon)); m.s = -Math.sin(toRad(m.lon)); });
+
+  // Labels sit OUTSIDE the ring. They are spread along the ring just far enough apart not to
+  // overlap (order preserved), and joined to their arrowheads by thin leader lines.
+  if (!sm && edgeMarkers.length) {
+    ctx.font = '12px sans-serif';
+    const LH = 15, GAP = 10, Rc = R + 32;
+    const lab = edgeMarkers.map(m => ({ m, w: ctx.measureText(m.name).width + 8, ang: m.lon }));
+    lab.sort((p, q) => p.ang - q.ang);
+    // start after the biggest angular gap, and unwrap so the list is monotonic
+    let gi = lab.length - 1, bestGap = -1;
+    lab.forEach((l, i) => {
+      const nxt = lab[(i + 1) % lab.length];
+      const g = ((nxt.ang - l.ang + 360) % 360) || 360;
+      if (g > bestGap) { bestGap = g; gi = i; }
+    });
+    const ord = [...lab.slice(gi + 1), ...lab.slice(0, gi + 1)];
+    for (let i = 1; i < ord.length; i++) while (ord[i].ang < ord[i - 1].ang) ord[i].ang += 360;
+    // half-extent of a label box along the ring's tangent at its angle
+    const ext = l => (l.w / 2) * Math.abs(Math.sin(toRad(l.ang))) + (LH / 2) * Math.abs(Math.cos(toRad(l.ang)));
+    for (let it = 0; it < 80; it++) {
+      let moved = false;
+      for (let i = 1; i < ord.length; i++) {
+        const need = toDeg((ext(ord[i]) + ext(ord[i - 1]) + GAP) / Rc);
+        const diff = ord[i].ang - ord[i - 1].ang;
+        if (diff < need - 0.01) { const d = (need - diff) / 2; ord[i].ang += d; ord[i - 1].ang -= d; moved = true; }
+      }
+      if (!moved) break;
+    }
+    ord.forEach(l => {
+      const a = toRad(l.ang), ca = Math.cos(a), sa = -Math.sin(a);
+      const rc = R + 12 + (l.w / 2) * Math.abs(ca) + (LH / 2) * Math.abs(sa);   // box's nearest edge ≈ R+12
+      l.m.label = { x: cx + ca * rc, y: cy + sa * rc, w: l.w, h: LH };
+    });
+  }
+
+  edgeMarkers.forEach(m => {
+    const L = m.label;
+    m.item = { body:{ name:m.name, kind:'direction' }, px: cx + m.c * R, py: cy + m.s * R, text:m.text,
+               box: L ? { x0: L.x - L.w / 2, y0: L.y - L.h / 2, x1: L.x + L.w / 2, y1: L.y + L.h / 2 } : null };
+    drawn.push(m.item);
+  });
 
   const inset = insetOn
     ? buildInset(earthVp, earthPos, moon, lag, state.show.lagrange, state.show.emLagrange, state.insetView, state.show.spacecraft) : null;
@@ -970,8 +1065,13 @@ function render() {
   if (mouse) {
     let best = Infinity;
     drawn.forEach(o => {
-      const dd  = Math.hypot(o.px - mouse.x, o.py - mouse.y);
-      const lim = (o.body.kind === 'inset' || !sm) ? 18 : 12;   // tighter hit radius on the small solar map
+      let dd = Math.hypot(o.px - mouse.x, o.py - mouse.y);
+      if (o.box) {                                              // direction markers: also hit-test the label box
+        const bx = Math.max(o.box.x0 - mouse.x, 0, mouse.x - o.box.x1);
+        const by = Math.max(o.box.y0 - mouse.y, 0, mouse.y - o.box.y1);
+        dd = Math.min(dd, Math.hypot(bx, by));
+      }
+      const lim = o.box ? 9 : ((o.body.kind === 'inset' || !sm) ? 18 : 12);   // tighter hit radius on the small solar map
       if (dd < lim && dd < best) { best = dd; hovered = o; }
     });
   }
@@ -1050,24 +1150,40 @@ function render() {
   if (state.show.trojans) drawGroup(trojanGroup,  [150,220,150], 0.70, sm ? 1 : 1.8);
 
   //=== Orbit paths ===//
-  function strokeOrbit(el, rgb, alpha) {
+  function strokeOrbit(el, rgb, alpha, dash = []) {
     const pts = orbitPoints(el);
-    ctx.beginPath();
-    pts.forEach(([X, Y], i) => {
-      const [x, y] = proj(X, Y);
-      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    let zmax = 0, rmax = 0;
+    pts.forEach(([X, Y, Z]) => { zmax = Math.max(zmax, Math.abs(Z)); rmax = Math.max(rmax, Math.hypot(X, Y)); });
+    // strongly inclined orbit (seen nearly edge-on from above): fade the half below the ecliptic
+    const tilted = zmax > 0.2 * rmax;
+    const above = new Path2D(), below = new Path2D();
+    let prev = null, lastBelow = null;
+    pts.forEach(([X, Y, Z]) => {
+      const cur = proj(X, Y);
+      if (prev) {
+        const isBelow = tilted && (prev[2] + Z) < 0, path = isBelow ? below : above;
+        if (isBelow !== lastBelow) path.moveTo(prev[0], prev[1]);   // new run keeps dashes continuous
+        path.lineTo(cur[0], cur[1]);
+        lastBelow = isBelow;
+      }
+      prev = [cur[0], cur[1], Z];
     });
-    ctx.strokeStyle = col(rgb, alpha);
     ctx.lineWidth = sm ? 0.6 : 0.8;
-    ctx.stroke();
+    ctx.setLineDash(dash);
+    ctx.strokeStyle = col(rgb, alpha);
+    ctx.stroke(above);
+    if (tilted) {
+      ctx.setLineDash(sm ? [1, 3] : [2, 4]);
+      ctx.strokeStyle = col(rgb, alpha * 0.55);
+      ctx.stroke(below);
+    }
+    ctx.setLineDash([]);
   }
   if (state.show.planetOrbits) {
     planets.forEach(p => strokeOrbit(planetElementsAt(p.el, T), p.style.rgb, 0.28));
   }
   if (state.show.minor && state.show.minorOrbits) {
-    ctx.setLineDash(sm ? [2, 2] : [3, 3]);
-    minors.forEach(m => { if (m.orbit) strokeOrbit(minorElementsAt(m.orbit, jd), m.rgb, 0.25); });
-    ctx.setLineDash([]);
+    minors.forEach(m => { if (m.orbit) strokeOrbit(minorElementsAt(m.orbit, jd), m.rgb, 0.25, sm ? [2, 2] : [3, 3]); });
   }
 
   //=== Sun ===//
@@ -1156,6 +1272,21 @@ function render() {
     }
   });
 
+  //=== Draw extra-solar probes that fall inside the view ===//
+  probeDots.forEach(o => {
+    const isHover = hovered === o;
+    drawDiamond(o.px, o.py, Math.max(2, 4 * sz), o.body.rgb);
+    if (isHover) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(o.px, o.py, sm ? 5 : 9, 0, Math.PI * 2); ctx.stroke();
+    }
+    if ((!sm && state.show.labels) || isHover) {
+      ctx.fillStyle = col(o.body.rgb); ctx.font = '11px sans-serif';
+      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(o.body.name, o.px + 8, o.py);
+    }
+  });
+
   //=== Draw Lagrange points (L3–L5; L1/L2 are in the Earth view) ===//
   drawn.filter(o => o.body.kind === 'lagrange').forEach(o => {
     const isHover = hovered === o;
@@ -1182,7 +1313,7 @@ function render() {
     ctx.font = '12px sans-serif';
     [[0, '0° ♈︎'], [90, '90°'], [180, '180°'], [270, '270°']].forEach(([deg, label]) => {
       const th = toRad(deg);
-      ctx.fillText(label, cx + (R + 20) * Math.cos(th), cy - (R + 20) * Math.sin(th));
+      ctx.fillText(label, cx + (R - 22) * Math.cos(th), cy - (R - 22) * Math.sin(th));   // inside the ring
     });
   } else {
     ctx.font = '10px sans-serif';
@@ -1191,31 +1322,31 @@ function render() {
     ctx.fillText('click: enlarge', cx, cy + R - 9);
   }
 
-  //=== Direction to the Galactic Center ===//
-  if (state.show.galactic) {
-    const rgb = [235, 150, 255], hov = hovered === gcItem;
+  //=== Direction markers at the ring edge (arrowhead on the ring, label outside) ===//
+  edgeMarkers.forEach(m => {
+    const hov = hovered === m.item;
     ctx.save();
-    // ctx.setLineDash(sm ? [2, 3] : [6, 5]);
-    // ctx.strokeStyle = col(rgb, hov ? 0.9 : 0.5); ctx.lineWidth = sm ? 0.8 : 1.2;
-    // ctx.beginPath();
-    // ctx.moveTo(cx + gcC * R * 0.08, cy + gcS * R * 0.08);
-    // ctx.lineTo(cx + gcC * R, cy + gcS * R);
-    // ctx.stroke();
-    // ctx.setLineDash([]);
-    // arrowhead on the ring, pointing outward
-    const a = sm ? 4 : 9, tx = cx + gcC * (R + a), ty = cy + gcS * (R + a);
-    const bx = cx + gcC * R, by = cy + gcS * R, nx = -gcS, ny = gcC;
-    ctx.fillStyle = col(rgb, 0.95);
+    const a = sm ? 4 : 9, tx = cx + m.c * (R + a), ty = cy + m.s * (R + a);
+    const bx = cx + m.c * R, by = cy + m.s * R, nx = -m.s, ny = m.c;
+    ctx.fillStyle = col(m.rgb, hov ? 1 : 0.85);
     ctx.beginPath();
     ctx.moveTo(tx, ty); ctx.lineTo(bx + nx * a * 0.6, by + ny * a * 0.6); ctx.lineTo(bx - nx * a * 0.6, by - ny * a * 0.6);
     ctx.closePath(); ctx.fill();
-    if (!sm) {
-      ctx.font = '12px sans-serif'; ctx.textBaseline = 'middle';
-      ctx.textAlign = gcC >= 0 ? 'left' : 'right';
-      ctx.fillText('Galactic Center', cx + gcC * R * 0.9 + (gcC >= 0 ? 10 : -10), cy + gcS * R * 0.9 - 4);
+    if (m.label) {
+      const L = m.label;
+      // leader line from the arrow tip to the nearest point of the label box
+      const qx = Math.min(Math.max(tx, L.x - L.w / 2), L.x + L.w / 2);
+      const qy = Math.min(Math.max(ty, L.y - L.h / 2), L.y + L.h / 2);
+      if (Math.hypot(qx - tx, qy - ty) > 3) {
+        ctx.strokeStyle = col(m.rgb, hov ? 0.9 : 0.45); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(qx, qy); ctx.stroke();
+      }
+      ctx.font = '12px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = col(m.rgb, hov ? 1 : 0.95);
+      ctx.fillText(m.name, L.x, L.y);
     }
     ctx.restore();
-  }
+  });
 
   //=============== EARTH–MOON VIEW ===============//
   if (inset) drawInset(inset, hovered);
@@ -1241,6 +1372,7 @@ function render() {
     parts.push(`Ecl. lon ${lon.toFixed(1)}°, lat ${lat.toFixed(1)}°`);
     parts.push(`Period ${formatPeriod(pos.el.a)}`);
     if (body.kind === 'minor') parts.push(`e = ${pos.el.e.toFixed(3)}, i = ${pos.el.I.toFixed(1)}°`);
+    if (body.kind === 'minor' && Math.abs(pos.el.I - 90) < 20) parts.push('orbit is nearly edge-on from above');
     text = parts.join('  |  ');
     if (body.name === 'Earth') text += '\n' + moonText(moon);
     else if (PLANET_MOONS[body.name]) text += '\n' + planetMoonsText(body.name);
