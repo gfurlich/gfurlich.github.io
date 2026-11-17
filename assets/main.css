@@ -32,9 +32,11 @@ t { color: white; background-color: #0f3f63; font-weight: 400; font-size: 150%; 
 h1 { color: white; background-color: #0f3f63; font-weight: bold; font-size: 150%; padding: 1.5vh 1vw; max-width: 20vw; margin-left: 5vw; text-align: center; }
 
 /* Paragraphs */
+body { text-align: justify; }
+
 p { color: inherit; font-size: 125%; margin: .5em .75em .5em .75em; }
 
-bp { font-size: 120%; text-align: justify; text-align-last: center; /* for IE9 */ -ms-text-align-last: center; }
+bp { font-size: 120%; text-align: justify; text-align-last: center; }
 @media screen and (max-width: 600px) { bp { text-align: left; text-align-last: left; } }
 
 .bp a { text-decoration: underline; }

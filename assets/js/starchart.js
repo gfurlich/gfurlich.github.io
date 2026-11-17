@@ -577,6 +577,10 @@ let showPlanets = true;
 let showMessier = false;
 
 function uiDark()  { return nightMode ? 'rgba(120, 0, 0, 0.85)' : 'rgba(100, 7, 7, 0.71)'; }
+// Hover highlight colours (rings + labels) follow Night Mode
+function hoverRing() { return nightMode ? 'rgba(200, 30, 30, 0.90)' : 'rgba(255,255,255,0.85)'; }
+function hoverText() { return nightMode ? 'rgba(220, 40, 40, 0.95)' : 'rgba(255,255,255,0.95)'; }
+
 function uiLight() { return nightMode ? 'rgba(180, 0, 0, 0.70)' : 'rgba(226, 29, 29, 0.42)'; }
 
 Object.defineProperty(window, 'darkRed',  { get: uiDark,  configurable: true });
@@ -1235,95 +1239,152 @@ function drawPlanets(ctx, jd, lst, lat, cx, cy, R) {
 }
 
 //===========================================================
-//  Satellite catalog groups available from CelesTrak
+//  Satellite data: CelesTrak GP (CSV) groups
 //===========================================================
+// CelesTrak usage policy (https://celestrak.org/usage-policy.php):
+//   - GP data only updates every 2 hours: request each group at most once per update
+//   - request FORMAT=CSV (TLE can't hold 6-digit catalog numbers, used since 2026-07-11)
+//   - stop on any non-200 response (repeated 403/404 errors get an IP firewalled)
+const GP_BASE = 'https://celestrak.org/NORAD/elements/gp.php';
 const SAT_GROUPS = {
-  'ISS':              'https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE',
-  'Brightest':        'https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=TLE',
-  'Earth Observing':  'https://celestrak.org/NORAD/elements/gp.php?GROUP=resource&FORMAT=TLE',
-  'Weather':          'https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=TLE',
-  'Comms':            'https://celestrak.org/NORAD/elements/gp.php?GROUP=geo&FORMAT=TLE',
-  'GNSS':             'https://celestrak.org/NORAD/elements/gp.php?GROUP=gnss&FORMAT=TLE',
-  'Science':          'https://celestrak.org/NORAD/elements/gp.php?GROUP=science&FORMAT=TLE',
-  'Cubesat':          'https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=TLE',
-  'Calibration':      'https://celestrak.org/NORAD/elements/gp.php?GROUP=radar&FORMAT=TLE',
-  'Starlink':         'https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=TLE',
+  'ISS':              `${GP_BASE}?CATNR=25544&FORMAT=CSV`,
+  'Brightest':        `${GP_BASE}?GROUP=visual&FORMAT=CSV`,
+  'Earth Observing':  `${GP_BASE}?GROUP=resource&FORMAT=CSV`,
+  'Weather':          `${GP_BASE}?GROUP=weather&FORMAT=CSV`,
+  'Comms':            `${GP_BASE}?GROUP=geo&FORMAT=CSV`,
+  'GNSS':             `${GP_BASE}?GROUP=gnss&FORMAT=CSV`,
+  'Science':          `${GP_BASE}?GROUP=science&FORMAT=CSV`,
+  'Cubesat':          `${GP_BASE}?GROUP=cubesat&FORMAT=CSV`,
+  'Calibration':      `${GP_BASE}?GROUP=radar&FORMAT=CSV`,
+  'Starlink':         `${GP_BASE}?GROUP=starlink&FORMAT=CSV`,
 };
 
-//===========================================================
-//  Fetch Satellite TLEs available from CelesTrak
-//===========================================================
-// Direct TLE URLs (more reliable, standard CelesTrak format)
-const TLE_URLS = {
-  'ISS':              'https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE',
-  'Brightest':        'https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=TLE',
-  'Earth Observing':  'https://celestrak.org/NORAD/elements/gp.php?GROUP=resource&FORMAT=TLE',
-  'Weather':          'https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=TLE',
-  'Comms':            'https://celestrak.org/NORAD/elements/gp.php?GROUP=geo&FORMAT=TLE',
-  'GNSS':             'https://celestrak.org/NORAD/elements/gp.php?GROUP=gnss&FORMAT=TLE',
-  'Science':          'https://celestrak.org/NORAD/elements/gp.php?GROUP=science&FORMAT=TLE',
-  'Cubesat':          'https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=TLE',
-  'Calibration':      'https://celestrak.org/NORAD/elements/gp.php?GROUP=radar&FORMAT=TLE',
-  'Starlink':         'https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=TLE',
-};
+const GP_MIN_REFETCH_MS = 130 * 60000;                 // 2 h update cycle + 10 min margin
+const GP_BACKOFF_MS = { client: 30 * 60000,            // 403 / 404 / 301
+                        server: 15 * 60000,            // 5xx (CelesTrak asks for >= 15 min)
+                        network: 30 * 60000 };         // fetch threw (offline, blocked, ...)
 
-/*
- * Parse a raw TLE text block into an array of satellite records.
- * Handles both 2-line and 3-line (with name) TLE formats.
- */
-function parseTLEs(text) {
-  const lines = text.trim().split('\n').map(l => l.trim()).filter(Boolean);
-  const sats  = [];
+// Remove stale TLE caches written by the old version (these may hold error text)
+try {
+  Object.keys(sessionStorage).filter(k => k.startsWith('tle_'))
+    .forEach(k => sessionStorage.removeItem(k));
+} catch (e) { /* storage unavailable */ }
 
-  // 3-line format: name, line1, line2
-  if (lines.length % 3 === 0 && !lines[0].startsWith('1 ')) {
-    for (let i = 0; i < lines.length; i += 3) {
+//=== Persistent storage (IndexedDB; falls back to memory only) ===//
+const gpStore = {
+  mem: {},
+  _db: null,
+  _open() {
+    if (this._db) return this._db;
+    this._db = new Promise(resolve => {
       try {
-        const satrec = satellite.twoline2satrec(lines[i + 1], lines[i + 2]);
-        sats.push({ name: lines[i].replace(/^0 /, '').trim(), satrec });
-      } catch(e) { /* skip malformed */ }
-    }
-  } else {
-    // 2-line format
-    for (let i = 0; i < lines.length - 1; i += 2) {
-      if (lines[i].startsWith('1 ') && lines[i+1].startsWith('2 ')) {
-        try {
-          const satrec = satellite.twoline2satrec(lines[i], lines[i + 1]);
-          sats.push({ name: `NORAD ${satrec.satnum}`, satrec });
-        } catch(e) { /* skip malformed */ }
-      }
-    }
+        const req = indexedDB.open('starchart-gp', 1);
+        req.onupgradeneeded = () => req.result.createObjectStore('gp');
+        req.onsuccess = () => resolve(req.result);
+        req.onerror   = () => resolve(null);
+        req.onblocked = () => resolve(null);
+      } catch (e) { resolve(null); }
+    });
+    return this._db;
+  },
+  async get(group) {
+    if (this.mem[group]) return this.mem[group];
+    const db = await this._open();
+    if (!db) return null;
+    return new Promise(resolve => {
+      try {
+        const r = db.transaction('gp').objectStore('gp').get(group);
+        r.onsuccess = () => { if (r.result) this.mem[group] = r.result; resolve(r.result || null); };
+        r.onerror   = () => resolve(null);
+      } catch (e) { resolve(null); }
+    });
+  },
+  async set(group, rec) {
+    this.mem[group] = rec;
+    const db = await this._open();
+    if (!db) return;
+    return new Promise(resolve => {
+      try {
+        const tx = db.transaction('gp', 'readwrite');
+        tx.objectStore('gp').put(rec, group);
+        tx.oncomplete = tx.onerror = tx.onabort = () => resolve();
+      } catch (e) { resolve(); }
+    });
+  },
+};
+
+//=== Earliest time we may ask CelesTrak again (small, so localStorage) ===//
+const gpGate = {
+  mem: {},
+  get(group) {
+    try { return parseInt(localStorage.getItem(`gp_next_${group}`) || '0'); }
+    catch (e) { return this.mem[group] || 0; }
+  },
+  set(group, t) {
+    this.mem[group] = t;
+    try { localStorage.setItem(`gp_next_${group}`, String(t)); } catch (e) { /* ignore */ }
+  },
+};
+
+//=== CSV parsing ===//
+const GP_FIELDS = ['OBJECT_NAME', 'EPOCH', 'MEAN_MOTION', 'ECCENTRICITY', 'INCLINATION',
+                   'RA_OF_ASC_NODE', 'ARG_OF_PERICENTER', 'MEAN_ANOMALY', 'BSTAR',
+                   'MEAN_MOTION_DOT', 'MEAN_MOTION_DDOT', 'NORAD_CAT_ID'];
+
+function splitCSVLine(line) {
+  const out = []; let cur = '', q = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (q) {
+      if (ch === '"') { if (line[i + 1] === '"') { cur += '"'; i++; } else q = false; }
+      else cur += ch;
+    } else if (ch === '"') q = true;
+    else if (ch === ',') { out.push(cur); cur = ''; }
+    else cur += ch;
+  }
+  out.push(cur);
+  return out;
+}
+
+/** Parse a CelesTrak GP CSV into compact rows (arrays in GP_FIELDS order). Throws if it isn't GP data. */
+function parseGPcsv(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) throw new Error('empty GP response');
+  const header = splitCSVLine(lines[0]);
+  const idx = GP_FIELDS.map(f => header.indexOf(f));
+  if (idx.some(i => i < 0)) throw new Error('unexpected GP CSV header');
+  return lines.slice(1).map(l => { const c = splitCSVLine(l); return idx.map(i => c[i]); });
+}
+
+/** Build satellite.js records from compact rows (OMM -> json2satrec, needs satellite.js >= 6). */
+function rowsToSats(rows, group) {
+  const sats = [];
+  for (const r of rows) {
+    try {
+      const satrec = satellite.json2satrec({
+        OBJECT_NAME: r[0], EPOCH: r[1], MEAN_MOTION: r[2], ECCENTRICITY: r[3],
+        INCLINATION: r[4], RA_OF_ASC_NODE: r[5], ARG_OF_PERICENTER: r[6],
+        MEAN_ANOMALY: r[7], BSTAR: r[8], MEAN_MOTION_DOT: r[9],
+        MEAN_MOTION_DDOT: r[10], NORAD_CAT_ID: r[11],
+      });
+      if (satrec.error) continue;
+      sats.push({ name: r[0], satrec, group });
+    } catch (e) { /* skip malformed row */ }
   }
   return sats;
 }
 
-/*
- * Fetch and parse TLEs for a named group.
- * Results are cached in sessionStorage to avoid hammering CelesTrak.
- */
-async function fetchTLEs(groupName) {
-  const url       = TLE_URLS[groupName];
-  const cacheKey  = `tle_${groupName}`;
-  const cacheTime = `tle_time_${groupName}`;
-  const maxAge    = 3600 * 1000;   // refresh TLEs every hour
-
-  // return cached data if fresh
-  const cached = sessionStorage.getItem(cacheKey);
-  const cachedAt = parseInt(sessionStorage.getItem(cacheTime) || '0');
-  if (cached && Date.now() - cachedAt < maxAge) {
-    return parseTLEs(cached);
+/** One network request for a group. Throws (with .status) on anything but a valid 200 CSV. */
+async function fetchGroupRows(group) {
+  const res  = await fetch(SAT_GROUPS[group]);
+  const text = await res.text();
+  if (!res.ok) {
+    const err = new Error(`HTTP ${res.status}`);
+    err.status = res.status;
+    err.body   = text.slice(0, 200);
+    throw err;
   }
-
-  try {
-    const res  = await fetch(url);
-    const text = await res.text();
-    sessionStorage.setItem(cacheKey, text);
-    sessionStorage.setItem(cacheTime, Date.now().toString());
-    return parseTLEs(text);
-  } catch (err) {
-    console.warn(`TLE fetch failed for ${groupName}:`, err);
-    return [];
-  }
+  return parseGPcsv(text);
 }
 
 /**
@@ -1365,43 +1426,97 @@ function satelliteAzAlt(satrec, date, lat, lon, altM = 0) {
 //===========================================================
 //  Satellite State Manager
 //===========================================================
+const gpTime = t => new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
 const satManager = {
-  satellites:    [],       // merged array of { name, satrec, group }
-  activeGroups:  new Set(['ISS']),
-  loading:       new Set(),   // tracks which groups are currently fetching
+  satellites:   [],        // merged array of { name, satrec, group } for ACTIVE groups only
+  activeGroups: new Set(['ISS']),
+  groupSats:    {},        // group -> { sats, fetchedAt }
+  status:       {},        // group -> short message ('' when fine)
+  inflight:     {},        // group -> Promise
+  version:      0,         // bumped whenever `satellites` changes
 
-  isLoading() { return this.loading.size > 0; },
+  isLoading() { return Object.keys(this.inflight).length > 0; },
 
-  async loadGroup(groupName) {
-    this.loading.add(groupName);
-    const sats = await fetchTLEs(groupName);
-    // tag each sat with its group for coloring
-    sats.forEach(s => s.group = groupName);
-    this.loading.delete(groupName);
-    this._rebuild();
-    return sats;
+  loadGroup(group) {
+    if (this.inflight[group]) return this.inflight[group];
+    this.inflight[group] = this._load(group).finally(() => {
+      delete this.inflight[group];
+      this._rebuild();
+      if (typeof redraw === 'function') redraw();
+    });
+    return this.inflight[group];
+  },
+
+  async _load(group) {
+    const now = Date.now();
+
+    // 1) memory / IndexedDB
+    let have = this.groupSats[group];
+    if (!have) {
+      const rec = await gpStore.get(group);
+      if (rec) {
+        have = { sats: rowsToSats(rec.rows, group), fetchedAt: rec.fetchedAt };
+        this.groupSats[group] = have;
+      }
+    }
+    if (have && now - have.fetchedAt < GP_MIN_REFETCH_MS) { this.status[group] = ''; return; }
+
+    // 2) respect the back-off / once-per-update gate
+    const next = gpGate.get(group);
+    if (now < next) {
+      this.status[group] = have
+        ? `using data from ${gpTime(have.fetchedAt)}; refresh after ${gpTime(next)}`
+        : `waiting for CelesTrak update; retry after ${gpTime(next)}`;
+      return;
+    }
+
+    // 3) one network request
+    this.status[group] = 'loading…';
+    try {
+      const rows      = await fetchGroupRows(group);
+      const fetchedAt = Date.now();
+      await gpStore.set(group, { fetchedAt, rows });
+      this.groupSats[group] = { sats: rowsToSats(rows, group), fetchedAt };
+      gpGate.set(group, fetchedAt + GP_MIN_REFETCH_MS);
+      this.status[group] = '';
+      console.log(`GP ${group}: ${rows.length} satellites`);
+    } catch (err) {
+      const s    = err.status;
+      const wait = s >= 500 ? GP_BACKOFF_MS.server : s ? GP_BACKOFF_MS.client : GP_BACKOFF_MS.network;
+      const retryAt = Date.now() + wait;
+      gpGate.set(group, retryAt);                       // never cache errors, never retry sooner
+      console.warn(`GP ${group} fetch failed (${s || err.message}):`, err.body || '');
+      this.status[group] = (have ? `update failed (${s || 'no valid data'}), using data from ${gpTime(have.fetchedAt)}`
+                                 : `unavailable (${s ? 'HTTP ' + s : 'no valid data'})`)
+                         + `; retry after ${gpTime(retryAt)}`;
+    }
   },
 
   async setGroups(groupNames) {
     this.activeGroups = new Set(groupNames);
-    // fetch any groups not already cached
+    this._rebuild();                                    // unchecked groups disappear immediately
     await Promise.all(groupNames.map(g => this.loadGroup(g)));
   },
 
-  _rebuild() {
-    // merge satellites from all active groups, re-fetching from cache
-    this.satellites = [];
-    this.activeGroups.forEach(groupName => {
-      const cacheKey = `tle_${groupName}`;
-      const cached   = sessionStorage.getItem(cacheKey);
-      if (cached) {
-        const sats = parseTLEs(cached);
-        sats.forEach(s => {
-          s.group = groupName;
-          this.satellites.push(s);
-        });
-      }
+  /** Called every redraw; cheap unless a refresh is actually due. */
+  refreshIfStale() {
+    const now = Date.now();
+    this.activeGroups.forEach(g => {
+      if (this.inflight[g]) return;
+      const have  = this.groupSats[g];
+      const stale = !have || now - have.fetchedAt >= GP_MIN_REFETCH_MS;
+      if (stale && now >= gpGate.get(g)) this.loadGroup(g);
     });
+  },
+
+  _rebuild() {
+    this.satellites = [];
+    this.activeGroups.forEach(g => {
+      const h = this.groupSats[g];
+      if (h) for (const s of h.sats) this.satellites.push(s);
+    });
+    this.version++;
   },
 };
 
@@ -1502,7 +1617,7 @@ function drawISSShape(ctx, cx, cy, s, color) {
 /*
  * Draw a single satellite marker.
  */
-function drawSatellite(ctx, x, y, name, color, isISS = false, hovered = false) {
+function drawSatellite(ctx, x, y, name, color, isISS = false, hovered = false, simple = false) {
   ctx.save();
 
   if (isISS) {
@@ -1516,7 +1631,7 @@ function drawSatellite(ctx, x, y, name, color, isISS = false, hovered = false) {
 
     // hover ring
     if (hovered) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+      ctx.strokeStyle = hoverRing();
       ctx.lineWidth   = 1;
       ctx.beginPath();
       ctx.arc(x, y, 26, 0, Math.PI * 2);
@@ -1529,7 +1644,7 @@ function drawSatellite(ctx, x, y, name, color, isISS = false, hovered = false) {
 
     // label
     if (hovered) {
-      ctx.fillStyle    = 'rgba(255,255,255,0.95)';
+      ctx.fillStyle    = hoverText();
       ctx.font         = '500 11px sans-serif';
       ctx.textAlign    = 'left';
       ctx.textBaseline = 'middle';
@@ -1539,19 +1654,21 @@ function drawSatellite(ctx, x, y, name, color, isISS = false, hovered = false) {
   } else {
     // all other satellites — existing dot logic unchanged
     if (hovered) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+      ctx.strokeStyle = hoverRing();
       ctx.lineWidth   = 1;
       ctx.beginPath();
       ctx.arc(x, y, 10, 0, Math.PI * 2);
       ctx.stroke();
     }
 
-    ctx.filter    = 'blur(3px)';
-    ctx.fillStyle = color.replace('1.0', '0.4');
-    ctx.beginPath();
-    ctx.arc(x, y, 4, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.filter = 'none';
+    if (!simple) {   // blur glow is too slow with hundreds of satellites
+      ctx.filter    = 'blur(3px)';
+      ctx.fillStyle = color.replace('1.0', '0.4');
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.filter = 'none';
+    }
 
     ctx.fillStyle = color;
     ctx.beginPath();
@@ -1559,7 +1676,7 @@ function drawSatellite(ctx, x, y, name, color, isISS = false, hovered = false) {
     ctx.fill();
 
     if (hovered || satManager.satellites.length <= 10) {
-      ctx.fillStyle    = hovered ? 'rgba(255,255,255,0.95)' : color;
+      ctx.fillStyle    = hovered ? hoverText() : color;
       ctx.font         = hovered ? '500 11px sans-serif' : '10px sans-serif';
       ctx.textAlign    = 'left';
       ctx.textBaseline = 'middle';
@@ -1570,33 +1687,42 @@ function drawSatellite(ctx, x, y, name, color, isISS = false, hovered = false) {
   ctx.restore();
 }
 
+// Propagating thousands of satellites (Starlink) is expensive, so compute positions
+// once per second per (location, satellite list) and reuse them for hover redraws.
+const satPosCache = { key: null, list: [] };
+
 function drawSatellites(ctx, date, lat, lon, cx, cy, R, hoveredSat = null) {
 
-  let visCount = 0;
-  const projSats = [];
+  const key = `${Math.floor(date.getTime() / 1000)}|${lat}|${lon}|${satManager.version}`;
+  if (satPosCache.key !== key) {
+    const list = [];
+    satManager.satellites.forEach(({ name, satrec, group }) => {
+      const pos = satelliteAzAlt(satrec, date, lat, lon);
+      if (!pos || pos.alt < 0) return;
+      list.push({ name, az: pos.az, alt: pos.alt, altKm: pos.altKm, range: pos.range, group });
+    });
+    satPosCache.key  = key;
+    satPosCache.list = list;
+  }
 
-  satManager.satellites.forEach(({ name, satrec, group }) => {
-    const pos = satelliteAzAlt(satrec, date, lat, lon);
-    if (!pos || pos.alt < 0) return;
-    const { x, y } = polarProject(pos.az, pos.alt, cx, cy, R);
-    const color = SAT_COLORS[group] || 'rgba(200,200,200,0.9)';
-    projSats.push({ name, px: x, py: y, az: pos.az, alt: pos.alt,
-                    altKm: pos.altKm, range: pos.range, color, group });
-    visCount++;
+  const projSats = satPosCache.list.map(s => {
+    const { x, y } = polarProject(s.az, s.alt, cx, cy, R);
+    return { ...s, px: x, py: y, color: SAT_COLORS[s.group] || 'rgba(200,200,200,0.9)' };
   });
+  const simple = projSats.length > 150;
 
   const isISS = n => n.includes('ISS') || n.includes('25544');
 
   // draw non-hovered first
   projSats.forEach(s => {
     if (s.name === hoveredSat) return;
-    drawSatellite(ctx, s.px, s.py, s.name, s.color, isISS(s.name), false);
+    drawSatellite(ctx, s.px, s.py, s.name, s.color, isISS(s.name), false, simple);
   });
 
   // draw hovered on top
   const hovSat = projSats.find(s => s.name === hoveredSat);
   if (hovSat) {
-    drawSatellite(ctx, hovSat.px, hovSat.py, hovSat.name, hovSat.color, isISS(hovSat.name), true);
+    drawSatellite(ctx, hovSat.px, hovSat.py, hovSat.name, hovSat.color, isISS(hovSat.name), true, simple);
   }
 
   //=== Satellite info box ===//
@@ -1631,7 +1757,12 @@ function updateSatInfoOverlay(projSats) {
     </div>`;
   }).join('');
 
-  el.innerHTML = `<div class="info-title">Satellites Visible</div>${rows}`;
+  const notes = activeGroups
+    .filter(g => satManager.status[g])
+    .map(g => `<div class="info-label" style="font-size:10px;white-space:normal">${g}: ${satManager.status[g]}</div>`)
+    .join('');
+
+  el.innerHTML = `<div class="info-title">Satellites Visible</div>${rows}${notes}`;
 }
 
 function seasonalEvents(year) {
@@ -2151,6 +2282,184 @@ function formatCountdown(daysAway) {
 }
 
 //===========================================================
+//  Sun altitude, sunrise/sunset, and daytime sky brightness
+//===========================================================
+
+const SUN_RISE_SET_ALT = -0.833;   // standard: upper limb + refraction
+
+/** Sun altitude in degrees for a Julian date at an observer location */
+function sunAltitude(jd, lat, lon) {
+  const { ra, dec } = sunPosition(jd);
+  const lst = mod360(gmst(jd) + lon);
+  return equatorialToHorizontal(ra, dec, lst, lat).alt;
+}
+
+/**
+ * 0 = full night, 1 = full day, smooth through twilight.
+ * Starts brightening at -12° (nautical twilight), full at +6°.
+ */
+function dayFactor(alt) {
+  const t = Math.min(1, Math.max(0, (alt + 12) / 18));
+  return t * t * (3 - 2 * t);   // smoothstep
+}
+
+const SKY_NIGHT = [[13, 13, 34], [7, 7, 20], [2, 2, 8]];
+const SKY_DAY   = [[135, 185, 235], [110, 160, 220], [80, 130, 200]];
+function mixRGB(a, b, t) {
+  return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',')})`;
+}
+
+/**
+ * Find sunrise/sunset times between startMs and endMs (epoch ms).
+ * Scans in 5-minute steps and bisects each sign change.
+ * Returns { events: [{type:'rise'|'set', t}], upAtStart }.
+ */
+function sunEventsInWindow(startMs, endMs, lat, lon) {
+  const f = ms => sunAltitude(ms / 86400000 + 2440587.5, lat, lon) - SUN_RISE_SET_ALT;
+  const STEP = 5 * 60000;
+  const events = [];
+  let tPrev = startMs, vPrev = f(tPrev);
+  const upAtStart = vPrev > 0;
+
+  for (let t = startMs + STEP; t <= endMs + STEP; t += STEP) {
+    const tc = Math.min(t, endMs);
+    const v  = f(tc);
+    if ((vPrev <= 0) !== (v <= 0)) {
+      let lo = tPrev, hi = tc;
+      for (let i = 0; i < 20; i++) {
+        const mid = (lo + hi) / 2;
+        ((f(mid) <= 0) === (vPrev <= 0)) ? (lo = mid) : (hi = mid);
+      }
+      events.push({ type: v > 0 ? 'rise' : 'set', t: (lo + hi) / 2 });
+    }
+    tPrev = tc; vPrev = v;
+    if (tc >= endMs) break;
+  }
+  return { events, upAtStart };
+}
+
+//=== Slider colours (follow Night Mode) ===//
+function sunTints() {
+  return nightMode ? { rise: 'rgba(215, 50, 50, 0.95)', set: 'rgba(140, 20, 20, 0.95)' }
+                   : { rise: 'rgba(235,150,40,0.95)',   set: 'rgba(200,90,110,0.95)'  };
+}
+function sunBarColors() {
+  return nightMode ? { day: 'rgba(150, 25, 25, 0.85)', night: 'rgba(30, 0, 0, 0.90)' }
+                   : { day: 'rgba(255,205,90,0.85)',   night: 'rgba(40,50,110,0.65)' };
+}
+
+//=== Sunrise / sunset marker styles ===//
+// Default style; the <select id="sun-marker-style"> in the HTML overrides it.
+// Options: 'text' | 'compact' | 'arrows' | 'ticks' | 'time' | 'icons' | 'none'
+const SUN_MARKER_DEFAULT = 'arrows';
+
+function sunMarkerHTML(style, isRise, time, leftCss, pctAlong = 50) {
+  if (style === 'none') return '';
+  const word  = isRise ? 'Sunrise' : 'Sunset';
+  const tint  = isRise ? sunTints().rise : sunTints().set;
+
+  // Arrows: the arrow sits exactly on the day/night transition (centred on the event x),
+  // with the time beside it, flipped to the left near the right-hand end of the slider.
+  if (style === 'arrows') {
+    const flip = pctAlong > 80;
+    return `<div title="${word} ${time}" style="position:absolute;top:0;bottom:6px;left:${leftCss};width:0;
+              font-size:10px;line-height:1;color:var(--sc-dim, grey);white-space:nowrap">
+              <div style="position:absolute;bottom:0;left:0;transform:translateX(-50%);color:${tint}">${isRise ? '▲' : '▼'}</div>
+              <div style="position:absolute;bottom:0;${flip ? 'right:8px;text-align:right' : 'left:8px'}">${time}</div>
+            </div>`;
+  }
+  let inner = '', line = false;
+
+  switch (style) {
+    case 'text':      // "Sunrise" over the time
+      inner = `<div style="color:${tint};font-weight:500">${word}</div><div>${time}</div>`; break;
+    case 'compact':   // "Rise 06:46"
+      inner = `<div style="white-space:nowrap"><span style="color:${tint}">${isRise ? 'Rise' : 'Set'}</span> ${time}</div>`; break;
+    case 'arrows':    // "▲ 06:46" / "▼ 06:46"
+      inner = `<div style="white-space:nowrap"><span style="color:${tint}">${isRise ? '▲' : '▼'}</span> ${time}</div>`; break;
+    case 'ticks':     // time on top of a thin line down to the bar
+      inner = `<div style="color:${tint}">${time}</div>`; line = true; break;
+    case 'time':      // just the time
+      inner = `<div>${time}</div>`; break;
+    case 'icons':     // original emoji style
+      inner = `<div style="font-size:14px">${isRise ? '🌅' : '🌇'}</div><div>${time}</div>`; break;
+  }
+  return `<div title="${word} ${time}" style="position:absolute;top:0;bottom:6px;left:${leftCss};
+            transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;
+            text-align:center;line-height:1.15;font-size:10px;color:var(--sc-dim, grey)">
+            ${inner}
+            ${line ? `<div style="flex:1;width:1px;background:${tint};opacity:.6;margin-top:1px"></div>` : ''}
+          </div>`;
+}
+
+//=== Sunrise / sunset markers on the time-offset slider ===//
+const sunSliderCache = { key: null };
+
+function updateSunSlider(lat, lon) {
+  const track = document.getElementById('sun-track');
+  const slider = document.getElementById('toffset');
+  if (!track || !slider) return;
+
+  const minHrs = parseFloat(slider.min), maxHrs = parseFloat(slider.max);
+  const span   = maxHrs - minHrs;
+
+  // rebuild at most once a minute (or when location changes)
+  const style = document.getElementById('sun-marker-style')?.value || SUN_MARKER_DEFAULT;
+  const key = `${lat.toFixed(2)}|${lon.toFixed(2)}|${style}|${nightMode}|${Math.floor(Date.now() / 60000)}`;
+  if (sunSliderCache.key === key) return;
+  sunSliderCache.key = key;
+
+  const base = Date.now();
+  const { events, upAtStart } = sunEventsInWindow(
+    base + minHrs * 3600000, base + maxHrs * 3600000, lat, lon);
+
+  const frac = t => (t - base) / 3600000 / 1;                 // hours from now
+  const pct  = t => ((frac(t) - minHrs) / span) * 100;       // 0..100 along slider
+
+  // day/night background bar, hard stops at each event
+  const { day: DAY, night: NIGHT } = sunBarColors();
+  let up = upAtStart, stops = [], last = 0;
+  stops.push(`${up ? DAY : NIGHT} 0%`);
+  events.forEach(e => {
+    const p = pct(e.t).toFixed(2);
+    stops.push(`${up ? DAY : NIGHT} ${p}%`);
+    up = !up;
+    stops.push(`${up ? DAY : NIGHT} ${p}%`);
+  });
+  stops.push(`${up ? DAY : NIGHT} 100%`);
+
+  // thumb is ~16px wide, so the usable track is inset by 8px each side
+  const left = p => `calc(8px + (100% - 16px) * ${(p / 100).toFixed(4)})`;
+  const markers = events.map(e => {
+    // 24-hour clock (h23 avoids "24:05" at midnight)
+    const time = new Date(e.t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+    const isRise = e.type === 'rise';
+    return sunMarkerHTML(style, isRise, time, left(pct(e.t)), pct(e.t));
+  }).join('');
+
+  // legend, far left above the markers
+  const sw = c => `<span style="display:inline-block;width:14px;height:5px;border-radius:2px;
+                    background:${c};vertical-align:middle;margin-right:3px"></span>`;
+  const legend = `
+    <div style="display:flex;gap:10px;font-size:10px;color:var(--sc-dim, grey);line-height:14px;white-space:nowrap">
+      ${style === 'arrows'
+        ? `<span><span style="color:${sunTints().rise}">▲</span> Sunrise</span>
+           <span><span style="color:${sunTints().set}">▼</span> Sunset</span>` : ''}
+      <span>${sw(DAY)}Day</span>
+      <span>${sw(NIGHT)}Night</span>
+    </div>`;
+
+  track.innerHTML = `
+    ${legend}
+    <div style="position:relative;height:34px">
+      ${markers}
+      <div style="position:absolute;bottom:0;left:8px;right:8px;height:5px;border-radius:3px;
+                  background:linear-gradient(to right, ${stops.join(',')});
+                  box-shadow:0 0 0 1px var(--sc-line, rgba(128,128,128,0.35))"></div>
+    </div>`;
+}
+
+//===========================================================
 //  Main Visual - Sky Plot
 //===========================================================
   
@@ -2179,13 +2488,16 @@ function drawSkyPlot(canvas, params, hoveredStar = null, hoveredSat = null) {
     //=== Nightsky background gradient ===//
     const skyGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
     if (nightMode) {
+      // keep night mode fully dark to preserve dark adaptation
       skyGrad.addColorStop(0,   '#0d0000');
       skyGrad.addColorStop(0.7, '#070000');
       skyGrad.addColorStop(1,   '#020000');
     } else {
-      skyGrad.addColorStop(0,   '#0d0d22');
-      skyGrad.addColorStop(0.7, '#070714');
-      skyGrad.addColorStop(1,   '#020208');
+      // blend night -> day sky using the Sun's altitude at the displayed time
+      const df = dayFactor(sunAltitude(jd, lat, lon));
+      skyGrad.addColorStop(0,   mixRGB(SKY_NIGHT[0], SKY_DAY[0], df));
+      skyGrad.addColorStop(0.7, mixRGB(SKY_NIGHT[1], SKY_DAY[1], df));
+      skyGrad.addColorStop(1,   mixRGB(SKY_NIGHT[2], SKY_DAY[2], df));
     }
     ctx.save();
     ctx.beginPath();
@@ -2312,7 +2624,15 @@ function drawSkyPlot(canvas, params, hoveredStar = null, hoveredSat = null) {
     // });
 
     //=== Draw Reference Planes ===//
-    drawGalacticPlane(ctx, lst, lat, cx, cy, R);
+    // Milky Way isn't visible in daylight: fade it out with the real Sun altitude
+    // (independent of Night Mode, which only changes the colour scheme)
+    const galVis = 1 - dayFactor(sunAltitude(jd, lat, lon));
+    if (galVis > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = galVis;
+      drawGalacticPlane(ctx, lst, lat, cx, cy, R);
+      ctx.restore();
+    }
     drawEcliptic(ctx, lst, lat, cx, cy, R);
 
     //=== Draw Satellites ===//
@@ -2373,7 +2693,7 @@ function drawSkyPlot(canvas, params, hoveredStar = null, hoveredSat = null) {
         if (s) {
 
           // highlight ring
-          ctx.strokeStyle = 'rgba(200,220,255,0.85)';
+          ctx.strokeStyle = hoverRing();
           ctx.lineWidth   = 1;
           ctx.beginPath();
           ctx.arc(s.px, s.py, starSize(s.mag) * 1.4 + 4, 0, Math.PI * 2);
@@ -2436,6 +2756,12 @@ let lastProjected  = { stars: [], sats: [] };
 //=== Display StarChart Info ===//
 function redraw() {
   lastProjected = drawSkyPlot(canvas, getParams(), hoveredStar, hoveredSat);
+
+  // Re-fetch satellite data only when a group is due (once per 2 h at most)
+  satManager.refreshIfStale();
+
+  // Sunrise/sunset markers on the time-offset slider
+  { const p = getParams(); updateSunSlider(p.lat, p.lon); }
 
   // Top Time Display
 
@@ -2521,6 +2847,9 @@ canvas.addEventListener('mousemove', e => {
 ['lat', 'lon', 'toffset'].forEach(id => {
   document.getElementById(id).addEventListener('input', redraw);
 });
+
+//=== Sunrise/sunset marker style ===//
+document.getElementById('sun-marker-style')?.addEventListener('change', redraw);
 
 // document.getElementById('sat-group').addEventListener('change', async e => {
 //   const group = e.target.value;
