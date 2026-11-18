@@ -216,32 +216,32 @@ const angDiff = (a, b) => { const d = Math.abs(a - b) % 360; return d > 180 ? 36
 //  Bodies with no fallback are simply skipped when the fetch fails.
 //===========================================================
 const MINOR_BODIES = [
-  { name:'Ceres',    sstr:'1',      rgb:[200,200,200], note:'dwarf planet · asteroid belt',
+  { name:'Ceres',    sstr:'1',      rgb:[225,225,225], note:'dwarf planet · asteroid belt',
     fallback:{ a:2.7691652, e:0.0760091, I:10.59407, Om:80.30553, w:73.59769, M0:77.3721, epoch:2458600.5 } },
-  { name:'Vesta',    sstr:'4',      rgb:[230,200,140], note:'asteroid' },
-  { name:'Pallas',   sstr:'2',      rgb:[190,210,230], note:'asteroid' },
-  { name:'Hygiea',   sstr:'10',     rgb:[180,160,140], note:'asteroid' },
-  { name:'Eros',     sstr:'433',    rgb:[240,170,120], note:'near-Earth asteroid' },
-  { name:'Apophis',  sstr:'99942',  rgb:[255,120,120], note:'near-Earth asteroid' },
-  { name:'Chiron',   sstr:'2060',   rgb:[170,200,170], note:'centaur' },
-  { name:'Haumea',   sstr:'136108', rgb:[210,225,240], note:'dwarf planet' },
-  { name:'Makemake', sstr:'136472', rgb:[225,170,130], note:'dwarf planet',
+  { name:'Vesta',    sstr:'4',      rgb:[215,175,120], note:'asteroid' },
+  { name:'Pallas',   sstr:'2',      rgb:[110,150,215], note:'asteroid' },
+  { name:'Hygiea',   sstr:'10',     rgb:[175,135,105], note:'asteroid' },
+  { name:'Eros',     sstr:'433',    rgb:[255,140,60], note:'near-Earth asteroid' },
+  { name:'Apophis',  sstr:'99942',  rgb:[255,85,85], note:'near-Earth asteroid' },
+  { name:'Chiron',   sstr:'2060',   rgb:[100,175,125], note:'centaur' },
+  { name:'Haumea',   sstr:'136108', rgb:[195,205,255], note:'dwarf planet' },
+  { name:'Makemake', sstr:'136472', rgb:[235,150,120], note:'dwarf planet',
     fallback:{ a:45.43, e:0.1559, I:28.98, Om:79.62, w:294.84, M0:165.5, epoch:2458600.5 } },
-  { name:'Eris',     sstr:'136199', rgb:[230,230,230], note:'dwarf planet',
+  { name:'Eris',     sstr:'136199', rgb:[240,240,160], note:'dwarf planet',
     fallback:{ a:67.864, e:0.4407, I:44.04, Om:35.95, w:151.64, M0:205.8, epoch:2458600.5 } },
-  { name:'Sedna',    sstr:'90377',  rgb:[220,100,80],  note:'extreme TNO' },
-  { name:'Halley',   sstr:'1P',     rgb:[150,230,255], note:'comet · 76-yr period', comet:true,
+  { name:'Sedna',    sstr:'90377',  rgb:[205,85,175],  note:'extreme TNO' },
+  { name:'Halley',   sstr:'1P',     rgb:[80,220,255], note:'comet · 76-yr period', comet:true,
     // Perihelion 1986-Feb-09 (JD 2446467.4); epoch is the perihelion time, M0 = 0.
     fallback:{ a:17.834, e:0.96714, I:162.26, Om:58.42, w:111.33, M0:0, epoch:2446467.4 } },
   // Other notable comets. Fallbacks use time of perihelion as the epoch (M0 = 0).
-  { name:'Encke',        sstr:'2P',        rgb:[150,230,255], note:'comet · 3.3-yr period', comet:true,
+  { name:'Encke',        sstr:'2P',        rgb:[255,110,190], note:'comet · 3.3-yr period', comet:true,
     fallback:{ a:2.215, e:0.8483, I:11.78, Om:334.57, w:186.54, M0:0, epoch:2460240.0 } },
-  { name:'67P/C-G',      sstr:'67P',       rgb:[150,230,255], note:'comet · Rosetta target, 6.4-yr period', comet:true },
-  { name:'Swift-Tuttle', sstr:'109P',      rgb:[150,230,255], note:'comet · Perseid parent, 133-yr period', comet:true,
+  { name:'67P/C-G',      sstr:'67P',       rgb:[150,255,110], note:'comet · Rosetta target, 6.4-yr period', comet:true },
+  { name:'Swift-Tuttle', sstr:'109P',      rgb:[170,130,255], note:'comet · Perseid parent, 133-yr period', comet:true,
     fallback:{ a:26.09, e:0.9632, I:113.45, Om:139.38, w:152.98, M0:0, epoch:2448968.8 } },
-  { name:'Hale-Bopp',    sstr:'C/1995 O1', rgb:[150,230,255], note:'comet · ~2,500-yr period', comet:true,
+  { name:'Hale-Bopp',    sstr:'C/1995 O1', rgb:[60,240,200], note:'comet · ~2,500-yr period', comet:true,
     fallback:{ a:186, e:0.9951, I:89.43, Om:282.47, w:130.59, M0:0, epoch:2450539.6 } },
-  { name:'NEOWISE',      sstr:'C/2020 F3', rgb:[150,230,255], note:'comet · ~6,800-yr period', comet:true,
+  { name:'NEOWISE',      sstr:'C/2020 F3', rgb:[255,200,70], note:'comet · ~6,800-yr period', comet:true,
     fallback:{ a:358, e:0.99918, I:128.94, Om:61.01, w:37.28, M0:0, epoch:2459033.7 } },
 ];
 
@@ -585,7 +585,7 @@ function drawInset(ins, hovered) {
 
   ctx.save();
   ctx.beginPath(); ctx.arc(cxI, cyI, RI, 0, Math.PI * 2);
-  ctx.fillStyle = small ? 'rgba(5, 5, 18, 0.85)' : (nightMode ? '#050000' : '#05050f'); ctx.fill();
+  ctx.fillStyle = small ? panelBg(0.85) : (nightMode ? '#050000' : '#05050f'); ctx.fill();
 
   ctx.save();
   ctx.beginPath(); ctx.arc(cxI, cyI, RI, 0, Math.PI * 2); ctx.clip();
@@ -626,7 +626,7 @@ function drawInset(ins, hovered) {
       ctx.beginPath(); ctx.arc(it.px, it.py, (isEM ? 3.5 : 2.5) * z, 0, Math.PI * 2); ctx.fill();
     }
     if (hovered === it) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 1;
+      ctx.strokeStyle = hoverRing(); ctx.lineWidth = 1;
       ctx.beginPath(); ctx.arc(it.px, it.py, 8 * z, 0, Math.PI * 2); ctx.stroke();
     }
     if (it.showLabel) {
@@ -634,6 +634,7 @@ function drawInset(ins, hovered) {
       ctx.fillText(it.label, it.px + 6 * z, it.py - 7 * z);
     }
   });
+  if (nightMode) { ctx.fillStyle = 'rgba(60, 0, 0, 0.25)'; ctx.fillRect(cxI - RI, cyI - RI, 2 * RI, 2 * RI); }
   ctx.restore();
 
   ctx.beginPath(); ctx.arc(cxI, cyI, RI, 0, Math.PI * 2);
@@ -796,6 +797,10 @@ const darkRed  = () => nightMode ? 'rgba(120, 0, 0, 0.85)'   : 'rgba(100, 7, 7, 
 const lightRed = () => nightMode ? 'rgba(180, 0, 0, 0.70)'   : 'rgba(226, 29, 29, 0.42)';
 
 /** [r,g,b] + alpha → CSS color; in night mode everything collapses to red luminance. */
+// Hover rings and panel backgrounds: white / blue-black by day, red / red-black at night
+const hoverRing = () => nightMode ? 'rgba(210,0,0,0.9)' : 'rgba(255,255,255,0.85)';
+const panelBg   = a  => nightMode ? `rgba(10,0,0,${a})` : `rgba(5,5,18,${a})`;
+
 function col(rgb, a = 1) {
   if (!nightMode) return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
   const L = 0.3 * rgb[0] + 0.59 * rgb[1] + 0.11 * rgb[2];
@@ -878,6 +883,47 @@ function updateSwapButton() {
 if (swapBtn) swapBtn.addEventListener('click', toggleSwap);
 updateSwapButton();
 
+//=== Night-mode styling for the page controls and the hover-text line ===//
+// Same red theme as the canvas / star chart. Self-contained, so it works in any layout;
+// if your site CSS already styles body.night-mode you can delete this block.
+(function injectNightStyles() {
+  if (!document.createElement || !document.head || document.getElementById('solar-night-style')) return;
+  const st = document.createElement('style');
+  st.id = 'solar-night-style';
+  st.textContent = `
+    body.night-mode { background-color: #050000; color: #8a0000; }
+    body.night-mode .canvas-container, body.night-mode .ctrl, body.night-mode .ctrl label,
+    body.night-mode #time-display { color: #8a0000; }
+    body.night-mode #info, body.night-mode #zoom-display { color: #7e0000 !important; }
+    body.night-mode .ctrl button, body.night-mode .canvas-container button, body.night-mode #night-mode-btn,
+    body.night-mode .ctrl select, body.night-mode .ctrl input[type="datetime-local"],
+    body.night-mode .ctrl input[type="number"] {
+      background-color: #140000; color: #a00000; border: 1px solid #4a0000; }
+    body.night-mode .ctrl button:hover, body.night-mode .canvas-container button:hover,
+    body.night-mode #night-mode-btn:hover { background-color: #260000; border-color: #7a0000; color: #c00000; }
+    body.night-mode .ctrl option { background-color: #140000; color: #a00000; }
+    body.night-mode .ctrl input[type="checkbox"] { accent-color: #9a0000; }
+    /* range slider: custom red track + thumb (the browser default stays light grey at night) */
+    body.night-mode .ctrl input[type="range"] {
+      -webkit-appearance: none; appearance: none; background: transparent; height: 18px; cursor: pointer; }
+    body.night-mode .ctrl input[type="range"]::-webkit-slider-runnable-track {
+      height: 6px; background: #3a0000; border-radius: 3px; border: none; }
+    body.night-mode .ctrl input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 14px; height: 14px; margin-top: -4px;
+      border-radius: 50%; background: #a00000; border: 1px solid #2a0000; }
+    body.night-mode .ctrl input[type="range"]:hover::-webkit-slider-thumb { background: #c00000; }
+    body.night-mode .ctrl input[type="range"]::-moz-range-track { height: 6px; background: #3a0000; border-radius: 3px; border: none; }
+    body.night-mode .ctrl input[type="range"]::-moz-range-progress { height: 6px; background: #6a0000; border-radius: 3px; }
+    body.night-mode .ctrl input[type="range"]::-moz-range-thumb {
+      width: 14px; height: 14px; border-radius: 50%; background: #a00000; border: 1px solid #2a0000; }
+    body.night-mode .ctrl input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      filter: invert(12%) sepia(100%) saturate(7000%) hue-rotate(-10deg) brightness(70%); }
+    body.night-mode .ctrl button:focus-visible, body.night-mode .ctrl select:focus-visible,
+    body.night-mode .ctrl input:focus-visible { outline: 1px solid #a00000; }
+  `;
+  document.head.appendChild(st);
+})();
+
 const nightBtn = document.getElementById('night-mode-btn');
 if (nightBtn) {
   nightBtn.addEventListener('click', () => {
@@ -934,6 +980,23 @@ const GRID_AU = [0.25, 0.5, 1, 2, 3, 5, 10, 20, 30, 40, 50, 75, 100, 200, 300, 5
 //===========================================================
 //  Render
 //===========================================================
+// Projected orbit polylines from the last frame (used to hover an orbit and identify its body)
+let lastOrbits = {};
+
+/** Shortest distance from point (px,py) to a polyline [[x,y],...]. */
+function polyDist(poly, px, py) {
+  let best = Infinity;
+  for (let i = 1; i < poly.length; i++) {
+    const [x0, y0] = poly[i - 1], [x1, y1] = poly[i];
+    const dx = x1 - x0, dy = y1 - y0, L2 = dx * dx + dy * dy;
+    let t = L2 ? ((px - x0) * dx + (py - y0) * dy) / L2 : 0;
+    t = Math.max(0, Math.min(1, t));
+    const d = Math.hypot(px - (x0 + t * dx), py - (y0 + t * dy));
+    if (d < best) best = d;
+  }
+  return best;
+}
+
 function render() {
   const W = canvas.width, H = canvas.height;
   const Rv = state.viewAU;
@@ -1076,6 +1139,21 @@ function render() {
     });
   }
 
+  // No marker under the mouse? Then see whether the mouse is on an orbit line: hovering an
+  // orbit selects its body (marker ring + label + orbit highlight + info text).
+  if (mouse && !hovered && state.show.minor && state.show.minorOrbits && Math.hypot(mouse.x - cx, mouse.y - cy) < R) {
+    let bestD = sm ? 4 : 6, bestName = null;
+    minors.forEach(m => {
+      const o = lastOrbits[m.name];
+      if (!o) return;
+      const d = polyDist(o.poly, mouse.x, mouse.y);
+      if (d < bestD) { bestD = d; bestName = m.name; }
+    });
+    if (bestName) hovered = drawn.find(o => o.body.kind === 'minor' && o.body.name === bestName) || null;
+  }
+  // body whose orbit should be highlighted
+  const hlName = hovered && (hovered.body.kind === 'minor' || hovered.body.kind === 'planet') ? hovered.body.name : null;
+
   ctx.clearRect(0, 0, W, H);
 
   //=============== SOLAR SYSTEM VIEW ===============//
@@ -1150,16 +1228,24 @@ function render() {
   if (state.show.trojans) drawGroup(trojanGroup,  [150,220,150], 0.70, sm ? 1 : 1.8);
 
   //=== Orbit paths ===//
-  function strokeOrbit(el, rgb, alpha, dash = []) {
+  // Draws one orbit in the body's own colour, at the same strength as the planets' orbits.
+  //  - comets: dashed along the whole orbit (longer dashes above the ecliptic, finer below it)
+  //  - other minor bodies: solid above the ecliptic, dashed below it
+  // Returns the outermost visible point plus the direction of travel there (for the arrowhead
+  // on the name tag).
+  const ORBIT_ALPHA = 0.28;
+  lastOrbits = {};
+  function strokeOrbit(name, el, rgb, isMinor, isComet) {
     const pts = orbitPoints(el);
     let zmax = 0, rmax = 0;
     pts.forEach(([X, Y, Z]) => { zmax = Math.max(zmax, Math.abs(Z)); rmax = Math.max(rmax, Math.hypot(X, Y)); });
-    // strongly inclined orbit (seen nearly edge-on from above): fade the half below the ecliptic
     const tilted = zmax > 0.2 * rmax;
-    const above = new Path2D(), below = new Path2D();
-    let prev = null, lastBelow = null;
-    pts.forEach(([X, Y, Z]) => {
-      const cur = proj(X, Y);
+    const above = new Path2D(), below = new Path2D(), poly = [];
+    let prev = null, lastBelow = null, tagIdx = -1, tagR = -1;
+    pts.forEach(([X, Y, Z], i) => {
+      const cur = proj(X, Y), rho = Math.hypot(X, Y);
+      poly.push(cur);
+      if (rho <= Rv * 0.985 && rho > tagR) { tagR = rho; tagIdx = i; }
       if (prev) {
         const isBelow = tilted && (prev[2] + Z) < 0, path = isBelow ? below : above;
         if (isBelow !== lastBelow) path.moveTo(prev[0], prev[1]);   // new run keeps dashes continuous
@@ -1168,22 +1254,58 @@ function render() {
       }
       prev = [cur[0], cur[1], Z];
     });
-    ctx.lineWidth = sm ? 0.6 : 0.8;
-    ctx.setLineDash(dash);
-    ctx.strokeStyle = col(rgb, alpha);
+    lastOrbits[name] = { poly };
+    const hi  = name === hlName;
+    const dim = isMinor && hlName && !hi;                       // fade the others while one is highlighted
+    ctx.lineWidth = hi ? 2.4 : (isMinor ? (sm ? 0.7 : 1.0) : (sm ? 0.6 : 0.8));
+    ctx.strokeStyle = col(rgb, hi ? 1 : (dim ? ORBIT_ALPHA * 0.6 : ORBIT_ALPHA));
+    ctx.setLineDash(isComet ? (sm ? [3, 2] : [6, 3]) : []);
     ctx.stroke(above);
     if (tilted) {
-      ctx.setLineDash(sm ? [1, 3] : [2, 4]);
-      ctx.strokeStyle = col(rgb, alpha * 0.55);
+      ctx.setLineDash(isComet ? (sm ? [1, 2] : [2.5, 3]) : (sm ? [2, 2] : [5, 3]));
       ctx.stroke(below);
     }
     ctx.setLineDash([]);
+    if (tagIdx < 0) return null;
+    // direction of travel = direction of increasing eccentric anomaly = along the sampled polyline
+    const p0 = poly[Math.max(0, tagIdx - 1)], p1 = poly[Math.min(poly.length - 1, tagIdx + 1)];
+    const dx = p1[0] - p0[0], dy = p1[1] - p0[1], L = Math.hypot(dx, dy) || 1;
+    return { x: poly[tagIdx][0], y: poly[tagIdx][1], dx: dx / L, dy: dy / L };
   }
   if (state.show.planetOrbits) {
-    planets.forEach(p => strokeOrbit(planetElementsAt(p.el, T), p.style.rgb, 0.28));
+    planets.forEach(p => strokeOrbit(p.name, planetElementsAt(p.el, T), p.style.rgb, false, false));
   }
+  const orbitTags = [];
   if (state.show.minor && state.show.minorOrbits) {
-    minors.forEach(m => { if (m.orbit) strokeOrbit(minorElementsAt(m.orbit, jd), m.rgb, 0.25, sm ? [2, 2] : [3, 3]); });
+    minors.forEach(m => {
+      if (!m.orbit) return;
+      const tag = strokeOrbit(m.name, minorElementsAt(m.orbit, jd), m.rgb, true, !!m.comet);
+      if (tag) orbitTags.push({ m, tag });
+    });
+  }
+  // Annotations on the orbits themselves: an arrowhead showing the direction of travel (always),
+  // plus the body's name where its own label isn't already close and tags wouldn't collide.
+  if (!sm && state.show.labels && orbitTags.length) {
+    ctx.font = '10px sans-serif'; ctx.textBaseline = 'middle';
+    const placed = [];
+    orbitTags.forEach(({ m, tag }) => {
+      const sz2 = 5, nx = -tag.dy, ny = tag.dx;
+      ctx.fillStyle = col(m.rgb, 0.95);
+      ctx.beginPath();
+      ctx.moveTo(tag.x + tag.dx * sz2, tag.y + tag.dy * sz2);
+      ctx.lineTo(tag.x - tag.dx * sz2 * 0.6 + nx * sz2 * 0.7, tag.y - tag.dy * sz2 * 0.6 + ny * sz2 * 0.7);
+      ctx.lineTo(tag.x - tag.dx * sz2 * 0.6 - nx * sz2 * 0.7, tag.y - tag.dy * sz2 * 0.6 - ny * sz2 * 0.7);
+      ctx.closePath(); ctx.fill();
+
+      const item = drawn.find(o => o.body === m);
+      if (item && Math.hypot(item.px - tag.x, item.py - tag.y) < 45) return;
+      if (placed.some(q => Math.hypot(q[0] - tag.x, q[1] - tag.y) < 26)) return;
+      placed.push([tag.x, tag.y]);
+      const right = tag.x >= cx;                                // text runs toward the centre, staying inside the map
+      ctx.fillStyle = col(m.rgb, 0.95);
+      ctx.textAlign = right ? 'right' : 'left';
+      ctx.fillText(m.name, tag.x + (right ? -9 : 9), tag.y);
+    });
   }
 
   //=== Sun ===//
@@ -1225,7 +1347,7 @@ function render() {
       ctx.beginPath(); ctx.ellipse(x, y, r * 2.2, r * 0.7, toRad(-20), 0, Math.PI * 2); ctx.stroke();
     }
     if (isHover) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 1;
+      ctx.strokeStyle = hoverRing(); ctx.lineWidth = 1;
       ctx.beginPath(); ctx.arc(x, y, r + (sm ? 4 : 7), 0, Math.PI * 2); ctx.stroke();
     }
     if ((!sm && state.show.labels) || isHover) {
@@ -1262,7 +1384,7 @@ function render() {
     ctx.fillStyle = col(m.rgb);
     ctx.beginPath(); ctx.arc(x, y, Math.max(1, 2.5 * sz), 0, Math.PI * 2); ctx.fill();
     if (isHover) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 1;
+      ctx.strokeStyle = hoverRing(); ctx.lineWidth = 1;
       ctx.beginPath(); ctx.arc(x, y, sm ? 5 : 9, 0, Math.PI * 2); ctx.stroke();
     }
     if ((!sm && state.show.labels) || isHover) {
@@ -1277,7 +1399,7 @@ function render() {
     const isHover = hovered === o;
     drawDiamond(o.px, o.py, Math.max(2, 4 * sz), o.body.rgb);
     if (isHover) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 1;
+      ctx.strokeStyle = hoverRing(); ctx.lineWidth = 1;
       ctx.beginPath(); ctx.arc(o.px, o.py, sm ? 5 : 9, 0, Math.PI * 2); ctx.stroke();
     }
     if ((!sm && state.show.labels) || isHover) {
@@ -1292,7 +1414,7 @@ function render() {
     const isHover = hovered === o;
     drawDiamond(o.px, o.py, Math.max(2, 4 * sz), LAG_RGB);
     if (isHover) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 1;
+      ctx.strokeStyle = hoverRing(); ctx.lineWidth = 1;
       ctx.beginPath(); ctx.arc(o.px, o.py, sm ? 5 : 9, 0, Math.PI * 2); ctx.stroke();
     }
     if ((!sm && state.show.labels) || isHover) {
@@ -1303,6 +1425,14 @@ function render() {
   });
 
   ctx.restore();   // end clip
+
+  // Night mode: red wash over the sky disc, as in the star chart
+  if (nightMode) {
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.clip();
+    ctx.fillStyle = 'rgba(60, 0, 0, 0.25)'; ctx.fillRect(cx - R, cy - R, 2 * R, 2 * R);
+    ctx.restore();
+  }
 
   //=== View ring (+ direction labels or swap hint) ===//
   ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
@@ -1371,8 +1501,14 @@ function render() {
     if (body.name !== 'Earth') parts.push(`${dEarth.toFixed(3)} AU from Earth (${(dEarth * LIGHT_MIN_PER_AU).toFixed(1)} light-min)`);
     parts.push(`Ecl. lon ${lon.toFixed(1)}°, lat ${lat.toFixed(1)}°`);
     parts.push(`Period ${formatPeriod(pos.el.a)}`);
-    if (body.kind === 'minor') parts.push(`e = ${pos.el.e.toFixed(3)}, i = ${pos.el.I.toFixed(1)}°`);
+    if (body.kind === 'minor') {
+      const q = pos.el.a * (1 - pos.el.e), Q = pos.el.a * (1 + pos.el.e);
+      parts.push(`e = ${pos.el.e.toFixed(3)}, i = ${pos.el.I.toFixed(1)}°`);
+      parts.push(`perihelion ${q.toFixed(2)} AU, aphelion ${Q.toFixed(Q < 100 ? 1 : 0)} AU`
+               + (Q > Rv * 0.98 ? ' (orbit continues beyond this view)' : ''));
+    }
     if (body.kind === 'minor' && Math.abs(pos.el.I - 90) < 20) parts.push('orbit is nearly edge-on from above');
+    if (body.kind === 'minor') parts.push(pos.el.I > 90 ? 'retrograde (clockwise from above)' : 'prograde (counter-clockwise from above)');
     text = parts.join('  |  ');
     if (body.name === 'Earth') text += '\n' + moonText(moon);
     else if (PLANET_MOONS[body.name]) text += '\n' + planetMoonsText(body.name);
@@ -1422,7 +1558,7 @@ function drawViewOverlay(W, H, jd) {
   const pad = 8, lh = 17, boxW = 235, boxH = lines.length * lh + pad * 2;
   const bx = pad, by = 100;   // upper-left, just below the time overlay
   ctx.save();
-  ctx.fillStyle = 'rgba(5, 5, 18, 0.70)';
+  ctx.fillStyle = panelBg(0.7);
   ctx.beginPath(); ctx.roundRect(bx - pad / 2, by, boxW, boxH, 4); ctx.fill();
   ctx.font = '11px monospace'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
   lines.forEach(({ label, value }, i) => {
@@ -1445,7 +1581,7 @@ function drawLegend(W, H) {
   const pad = 8, lh = 15, boxW = 150, boxH = items.length * lh + pad * 2;
   const bx = W - boxW - pad, by = H - boxH - pad;
   ctx.save();
-  ctx.fillStyle = 'rgba(5, 5, 18, 0.70)';
+  ctx.fillStyle = panelBg(0.7);
   ctx.beginPath(); ctx.roundRect(bx - pad / 2, by, boxW, boxH, 4); ctx.fill();
   ctx.font = '11px monospace'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
   items.forEach(([label, rgb], i) => {
