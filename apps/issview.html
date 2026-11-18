@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en"> <!--- Header --->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        
+        Greg Furlich
+    </title>
+    <meta itemprop="description" name="description" content="Personal Website of Greg Furlich, PhD" />
+    <meta name="author" content="Greg Furlich">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    
+
+    <!-- Color and Font Schemes -->
+    <meta name="color-scheme" content="only light">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Bing Webmaster tools -->
+    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" /> 
+
+
+</head>
+<body><header>
+
+    <nav>
+       <div class="topnav">
+           <a href="/">
+               <p>
+                   <h> Greg Furlich</h>
+               </p>
+           </a>
+       </div>
+
+       <!-- Top Navigation Menu -->
+        <div class="topnav-app">
+
+            <!-- Navigation links (hidden by default) -->
+            <div id="myLinks">
+                <a href="/apps/starchart.html"><p>Star Chart</p></a>
+                <a href="/apps/solarsystem.html"><p>Solar System</p></a>
+                <a href="/apps/fulldisk.html"><p>Fulldisk View</p></a>
+                <a href="/apps/mesoview.html"><p>Meso View</p></a>
+                <a href="/apps/launches.html"><p>Launches</p></a>
+                <a href="/Research.html"><p>Research</p></a>
+                <a href="/Education.html"><p>Education</p></a>
+                <a href="/Projects.html"><p>Projects</p></a>
+                <a href="/Hobbies.html"><p>Hobbies</p></a>
+                <a href="/Photography.html"><p>Photography</p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="CU" src="/assets/logos/cub.png" height=30>
+                    </p>
+                </a>
+                <a href="https://github.com/gfurlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="github" src="/assets/logos/github.png" height=30>
+                    </p>
+                </a>
+                <a href="https://www.linkedin.com/in/greg-furlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="linkedin" src="/assets/logos/in.png" height=30>
+                    </p>
+                </a>
+                <a href="mailto:greg.furlich@colorado.edu">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="mzil" src="/assets/logos/mail.png" height=30>
+                    </p>
+                </a>
+            </div>
+
+            <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <i class="fa fa-bars" height=30></i>
+            </a>
+        </div>
+
+   </nav>
+
+   <script src="/assets/js/app_menu.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</header>
+
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <!--
+  ISS TRACKER
+  Jekyll page. Uses the same D3 orthographic globe as the Meso viewer,
+  plus a flat equirectangular ground-track view.
+
+  DATA: TLE for ISS (NORAD 25544) from CelesTrak (CORS open), propagated
+  in the browser with satellite.js (SGP4). Eclipse state uses a conical
+  Earth-shadow model (umbra / penumbra) against a low-precision Sun.
+
+  Similar to https://www.nasa.gov/spot-the-station/
+  
+-->
+
+<div style="height: 5vh"></div>
+
+<div class="gv">
+
+  <header class="gv-head">
+    <h1>
+      ISS Tracker
+      <small>International Space Station · NORAD 25544 · SGP4 from live TLE</small>
+    </h1>
+    <div class="gv-status">
+      <div id="iss-utc">—</div>
+      <div id="iss-hint">Drag to rotate · scroll to zoom</div>
+    </div>
+  </header>
+
+  <div class="gv-card">
+    <div class="iss-toolbar">
+      <button class="gv-img-pill active" data-view="globe">Globe</button>
+      <button class="gv-img-pill" data-view="flat">Ground track</button>
+      <label class="iss-follow"><input type="checkbox" id="iss-follow" checked> Follow ISS</label>
+    </div>
+
+    <div class="gv-globe-wrap" id="iss-globe-wrap">
+      <svg id="iss-globe-svg" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="gv-globe-wrap" id="iss-flat-wrap" style="display:none;cursor:default">
+      <svg id="iss-flat-svg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <div class="gv-foot">
+      <div class="gv-legend">
+        <div class="gv-legend-item"><div class="gv-swatch" style="background:#ff5a5a"></div> ISS</div>
+        <div class="gv-legend-item"><div class="gv-swatch" style="background:rgba(255,255,255,0.35)"></div> Past Half Orbit</div>
+        <div class="gv-legend-item"><div class="gv-swatch" style="border-top:2px dashed #ff9a9a;height:0"></div> Next Orbit</div>
+        <div class="gv-legend-item"><div class="gv-swatch" style="background:rgba(255,90,90,0.15);border:1.5px solid #ff5a5a"></div> Visibility footprint</div>
+        <div class="gv-legend-item"><div class="gv-swatch" style="background:#ffe050;width:10px"></div> Solar subpoint</div>
+      </div>
+      <div class="gv-fetch-status" id="iss-fetch-status">Loading TLE…</div>
+    </div>
+  </div>
+
+  <div class="iss-grid">
+    <div class="gv-table-wrap">
+      <div class="gv-table-head">Status &amp; Illumination</div>
+      <table class="gv-table"><tbody id="iss-t-status"></tbody></table>
+    </div>
+    <div class="gv-table-wrap">
+      <div class="gv-table-head">Geodetic Position (LLA, WGS-84)</div>
+      <table class="gv-table"><tbody id="iss-t-lla"></tbody></table>
+    </div>
+    <div class="gv-table-wrap">
+      <div class="gv-table-head">ECEF State (Earth-fixed)</div>
+      <table class="gv-table"><tbody id="iss-t-ecef"></tbody></table>
+    </div>
+    <div class="gv-table-wrap">
+      <div class="gv-table-head">ECI State Vector (TEME)</div>
+      <table class="gv-table"><tbody id="iss-t-eci"></tbody></table>
+    </div>
+    <div class="gv-table-wrap">
+      <div class="gv-table-head">Orbital Elements (from TLE)</div>
+      <table class="gv-table"><tbody id="iss-t-elem"></tbody></table>
+    </div>
+    <div class="gv-table-wrap">
+      <div class="gv-table-head">Two-Line Element Set</div>
+      <pre class="iss-pre" id="iss-tle">Loading…</pre>
+    </div>
+    <div class="gv-table-wrap iss-stream">
+      <div class="gv-table-head">Live Stream</div>
+      <div class="iss-stream-bar">
+        <select id="iss-stream-select"></select>
+        <input type="text" id="iss-stream-custom" placeholder="Paste a YouTube URL or video ID" style="display:none">
+        <button class="gv-img-pill" id="iss-stream-load" style="display:none">Load</button>
+      </div>
+      <div class="iss-video"><iframe id="iss-stream-frame" title="ISS live stream" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+    </div>
+  </div>
+
+  <div style="height: 5vh"></div>
+  <div class="gv-info">
+    <strong>Data Sources &amp; Notes:</strong><br>
+    <a href="https://celestrak.org/NORAD/elements/">CelesTrak</a> GP/TLE data for the ISS (refreshed every 6 h)<br>
+    <a href="https://github.com/shashwatak/satellite-js">satellite.js</a> SGP4 propagation. ECI is TEME; ECEF is TEME rotated by GMST (no polar motion).<br>
+    Eclipse: conical shadow model using the apparent angular radii of Earth and Sun as seen from the ISS.
+  </div>
+
+</div><!-- /gv -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/satellite.js/5.0.0/satellite.min.js"></script>
+
+<script src="/assets/js/issviewer.js"></script>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+  <!--- Footer Content --->
+  	&copy Greg Furlich 2026 <br>
+  	All Rights Reserved<br>
+</footer>
+</body>
+
+</html>
