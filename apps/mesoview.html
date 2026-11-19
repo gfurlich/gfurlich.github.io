@@ -99,7 +99,7 @@
 ════════════════════════════════════════════════════════════════
   GOES MESOSCALE GLOBE VIEWER
   Jekyll page
-
+ 
   Renders a D3 orthographic globe showing:
     - Land / country borders from world-atlas TopoJSON (CDN)
     - GOES-19 (East, 75.2°W) and GOES-18 (West, 136.9°W) sub-satellite
@@ -107,23 +107,23 @@
     - Live GOES M1/M2 mesoscale sector boxes fetched from the NWS
       ADMNES product via api.weather.gov
     - Smooth mouse-drag (and touch) rotation with momentum
-
+ 
   DATA SOURCE: NWS Administrative Messages (ADMNES)
     https://api.weather.gov/products?type=ADM&location=NES
     Each approved meso request is a structured text bulletin with
     CENTER POINT in decimal lat/lon. We parse all products issued
     in the past 24 h, deduplicate by SAT+MESO, and keep the most
     recent active entry for each sector.
-
+ 
   CORS: api.weather.gov sets Access-Control-Allow-Origin: *
   TOPO: cdn.jsdelivr.net/npm/world-atlas@2 (also open CORS)
 ════════════════════════════════════════════════════════════════
 -->
-
+ 
 <div style="height: 5vh"></div>
-
+ 
 <div class="gv">
-
+ 
   <header class="gv-head">
     <h1>
       GOES Mesoscale Globe Viewer
@@ -159,7 +159,7 @@
             <div class="gv-swatch" style="background:rgba(77,208,225,0.15);border:1.5px dashed #4dd0e1"></div> GK2A LA
           </div>
           <div class="gv-legend-item">
-            <div class="gv-swatch" style="background:rgba(196,126,212,0.18);border:1.5px dashed #c47ed4"></div> H9 JPN
+            <div class="gv-swatch" style="background:rgba(196,126,212,0.18);border:1.5px dashed #c47ed4"></div> H9 JP01
           </div>
           <div class="gv-legend-item" style="display:flex;align-items:center;gap:0.35rem;">
             <span style="color:#e8f060;font-size:22px;line-height:0;display:block;position:relative;bottom:2px">&#9650;</span> Launch site
@@ -185,7 +185,7 @@
         </tbody>
       </table>
     </div>
-
+ 
     <!-- Upcoming meso table - hidden when empty -->
     <div class="gv-table-wrap" id="gv-upcoming-wrap" style="margin-top:1rem;display:none">
       <div class="gv-table-head">Upcoming Mesoscale Requests ( Source: <a href='https://forecast.weather.gov/product.php?site=NWS&issuedby=NES&product=ADM&format=CI&version=1&glossary=0'>NWS ADMNES</a>)</div>
@@ -200,7 +200,7 @@
         <tbody id="gv-upcoming-tbody"></tbody>
       </table>
     </div>
-
+ 
     <!-- ══ Meso Imagery Panel ══════════════════════════════════ -->
     <!-- Populated dynamically by renderMesoImagery() in mesoviewer.js -->
     <div class="gv-table-wrap" id="gv-imagery-wrap" style="margin-top:1rem;display:none">
@@ -210,7 +210,7 @@
       </div>
       <!-- #gv-img-channel-picker and #gv-img-grid injected by JS -->
     </div>
-
+ 
     <!-- Data Sources box -->
     <div style="height: 5vh"></div>
     <div class="gv-info">
@@ -221,7 +221,7 @@
       <a href="https://cdn.star.nesdis.noaa.gov/">NESDIS STAR CDN</a> for rendered ABI channel imagery<br>
       <a href='https://www.nco.ncep.noaa.gov/status/satellite/'>Current Geostationary Satellite Sector Locations</a>
     </div>
-
+ 
     <div id="gv-tooltip" style="
     position: fixed;
     display: none;
@@ -239,14 +239,12 @@
   "></div>
   
   </div><!-- /gv -->
-
+ 
 <!-- Load Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
-
+ 
 <script src="/assets/js/mesoviewer.js"></script>
-
-
       </div>
     </main><footer class="site-footer h-card">
   <data class="u-url" href="/"></data>

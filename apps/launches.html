@@ -102,32 +102,42 @@
   <header class="gv-head">
     <h1>
       Upcoming Space Launches
-      <p class="lp__subtitle">Launch schedule over the coming week</p>
+      <small>Data Source: Launch Library 2 · TheSpaceDevs</small>
+      <p class="lp__subtitle">NEXT 7 DAYS &nbsp;·&nbsp; ALL OPERATORS &nbsp;·&nbsp; ORBITAL + SUBORBITAL</p>
     </h1>
     <div class="lp__meta">
       <div class="lp__count" id="launch-count">—</div>
       <span class="lp__count-label">launches found</span>
-      <span class="lp__updated" id="fetch-time"></span><br>
-      <small>Data Source: Launch Library 2 by TheSpaceDevs</small>
+      <span class="lp__updated" id="fetch-time"></span>
     </div>
   </header>
-
- 
 
 <section class="lp">
   <div class="lp__inner">
 
+    <!-- <header class="lp__header">
+      <div>
+        <p class="lp__kicker">// Launch Library 2 · TheSpaceDevs</p>
+        <h1 class="lp__title">Upcoming Launches</h1>
+        <p class="lp__subtitle">NEXT 7 DAYS &nbsp;·&nbsp; ALL OPERATORS &nbsp;·&nbsp; ORBITAL + SUBORBITAL</p>
+      </div>
+      <div class="lp__meta">
+        <div class="lp__count" id="launch-count">—</div>
+        <span class="lp__count-label">launches found</span>
+      </div>
+    </header> -->
+
     <div id="launch-container">
       <div class="lp__loading">
         <div class="lp__loading-spinner"></div>
-        <p>Querying launch manifest for Launch Library 2…</p>
+        <p>Querying launch manifest…</p>
       </div>
     </div>
 
     <footer class="lp__footer">
       <p class="lp__footer-note">
-        Data Source: <a href="https://thespacedevs.com/llapi" target="_blank" rel="noopener">Launch Library 2</a>
-        by TheSpaceDevs
+        Data: <a href="https://thespacedevs.com/llapi" target="_blank" rel="noopener">Launch Library 2</a>
+        by TheSpaceDevs · Free tier: 15 req/hr per IP ·
         <a href="https://ll.thespacedevs.com/docs/" target="_blank" rel="noopener">API docs</a>
       </p>
     </footer>
@@ -137,11 +147,6 @@
 
 <!-- Load Scripts -->
 <script src="/assets/js/launches.js"></script>
-
-<!-- Leaflet (Maps) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-
 
       </div>
     </main><footer class="site-footer h-card">
