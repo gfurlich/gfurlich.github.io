@@ -1,0 +1,10 @@
+# PLACEHOLDER - replace this entire file with a real download.
+#
+# 1. Open this address in your browser (once CelesTrak stops returning errors):
+#      https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=tle
+# 2. Save the page's text as  assets/data/visual.tle  in your site (overwriting this file).
+#    It should look like groups of three lines: a name, then a line starting "1 ", then a line starting "2 ".
+# 3. Commit and publish. sky_background.js only reads this file when CelesTrak can't be reached,
+#    and it ignores it if it contains no valid satellites.
+#
+# Refresh the file every week or two; positions drift as the data ages.
