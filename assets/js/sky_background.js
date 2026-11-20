@@ -45,6 +45,10 @@
     tleUrls: [
       'https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=tle',
     ],
+    // Optional hand-saved copy of the TLE file. Only requested when CelesTrak can't be reached
+    // and there is no fresh cached copy. Set to null to disable.
+    tleFallbackUrl: '/assets/data/visual.tle',
+    tleRetryMinutes: 30,      // after a failed request, don't ask CelesTrak again for this long
     tleMaxAgeDays: 10,        // skip a TLE source whose data is older than this
     tleCacheHours: 6,
     satelliteSize: 6,         // icon unit in px (station ~12 px wide, payload ~7 px)
@@ -317,15 +321,24 @@
       .finally(() => clearTimeout(timer));
   }
 
-  function cacheGet(url) {
+  function cacheGet(url, maxAgeMs) {
     try {
       const o = JSON.parse(localStorage.getItem('skytle:' + url) || 'null');
-      if (o && Date.now() - o.t < cfg.tleCacheHours * 3600e3) return o.text;
+      if (o && Date.now() - o.t < maxAgeMs) return o.text;
     } catch (e) { /* storage unavailable */ }
     return null;
   }
   function cacheSet(url, text) {
     try { localStorage.setItem('skytle:' + url, JSON.stringify({ t: Date.now(), text })); } catch (e) { /* ignore */ }
+  }
+  function failedRecently(url) {
+    try {
+      const t = +localStorage.getItem('skyfail:' + url);
+      return t > 0 && Date.now() - t < cfg.tleRetryMinutes * 60e3;
+    } catch (e) { return false; }
+  }
+  function markFailed(url) {
+    try { localStorage.setItem('skyfail:' + url, String(Date.now())); } catch (e) { /* ignore */ }
   }
 
   // ---- Satellite types, classified from the TLE name ----
@@ -386,11 +399,22 @@
     ctx.restore();
   }
 
+  // TLE lines end in a checksum digit (digits count as themselves, '-' counts as 1).
+  function checksumOk(line) {
+    if (line.length !== 69) return true;           // let satellite.js decide about odd lengths
+    let sum = 0;
+    for (let i = 0; i < 68; i++) {
+      const ch = line[i];
+      if (ch >= '0' && ch <= '9') sum += +ch; else if (ch === '-') sum += 1;
+    }
+    return sum % 10 === +line[68];
+  }
+
   function parseTLE(text) {
     const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
     const out = [];
     for (let i = 0; i < lines.length - 1; i++) {
-      if (lines[i].startsWith('1 ') && lines[i + 1].startsWith('2 ')) {
+      if (lines[i].startsWith('1 ') && lines[i + 1].startsWith('2 ') && checksumOk(lines[i]) && checksumOk(lines[i + 1])) {
         const prev = lines[i - 1];
         const name = prev && !prev.startsWith('1 ') && !prev.startsWith('2 ') ? prev : '';
         try {
@@ -412,6 +436,11 @@
     return (Date.now() - epoch) / 86400000;
   }
 
+  function note(url, list) {
+    console.info('[sky] tracking ' + list.length + ' satellites from ' + url +
+                 ' (TLE age ' + ageDays(list[0].rec).toFixed(1) + ' days)');
+  }
+
   async function initSatellites() {
     if (!cfg.satellites) return;
     try {
@@ -420,18 +449,27 @@
       observerGd = { longitude: cfg.lon * D2R, latitude: cfg.lat * D2R, height: cfg.heightKm };
     } catch (e) { return; }
 
+    const sources = cfg.tleUrls.concat(cfg.tleFallbackUrl ? [cfg.tleFallbackUrl] : []);
     let best = null;
-    for (const url of cfg.tleUrls) {
-      try {
-        let text = cacheGet(url);
-        if (!text) { text = await fetchText(url, 8000); cacheSet(url, text); }
-        const list = parseTLE(text);
-        if (!list.length) continue;
-        if (ageDays(list[0].rec) <= cfg.tleMaxAgeDays) { sats = list; return; }
-        if (!best) best = list;   // stale, but better than nothing
-      } catch (e) { /* try next source */ }
+    for (const url of sources) {
+      const isFallback = url === cfg.tleFallbackUrl;
+      // 1) a recent cached copy, 2) the network (at most one try per tleRetryMinutes),
+      // 3) the last good cached copy however old
+      let text = isFallback ? null : cacheGet(url, cfg.tleCacheHours * 3600e3);
+      if (!text && !failedRecently(url)) {
+        try {
+          text = await fetchText(url, 8000);
+          if (!isFallback) cacheSet(url, text);
+        } catch (e) { markFailed(url); }
+      }
+      if (!text && !isFallback) text = cacheGet(url, Infinity);
+      if (!text) continue;
+      const list = parseTLE(text);
+      if (!list.length) continue;
+      if (ageDays(list[0].rec) <= cfg.tleMaxAgeDays) { sats = list; note(url, list); return; }
+      if (!best) { best = list; best.src = url; }   // stale, but better than nothing
     }
-    if (best) sats = best;
+    if (best) { sats = best; note(best.src, best); }
   }
 
   function satState(rec, date) {
