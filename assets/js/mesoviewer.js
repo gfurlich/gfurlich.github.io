@@ -18,10 +18,20 @@
     h9: { key:'himawari', name:'Himawari 9', lon:140.7,
       diskColor:'#c47ed4', diskFill:'rgba(196,126,212,0.15)',
       s3Bucket:'noaa-himawari9',
-      // jpCenter: [145, 34], // TODO: Update
-      jpCenter: [137, 49], // TODO: Update
-      jpColor: '#c47ed4',
-      jpFill:  'rgba(196,126,212,0.18)',
+      // JP01 sector corners from HS_H09_20260423_0350_B13_JP01_R20_S0101_DAT.bz2
+      // Extracted via satpy ahi_hsd reader. GEOS proj, lon_0=140.7°E, 1500×1200 px at 2km
+      // jp01Sector: {
+      //   nw: [103.11518350343187,
+      //     52.89533776681468],  // [lon, lat]
+      //   ne: [153.8070964554106,
+      //     51.184689177849826],
+      //   sw: [119.01942668422086,
+      //     20.879642512607926],
+      //   se: [148.98768778266813,
+      //     20.626745166088057],
+      // },
+      // jp01Color: '#c47ed4',
+      // jp01Fill:  'rgba(196,126,212,0.18)',
     },
     gk2a:   { key:'gk2a',   name:'GEO-KOMPSAT-2A',   lon:128.2,
       diskColor:'#4dd0e1', diskFill:'rgba(77,208,225,0.15)',
@@ -312,20 +322,6 @@
     return 0;
   }
  
-  /* == HimawariJP GEOJSON */
-  let himawariJP = null;
-
-  function loadHimawari() {
-    if (himawariJP) return Promise.resolve(himawariJP);
-
-    return fetch('/assets/js/himawari_japan.json')
-      .then(res => res.json())
-      .then(data => {
-        himawariJP = data;
-        return data;
-      });
-  }
-
   /* ══════════════════════════════════════════════════════════
      IMAGE URL HELPERS
   ══════════════════════════════════════════════════════════ */
@@ -377,6 +373,8 @@
   /* == State == */
   var worldTopo  = null;
   var stateLines = null;   /* Natural Earth Admin 1 boundary lines */
+  var h9JP       = null; /* Himawari-9 JP01 footprint (normalized GeoJSON Feature) */
+  var H9_JP_STYLE = { fill:'rgba(196,126,212,0.18)', stroke:'#c47ed4' };
   var mesoBoxes  = [];   /* from ADMNES */
   var scanTimes  = {};   /* {east_M1, east_M2, west_M1, west_M2} → {time, lat, lon} */
 
@@ -600,37 +598,35 @@
       }
     })();
 
-    /* Himawari-9 JP sector footprint (static, GEOJSON file) */
+    /* Himawari-9 JP01 sector footprint (loaded once at boot from himawari_japan.json) */
     gH9JP.selectAll('*').remove();
-    (function() {
-      loadHimawari().then(data => {
-        gH9JP.append('path')
-          .datum(data)
-          .attr('d', path)
-          .attr('fill', SATS.h9.jpFill)
-          .attr('stroke', SATS.h9.jpColor)
-          .attr('stroke-width', 1.4)
-          .attr('stroke-dasharray', '5 3')
-          .attr('opacity', 0.85);
-        });
-      var labelPt = proj([SATS.h9.jpCenter[0], SATS.h9.jpCenter[1]]);
-      // console.log('JPN Vis:', SATS.h9.jpCenter, visibleCenter)
-      if (d3.geoDistance(SATS.h9.jpCenter, visibleCenter) >= Math.PI/2) return;
-      if (labelPt) {
-        var lbl = 'H9 JPN';
-        var tw = lbl.length * 6 + 10;
-        gH9JP.append('rect')
-          .attr('x', labelPt[0]-tw/2).attr('y', labelPt[1]-9)
-          .attr('width', tw).attr('height', 14).attr('rx', 3)
-          .attr('fill', 'rgba(4,8,15,0.82)');
-        gH9JP.append('text')
-          .attr('x', labelPt[0]).attr('y', labelPt[1]+1)
-          .attr('text-anchor','middle').attr('dominant-baseline','middle')
-          .attr('fill', SATS.h9.jpColor).attr('font-size', 9)
-          .attr('font-family','Share Tech Mono, monospace').attr('font-weight','600')
-          .attr('letter-spacing','0.06em').text(lbl);
-      };
-    })();
+    if (h9JP) {
+      gH9JP.append('path').datum(h9JP).attr('d', path)
+        .attr('fill', H9_JP_STYLE.fill)
+        .attr('stroke', H9_JP_STYLE.stroke)
+        .attr('stroke-width', 1.4)
+        .attr('stroke-dasharray', '5 3')
+        .attr('opacity', 0.85);
+      var jpBounds = d3.geoBounds(h9JP);
+      var jpCen    = d3.geoCentroid(h9JP);
+      if (d3.geoDistance(jpCen, visibleCenter) < Math.PI / 2) {
+        var jpLabelPt = proj([jpCen[0], jpBounds[1][1]]);
+        if (jpLabelPt) {
+          var jpLbl = 'H9 JP01';
+          var jpTw  = jpLbl.length * 6 + 10;
+          gH9JP.append('rect')
+            .attr('x', jpLabelPt[0]-jpTw/2).attr('y', jpLabelPt[1]-9)
+            .attr('width', jpTw).attr('height', 14).attr('rx', 3)
+            .attr('fill', 'rgba(4,8,15,0.82)');
+          gH9JP.append('text')
+            .attr('x', jpLabelPt[0]).attr('y', jpLabelPt[1]+1)
+            .attr('text-anchor','middle').attr('dominant-baseline','middle')
+            .attr('fill', H9_JP_STYLE.stroke).attr('font-size', 9)
+            .attr('font-family','Share Tech Mono, monospace').attr('font-weight','600')
+            .attr('letter-spacing','0.06em').text(jpLbl);
+        }
+      }
+    }
 
     /* Launch sites */
     gLaunch.selectAll('*').remove();
@@ -736,8 +732,7 @@
       var lonStr = sol.lon >= 0
         ? sol.lon.toFixed(1) + '°E'
         : Math.abs(sol.lon).toFixed(1) + '°W';
-      // var slabel = '☀ Solar Subpoint';
-      var slabel = 'Solar Subpoint';
+      var slabel = '☀ Solar Subpoint';
       var sinfo = latStr + ' ' + lonStr;
       var stw = slabel.length * 6 + 10;
       gSolar.append('rect')
@@ -1746,9 +1741,72 @@
       return buildCardHtml(slot, box);
     }).join('');
  
+    renderIntlImagery();
     wrap.style.display = '';
   }
  
+  /* ══════════════════════════════════════════════════════════
+     HIMAWARI-9 / GK2A IMAGERY CARDS
+     Independent of the GOES channel picker. Set imgUrl to a function
+     returning an image URL, or null to show a link-out card only.
+  ══════════════════════════════════════════════════════════ */
+  var INTL_IMG_SLOTS = [
+    { id:'h9jp', label:'Himawari-9 Japan', tag:'H9', tagClass:'tag-h9',
+      imgUrl:  'https://www.ospo.noaa.gov/jma/japan/vis.gif',
+      openUrl: 'https://www.ospo.noaa.gov/products/imagery/nohemi.html#Japan_Sector',
+      desc:    'Visible \u00b7 NOAA OSPO Japan sector (wider than JP01)' },
+  ];
+
+  function fmtLatLon(lat, lon) {
+    return (lat >= 0 ? lat.toFixed(1)+'\u00b0N' : Math.abs(lat).toFixed(1)+'\u00b0S') + ' / ' +
+           (lon >= 0 ? lon.toFixed(1)+'\u00b0E' : Math.abs(lon).toFixed(1)+'\u00b0W');
+  }
+
+  function intlCenter(id) {
+    if (id === 'h9jp' && h9JP) { var c = d3.geoCentroid(h9JP); return [c[1], c[0]]; }
+    return null;
+  }
+
+  function intlCardHtml(slot) {
+    var c = intlCenter(slot.id);
+    var pos = c ? fmtLatLon(c[0], c[1]) : '';
+    var body;
+    if (slot.imgUrl) {
+      var bust = Math.floor(Date.now() / 300000);
+      body = '<div style="padding-bottom:0.5rem;"><img src="' + slot.imgUrl + '?t=' + bust + '" ' +
+        'style="width:100%;display:block;" alt="' + slot.label + '" ' +
+        'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">' +
+        '<div style="display:none;padding:1rem;font-family:var(--mono);font-size:0.65rem;color:var(--muted)">Image unavailable</div></div>';
+    } else {
+      body = '<div style="padding:2rem 1rem;text-align:center;font-family:var(--mono);font-size:0.65rem;color:var(--muted)">No inline image configured</div>';
+    }
+    return '<div class="gv-img-card" style="border-right:none">' +
+      '<div class="gv-img-card-head"><span class="tag ' + slot.tagClass + '">' + slot.tag + '</span>' +
+      '&nbsp;' + slot.label + '<span class="gv-img-card-pos">' + pos + '</span></div>' +
+      '<div class="gv-img-card-foot" style="display:block;padding:0">' + body +
+      '<div style="display:flex;align-items:center;justify-content:space-between;' +
+      'padding:0.35rem 0.75rem;font-family:var(--mono);font-size:0.6rem;color:var(--muted);' +
+      'border-top:1px solid var(--border)"><span>' + slot.desc + '</span>' +
+      '<a href="' + slot.openUrl + '" target="_blank" rel="noopener" ' +
+      'style="color:var(--accent);text-decoration:none;opacity:0.8;">Open \u2197</a></div>' +
+      '</div></div>';
+  }
+
+  function renderIntlImagery() {
+    var wrap = document.getElementById('gv-imagery-wrap');
+    if (!wrap) return;
+    var el = document.getElementById('gv-img-intl');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'gv-img-intl';
+    }
+    /* Always (re)append so it stays below the GOES grid, even if it was
+       created before the grid existed (appendChild moves an existing node). */
+    wrap.appendChild(el);
+    el.innerHTML = '<div class="gv-img-subhead">Himawari-9 Japan</div>' +
+      '<div class="gv-img-grid" style="grid-template-columns:1fr">' + INTL_IMG_SLOTS.map(intlCardHtml).join('') + '</div>';
+  }
+
   /** Refresh only the foot content on channel switch or 2-min timer. */
   function refreshImageSrcs() {
     MESO_SLOT_ORDER.forEach(function(slot) {
@@ -1765,7 +1823,7 @@
 
 
   /* Refresh imagery every 1 minutes */
-  setInterval(refreshImageSrcs, 1 * 60 * 1000);
+  setInterval(function(){ refreshImageSrcs(); renderIntlImagery(); }, 1 * 60 * 1000);
   
   /* == Boot == */
   fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
@@ -1782,6 +1840,38 @@
       setInterval(fetchAdmnes, 5*60*1000);
     })
     .catch(function(err){ console.error('world-atlas load failed:', err); });
+
+  /* Himawari-9 JP01 footprint.
+     The exported file has Polygon geometry nested one level too deep
+     (effectively a MultiPolygon), so normalize it here. Winding is also
+     checked: D3 fills the *complement* of a ring wound the wrong way. */
+  function normalizeFootprint(gj) {
+    var polys = [];
+    (gj.features || [gj]).forEach(function(f) {
+      var g = f.geometry || f;
+      var c = g.coordinates;
+      if (g.type === 'MultiPolygon' || (g.type === 'Polygon' && Array.isArray(c[0][0][0]))) {
+        c.forEach(function(p) { polys.push(p); });
+      } else {
+        polys.push(c);
+      }
+    });
+    var feat = { type:'Feature', properties:{}, geometry:{ type:'MultiPolygon', coordinates: polys } };
+    if (d3.geoArea(feat) > 2 * Math.PI) {   /* wrong winding -> reverse every ring */
+      feat.geometry.coordinates = polys.map(function(p) {
+        return p.map(function(ring) { return ring.slice().reverse(); });
+      });
+    }
+    return feat;
+  }
+
+  fetch('/assets/js/himawari_japan.json')
+    .then(function(r){
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(gj){ h9JP = normalizeFootprint(gj); draw(); renderIntlImagery(); })
+    .catch(function(err){ console.warn('Himawari JP01 load failed:', err.message); });
 
   // State/province lines — optional layer, failure is non-fatal
   fetch('https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@master/geojson/ne_50m_admin_1_states_provinces_lakes.geojson')
