@@ -1,10 +1,3 @@
-//===========================================================
-//
-//  Javascript ISS Tracker for Website
-//
-//  Author: Greg Furlich, Assisted by Claude
-//
-//===========================================================
 (function () {
   'use strict';
 
@@ -403,42 +396,6 @@
       redraw();
     });
   });
-
-  /* == Live stream panel ==
-     IDs come from public stream listings and can change or go offline; use
-     "Custom" to paste any embeddable YouTube live URL or ID. */
-  var STREAMS = [
-    { label: 'ISS overview camera (AfarTV)', id: 'VigTmsEGS18' },
-    { label: 'NASA external HD views (AfarTV)', id: 'xRPjKQtRXR8' },
-    { label: 'Custom…', id: '' }
-  ];
-  var sSel = document.getElementById('iss-stream-select');
-  var sIn = document.getElementById('iss-stream-custom');
-  var sBtn = document.getElementById('iss-stream-load');
-  var sFrame = document.getElementById('iss-stream-frame');
-
-  function parseYtId(s) {
-    var m = s.trim().match(/(?:v=|youtu\.be\/|live\/|embed\/)([\w-]{11})/) || s.trim().match(/^([\w-]{11})$/);
-    return m ? m[1] : null;
-  }
-  function loadStream(id) {
-    if (id) sFrame.src = 'https://www.youtube.com/embed/' + id + '?autoplay=0&mute=1&rel=0';
-  }
-  STREAMS.forEach(function (s, i) {
-    var o = document.createElement('option'); o.value = i; o.textContent = s.label; sSel.appendChild(o);
-  });
-  sSel.addEventListener('change', function () {
-    var s = STREAMS[sSel.value], custom = !s.id;
-    sIn.style.display = sBtn.style.display = custom ? '' : 'none';
-    if (!custom) loadStream(s.id);
-  });
-  function loadCustom() {
-    var id = parseYtId(sIn.value);
-    if (id) loadStream(id); else sIn.value = '';
-  }
-  sBtn.addEventListener('click', loadCustom);
-  sIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') loadCustom(); });
-  loadStream(STREAMS[0].id);
 
   /* == Boot == */
   fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')

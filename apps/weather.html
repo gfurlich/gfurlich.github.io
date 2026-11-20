@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en"> <!--- Header --->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        
+        Greg Furlich
+    </title>
+    <meta itemprop="description" name="description" content="Personal Website of Greg Furlich, PhD" />
+    <meta name="author" content="Greg Furlich">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    
+
+    <!-- Color and Font Schemes -->
+    <meta name="color-scheme" content="only light">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Bing Webmaster tools -->
+    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" /> 
+
+
+</head>
+<body><header>
+
+    <nav>
+       <div class="topnav">
+           <a href="/">
+               <p>
+                   <h> Greg Furlich</h>
+               </p>
+           </a>
+       </div>
+
+       <!-- Top Navigation Menu -->
+        <div class="topnav-app">
+
+            <!-- Navigation links (hidden by default) -->
+            <div id="myLinks">
+                <a href="/apps/starchart.html"><p>Star Chart</p></a>
+                <a href="/apps/solarsystem.html"><p>Solar System</p></a>
+                <a href="/apps/fulldisk.html"><p>Fulldisk View</p></a>
+                <a href="/apps/mesoview.html"><p>Meso View</p></a>
+                <a href="/apps/launches.html"><p>Launches</p></a>
+                <a href="/apps/issview.html"><p>ISS Tracker</p></a>
+                <a href="/Research.html"><p>Research</p></a>
+                <a href="/Education.html"><p>Education</p></a>
+                <a href="/Projects.html"><p>Projects</p></a>
+                <a href="/Hobbies.html"><p>Hobbies</p></a>
+                <a href="/Photography.html"><p>Photography</p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="CU" src="/assets/logos/cub.png" height=30>
+                    </p>
+                </a>
+                <a href="https://github.com/gfurlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="github" src="/assets/logos/github.png" height=30>
+                    </p>
+                </a>
+                <a href="https://www.linkedin.com/in/greg-furlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="linkedin" src="/assets/logos/in.png" height=30>
+                    </p>
+                </a>
+                <a href="mailto:greg.furlich@colorado.edu">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="mzil" src="/assets/logos/mail.png" height=30>
+                    </p>
+                </a>
+            </div>
+
+            <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <i class="fa fa-bars" height=30></i>
+            </a>
+        </div>
+
+   </nav>
+
+   <script src="/assets/js/app_menu.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</header>
+
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.wx{
+  --line:rgba(128,128,128,.28); --tint:rgba(255,255,255,.35); --accent:#b00020;
+  max-width:1100px; margin:0 auto; padding:0 16px 40px; text-align:left; box-sizing:border-box;
+}
+.wx *,.wx *::before,.wx *::after{box-sizing:border-box}
+.wx h2{margin:0;font-size:26px;line-height:1.2}
+.wx h3{margin:0 0 8px;font-size:14px;font-weight:600}
+.wx p,.wx dl,.wx dd,.wx dt{margin:0}
+.wx img{max-width:none}
+
+/* title bar */
+.wx-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:6px 16px;margin-bottom:14px}
+.wx-status{margin-top:4px;font-size:12px;opacity:.7}
+.wx-status.wx-error{color:var(--accent);opacity:1}
+.wx-loc{font-size:12px}
+.wx-loc summary{cursor:pointer;opacity:.8;text-align:right}
+.wx-form{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.wx-form input{width:96px}
+
+/* alerts */
+.wx-alerts{margin-bottom:14px}
+.wx-alert{border-left:4px solid var(--accent);background:var(--tint);border-radius:0 6px 6px 0;padding:6px 12px;margin-bottom:6px;font-size:13px}
+.wx-alert summary{cursor:pointer;font-weight:600}
+.wx-alert p{white-space:pre-line;margin:6px 0}
+
+/* two-column dashboard: left = now + hourly, right = 7-day */
+.wx-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+.wx-col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.wx-card{background:var(--tint);border-radius:12px;padding:14px 16px;min-width:0}
+
+/* hero */
+.wx-hero{color:#fff;border-radius:12px;padding:18px 20px;background:linear-gradient(135deg,#2f6fd0,#6db3f8)}
+.wx-hero.is-night{background:linear-gradient(135deg,#16213e,#3d4f7c)}
+.wx-hero[hidden]{display:none}
+.wx-now{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.wx-now img{width:84px;height:84px;border-radius:12px;flex:none}
+.wx-temp{font-size:64px;line-height:1;font-weight:300}
+.wx-desc{font-size:18px;margin-top:4px}
+.wx-station{font-size:11px;opacity:.75;margin-top:4px}
+.wx-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.wx-stats>div{background:rgba(255,255,255,.16);border-radius:8px;padding:8px 10px;min-width:0}
+.wx-stats dt{font-size:11px;opacity:.8;margin-bottom:2px}
+.wx-stats dd{font-size:14px;font-weight:500;overflow-wrap:anywhere}
+
+/* hourly chart */
+.wx-chart{display:block;width:100%;height:auto;overflow:visible}
+.wx-chart .area{fill:rgba(60,120,210,.18)}
+.wx-chart .line{fill:none;stroke:#2f6fd0;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.wx-chart .dot{fill:#2f6fd0}
+.wx-chart text{font-size:13px;fill:currentColor;text-anchor:middle}
+.wx-chart .t{font-weight:600;font-size:14px}
+.wx-chart .h{opacity:.7}
+.wx-chart .pop{fill:var(--accent);font-size:12px}
+
+/* 7-day */
+.wx-icon{width:36px;height:36px;border-radius:6px;display:block}
+.wx-day{border-top:1px solid var(--line)}
+.wx-day:first-child{border-top:0}
+.wx-day-row{display:grid;grid-template-columns:76px 36px minmax(0,1fr) 34px 70px 34px;align-items:center;gap:10px;padding:7px 0;cursor:pointer;list-style:none}
+.wx-day-row::-webkit-details-marker{display:none}
+.wx-day-row::marker{content:""}
+.wx-day-name{font-size:13px;font-weight:600}
+.wx-day-text{display:flex;flex-direction:column;font-size:12px;line-height:1.3}
+.wx-day-pop{color:var(--accent)}
+.wx-lo{text-align:right;opacity:.65;font-size:14px}
+.wx-hi{font-size:14px;font-weight:600}
+.wx-range{position:relative;height:6px;border-radius:3px;background:rgba(128,128,128,.25)}
+.wx-range-bar{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,#4a90d9,#e0883a)}
+.wx-day-detail{margin:0 0 10px 86px;font-size:12px;line-height:1.5;white-space:pre-line;opacity:.85}
+
+.wx-credit{font-size:11px;opacity:.65;margin-top:20px}
+
+@media (max-width:900px){
+  .wx-layout{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .wx-temp{font-size:48px}
+  .wx-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wx-day-row{grid-template-columns:62px minmax(0,1fr) 30px 54px 30px;gap:6px}
+  .wx-day-row .wx-icon{display:none}
+  .wx-day-detail{margin-left:0}
+}
+</style>
+
+<div style="height: 10vh"></div>
+
+<main id="weather-app" class="wx">
+
+  <div class="wx-top">
+    <div>
+      <h2 id="wx-place">Local Weather</h2>
+      <p id="wx-status" class="wx-status">Locating…</p>
+    </div>
+    <details class="wx-loc">
+      <summary>Change location</summary>
+      <form id="wx-form" class="wx-form">
+        <label>Lat <input id="wx-lat" type="number" step="any" min="-90" max="90"></label>
+        <label>Lon <input id="wx-lon" type="number" step="any" min="-180" max="180"></label>
+        <button type="submit">Get weather</button>
+        <button type="button" id="wx-here">Use my location</button>
+      </form>
+    </details>
+  </div>
+
+  <section id="wx-alerts" class="wx-alerts" hidden></section>
+
+  <div class="wx-layout">
+    <div class="wx-col">
+      <section id="wx-current" class="wx-hero" hidden>
+        <div class="wx-now">
+          <img id="wx-current-icon" alt="" width="84" height="84">
+          <div>
+            <div id="wx-temp" class="wx-temp"></div>
+            <div id="wx-desc" class="wx-desc"></div>
+            <div class="wx-station" id="wx-station"></div>
+          </div>
+        </div>
+        <dl class="wx-stats">
+          <div><dt>Feels like</dt><dd id="wx-feels"></dd></div>
+          <div><dt>Humidity</dt><dd id="wx-humidity"></dd></div>
+          <div><dt>Wind</dt><dd id="wx-wind"></dd></div>
+          <div><dt>Pressure</dt><dd id="wx-pressure"></dd></div>
+          <div><dt>Visibility</dt><dd id="wx-vis"></dd></div>
+          <div><dt>Observed</dt><dd id="wx-time"></dd></div>
+        </dl>
+      </section>
+
+      <section class="wx-card">
+        <h3>Next 24 hours</h3>
+        <div id="wx-hourly"></div>
+      </section>
+    </div>
+
+    <section class="wx-card">
+      <h3>7-day forecast <small style="font-weight:400;opacity:.7">(tap a day for details)</small></h3>
+      <div id="wx-daily"></div>
+    </section>
+  </div>
+
+  <p class="wx-credit">
+    Data: <a href="https://www.weather.gov" target="_blank" rel="noopener">National Weather Service</a>
+    (<a href="https://forecast.weather.gov" target="_blank" rel="noopener">forecast.weather.gov</a>)
+  </p>
+</main>
+
+<script src="/assets/js/weather.js"></script>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+  <!--- Footer Content --->
+  	&copy Greg Furlich 2026 <br>
+  	All Rights Reserved<br>
+</footer>
+</body>
+
+</html>
