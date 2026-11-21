@@ -79,6 +79,8 @@
   var gSphere  = svg.append('g'); // Globe
   var gGrat    = svg.append('g'); // Graticule grid (Lat and Lon)
   var gLand    = svg.append('g'); // Landmass
+  var gLakes   = svg.append('g'); // Lakes
+  var gRivers  = svg.append('g'); // Rivers
   var gStates  = svg.append('g'); // State/Province borders
   var gBorders = svg.append('g'); // Country Borders
   var gDisk    = svg.append('g'); // GOES Field of Regards
@@ -373,6 +375,8 @@
   /* == State == */
   var worldTopo  = null;
   var stateLines = null;   /* Natural Earth Admin 1 boundary lines */
+  var lakeData   = null;   /* Natural Earth 50m lakes (polygons) */
+  var riverData  = null;   /* Natural Earth 50m river centerlines */
   var h9JP       = null; /* Himawari-9 JP01 footprint (normalized GeoJSON Feature) */
   var H9_JP_STYLE = { fill:'rgba(196,126,212,0.18)', stroke:'#c47ed4' };
   var mesoBoxes  = [];   /* from ADMNES */
@@ -462,6 +466,19 @@
         .datum(topojson.mesh(worldTopo, worldTopo.objects.countries, function(a,b){ return a!==b; }))
         .attr('d',path).attr('fill','none').attr('stroke','#4a6b4a')
         .attr('stroke-width',1).attr('stroke-dasharray','2 2');
+    }
+
+    /* Lakes (filled like the ocean) and rivers, drawn under borders */
+    gLakes.selectAll('path').remove();
+    if (lakeData) {
+      gLakes.append('path').datum(lakeData).attr('d', path)
+        .attr('fill', '#0a1a2e').attr('stroke', '#2f6f9f').attr('stroke-width', 0.5);
+    }
+    gRivers.selectAll('path').remove();
+    if (riverData) {
+      gRivers.append('path').datum(riverData).attr('d', path)
+        .attr('fill', 'none').attr('stroke', '#3f8fc5').attr('stroke-width', 0.6)
+        .attr('stroke-linejoin', 'round').attr('opacity', 0.85);
     }
 
     /* State / Province borders (Admin 1) */
@@ -1872,6 +1889,17 @@
     })
     .then(function(gj){ h9JP = normalizeFootprint(gj); draw(); renderIntlImagery(); })
     .catch(function(err){ console.warn('Himawari JP01 load failed:', err.message); });
+
+  // Lakes and rivers — optional layers, failure is non-fatal
+  var NE_BASE = 'https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@master/geojson/';
+  [['ne_50m_lakes.geojson', function(g){ lakeData = g; }],
+   ['ne_50m_rivers_lake_centerlines.geojson', function(g){ riverData = g; }]
+  ].forEach(function(l) {
+    fetch(NE_BASE + l[0])
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(g){ l[1](g); draw(); })
+      .catch(function(err){ console.warn(l[0] + ' load failed:', err.message); });
+  });
 
   // State/province lines — optional layer, failure is non-fatal
   fetch('https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@master/geojson/ne_50m_admin_1_states_provinces_lakes.geojson')
