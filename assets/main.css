@@ -780,9 +780,9 @@ table.gv-table tr:hover td { background: var(--bg); }
 
 .sp-field { display: flex; flex-direction: column; gap: 2px; }
 .sp-field label { font-family: var(--mono); font-size: 0.6rem; color: var(--muted); letter-spacing: 0.03em; }
-.sp-field input, .sp-field select { font-family: var(--mono); font-size: 0.72rem; color: var(--text); background: var(--surface); border: 1.5px solid var(--border); border-radius: 6px; padding: 0.3rem 0.45rem; width: 100%; }
-.sp-field input:focus-visible, .sp-field select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.sp-field input:disabled, .sp-field select:disabled { background: var(--bg); color: var(--muted); }
+.sp-field input, .sp-field select, .sp-field textarea { font-family: var(--mono); font-size: 0.72rem; color: var(--text); background: var(--surface); border: 1.5px solid var(--border); border-radius: 6px; padding: 0.3rem 0.45rem; width: 100%; }
+.sp-field input:focus-visible, .sp-field select:focus-visible, .sp-field textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.sp-field input:disabled, .sp-field select:disabled, .sp-field textarea:disabled { background: var(--bg); color: var(--muted); }
 
 .sp-field.wide { grid-column: 1 / -1; }
 
@@ -800,11 +800,22 @@ table.gv-table tr:hover td { background: var(--bg); }
 
 .sp-card > .sp-info { padding: 0.5rem 1rem 0.7rem; }
 
-.sp-mini { display: block; width: 100%; aspect-ratio: 1 / 1; background: #04080f; }
+.sp-credit { max-width: 1100px; margin: 1.25rem auto 0; font-family: var(--mono); font-size: 0.6rem; line-height: 1.6; color: var(--muted); text-align: center; }
 
-.tag-h9 { color: #c47ed4; border-color: #c47ed4; background: rgba(196, 126, 212, 0.1); }
+.sp-field textarea { resize: vertical; line-height: 1.4; }
 
-.gv-img-subhead { padding: 0.5rem 1rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 0.65rem; font-weight: 600; letter-spacing: 0.04em; color: var(--text); }
+.sp-note { font-family: var(--mono); font-size: 0.58rem; color: var(--muted); min-height: 1em; }
+
+/* == Interactive ground-coverage globe == */
+.sp-covwrap { position: relative; }
+
+.sp-covhint { position: absolute; top: 8px; left: 8px; padding: 3px 8px; border-radius: 4px; background: rgba(4, 8, 15, 0.8); color: rgba(255, 255, 255, 0.7); font-family: var(--mono); font-size: 0.6rem; pointer-events: none; }
+
+.sp-covtools { position: absolute; top: 8px; right: 8px; display: flex; gap: 0.4rem; }
+.sp-covtools .sp-btn { background: rgba(4, 8, 15, 0.8); border-color: rgba(232, 240, 96, 0.4); color: #e8f060; }
+.sp-covtools .sp-btn:hover { border-color: #e8f060; }
+
+.sp-mini { display: block; width: 100%; aspect-ratio: 1 / 1; background: #04080f; cursor: grab; touch-action: none; }
 
 .recipe-card { margin: 2rem auto; padding: 2rem 2.5rem; font-size: 15px; line-height: 1.7; }
 

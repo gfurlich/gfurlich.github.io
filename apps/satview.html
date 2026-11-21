@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en"> <!--- Header --->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        
+        Greg Furlich
+    </title>
+    <meta itemprop="description" name="description" content="Personal Website of Greg Furlich, PhD" />
+    <meta name="author" content="Greg Furlich">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    
+
+    <!-- Color and Font Schemes -->
+    <meta name="color-scheme" content="only light">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Bing Webmaster tools -->
+    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" /> 
+
+
+</head>
+<body><header>
+
+    <nav>
+       <div class="topnav">
+           <a href="/">
+               <p>
+                   <h> Greg Furlich</h>
+               </p>
+           </a>
+       </div>
+
+       <!-- Top Navigation Menu -->
+        <div class="topnav-app">
+
+            <!-- Navigation links (hidden by default) -->
+            <div id="myLinks">
+                <a href="/apps/starchart.html"><p>Star Chart</p></a>
+                <a href="/apps/solarsystem.html"><p>Solar System</p></a>
+                <a href="/apps/fulldisk.html"><p>Fulldisk View</p></a>
+                <a href="/apps/mesoview.html"><p>Meso View</p></a>
+                <a href="/apps/launches.html"><p>Launches</p></a>
+                <a href="/apps/issview.html"><p>ISS Tracker</p></a>
+                <a href="/apps/satview.html"><p>Satellite View</p></a>
+                <a href="/Research.html"><p>Research</p></a>
+                <a href="/Education.html"><p>Education</p></a>
+                <a href="/Projects.html"><p>Projects</p></a>
+                <a href="/Hobbies.html"><p>Hobbies</p></a>
+                <a href="/Photography.html"><p>Photography</p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="CU" src="/assets/logos/cub.png" height=30>
+                    </p>
+                </a>
+                <a href="https://github.com/gfurlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="github" src="/assets/logos/github.png" height=30>
+                    </p>
+                </a>
+                <a href="https://www.linkedin.com/in/greg-furlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="linkedin" src="/assets/logos/in.png" height=30>
+                    </p>
+                </a>
+                <a href="mailto:greg.furlich@colorado.edu">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="mzil" src="/assets/logos/mail.png" height=30>
+                    </p>
+                </a>
+            </div>
+
+            <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <i class="fa fa-bars" height=30></i>
+            </a>
+        </div>
+
+   </nav>
+
+   <script src="/assets/js/app_menu.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</header>
+
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <!--
+  SATELLITE PERSPECTIVE VIEWER
+  Enter a satellite's lat / lon / altitude, a field of view, and a pointing
+  direction. The page ray-casts a camera against the WGS84 ellipsoid and shows
+  what the satellite would see. See /assets/js/satview.js.
+
+  Layout:  [ Camera view ] [ Ground coverage ]
+           [ Satellite & payload configuration ]
+-->
+
+<div style="height: 5vh"></div>
+
+<div class="sp">
+
+  <header class="sp-head">
+    <h1>
+      Satellite Perspective Viewer
+      <small>Set position, field of view, and pointing to see the satellite's perspective.</small>
+    </h1>
+    <div class="sp-info" style="text-align:right">
+      <div style="border:none"><span id="sp-utc">—</span></div>
+    </div>
+  </header>
+
+  <div class="sp-layout">
+
+    <!-- Box 1: satellite payload perspective -->
+    <section class="sp-card">
+      <h2 class="sp-title">Satellite Payload View</h2>
+      <div class="sp-stage" id="sp-stage">
+        <canvas id="sp-canvas" width="720" height="720"></canvas>
+        <div class="sp-hover" id="sp-hover">Move the pointer over the view</div>
+      </div>
+      <div class="sp-info" id="sp-info-view"></div>
+    </section>
+
+    <!-- Box 2: payload ground coverage -->
+    <section class="sp-card">
+      <h2 class="sp-title">Payload Coverage</h2>
+      <div class="sp-covwrap">
+        <canvas class="sp-mini" id="sp-minimap" width="720" height="720"></canvas>
+        <div class="sp-covhint">Drag to rotate · scroll / pinch to zoom</div>
+        <div class="sp-covtools">
+          <button class="sp-btn" id="sp-cov-fit" type="button">Fit footprint</button>
+          <button class="sp-btn" id="sp-cov-full" type="button">Full globe</button>
+        </div>
+      </div>
+      <div class="sp-info" id="sp-info-cov"></div>
+    </section>
+
+    <!-- Box 3: satellite + payload configuration (full width) -->
+    <section class="sp-card sp-card--wide">
+      <h2 class="sp-title">Satellite Ephemeris &amp; Payload Configuration</h2>
+      <div class="sp-config-grid">
+
+        <div>
+          <div class="sp-group-title">Satellite position (LLA)</div>
+          <div class="sp-grid2">
+            <div class="sp-field wide"><label for="sp-preset">Preset</label>
+              <select id="sp-preset">
+                <option value="goes19">GOES-19 East (full disk)</option>
+                <option value="goes18">GOES-18 West (full disk)</option>
+                <option value="h9">Himawari-9 (full disk)</option>
+                <option value="gk2a">GEO-KOMPSAT-2A (full disk)</option>
+                <option value="met12">Meteosat-12 (full disk)</option>
+                <option value="iss">ISS (wide camera)</option>
+                <option value="leo">Landsat-like LEO (nadir)</option>
+                <option value="custom">Custom</option>
+              </select></div>
+            <div class="sp-field"><label for="sp-lat">Latitude (°N)</label>
+              <input id="sp-lat" type="number" step="0.1" min="-90" max="90" value="0"></div>
+            <div class="sp-field"><label for="sp-lon">Longitude (°E)</label>
+              <input id="sp-lon" type="number" step="0.1" min="-180" max="180" value="-75.2"></div>
+            <div class="sp-field wide"><label for="sp-alt">Altitude above ellipsoid (km)</label>
+              <input id="sp-alt" type="number" step="10" min="100" value="35786"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sp-group-title">Payload line of sight</div>
+          <div class="sp-grid2">
+            <div class="sp-field wide"><label for="sp-mode">Mode</label>
+              <select id="sp-mode">
+                <option value="nadir">Azimuth + off-nadir angle</option>
+                <option value="target">Point at ground target</option>
+              </select></div>
+            <div class="sp-field"><label for="sp-az">Azimuth (° from N, cw)</label>
+              <input id="sp-az" type="number" step="1" value="0"></div>
+            <div class="sp-field"><label for="sp-off">Off-nadir angle (°)</label>
+              <input id="sp-off" type="number" step="0.1" min="0" max="180" value="0"></div>
+            <div class="sp-field"><label for="sp-tlat">Target lat (°N)</label>
+              <input id="sp-tlat" type="number" step="0.1" min="-90" max="90" value="39.7" disabled></div>
+            <div class="sp-field"><label for="sp-tlon">Target lon (°E)</label>
+              <input id="sp-tlon" type="number" step="0.1" min="-180" max="180" value="-105" disabled></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sp-group-title">Payload FOV (angular extent)</div>
+          <div class="sp-grid2">
+            <div class="sp-field wide"><label for="sp-shape">FOV shape</label>
+              <select id="sp-shape">
+                <option value="rect">Rectangular</option>
+                <option value="ellipse">Elliptical / circular</option>
+                <option value="diamond">Diamond</option>
+                <option value="custom">Custom polygon</option>
+              </select></div>
+            <div class="sp-field"><label for="sp-fovw">Width (° full angle)</label>
+              <input id="sp-fovw" type="number" step="0.1" min="0.05" max="170" value="17.4"></div>
+            <div class="sp-field"><label for="sp-fovh">Height (° full angle)</label>
+              <input id="sp-fovh" type="number" step="0.1" min="0.05" max="170" value="17.4"></div>
+            <div class="sp-field wide"><label for="sp-poly">Custom vertices: "x, y" angular offsets in °, one per line (+x right, +y up)</label>
+              <textarea id="sp-poly" rows="5" spellcheck="false" disabled></textarea>
+              <span class="sp-note" id="sp-poly-msg"></span></div>
+            <div class="sp-field"><label for="sp-roll">Roll (°)</label>
+              <input id="sp-roll" type="number" step="1" value="0"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sp-group-title">Payload detector &amp; optics</div>
+          <div class="sp-grid2">
+            <div class="sp-field wide"><label for="sp-def">Define payload by</label>
+              <select id="sp-def">
+                <option value="fov">FOV + pixel count</option>
+                <option value="optics">Focal length + pixel pitch</option>
+              </select></div>
+            <div class="sp-field"><label for="sp-pixx">Pixels across</label>
+              <input id="sp-pixx" type="number" step="1" min="1" value="5424"></div>
+            <div class="sp-field"><label for="sp-pixy">Pixels down</label>
+              <input id="sp-pixy" type="number" step="1" min="1" value="5424"></div>
+            <div class="sp-field"><label for="sp-pitch">Pixel pitch (µm)</label>
+              <input id="sp-pitch" type="number" step="0.1" min="0.01" value="10"></div>
+            <div class="sp-field"><label for="sp-focal">Focal length (mm)</label>
+              <input id="sp-focal" type="number" step="1" min="0.1" value="500" disabled></div>
+          </div>
+          <label class="sp-check" style="margin-top:0.5rem"><input type="checkbox" id="sp-sim"> Show at detector resolution</label>
+        </div>
+
+        <div>
+          <div class="sp-group-title">Detector results (computed)</div>
+          <div class="sp-info" id="sp-info-sensor"></div>
+        </div>
+
+        <div>
+          <div class="sp-group-title">Scene</div>
+          <div class="sp-grid2">
+            <div class="sp-field wide"><label for="sp-light">Illumination</label>
+              <select id="sp-light">
+                <option value="day" selected>Full daylight</option>
+                <option value="real">Real day / night (from time)</option>
+              </select></div>
+            <div class="sp-field wide"><label for="sp-time">Time (UTC) · editing it switches to real day / night</label>
+              <input id="sp-time" type="datetime-local"></div>
+          </div>
+          <div style="display:flex;gap:0.8rem;align-items:center;margin-top:0.5rem;flex-wrap:wrap">
+            <button class="sp-btn" id="sp-now" type="button">Use current time</button>
+            <label class="sp-check"><input type="checkbox" id="sp-grat" checked> Graticule (10°)</label>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<p class="sp-credit">Base imagery: Blue Marble Next Generation with Topography and Bathymetry, NASA Earth Observatory.
+  Lakes, rivers, states and provinces: Natural Earth.</p>
+
+<script>
+  /* Blue Marble base image: save the NASA JPEG here (see notes). Remove the line to use flat vector land. */
+  window.SATVIEW = { baseImage: "/assets/data/blue_marble_topo_bathy.jpg" };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script src="/assets/js/satview.js"></script>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+  <!--- Footer Content --->
+  	&copy Greg Furlich 2026 <br>
+  	All Rights Reserved<br>
+</footer>
+</body>
+
+</html>
