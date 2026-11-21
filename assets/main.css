@@ -817,6 +817,32 @@ table.gv-table tr:hover td { background: var(--bg); }
 
 .sp-mini { display: block; width: 100%; aspect-ratio: 1 / 1; background: #04080f; cursor: grab; touch-action: none; }
 
+.iss-toolbar { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+
+.iss-opts { margin-left: auto; display: flex; gap: 1rem; }
+
+.iss-follow { display: flex; align-items: center; gap: 0.4rem; font-family: var(--mono); font-size: 0.68rem; color: var(--muted); cursor: pointer; }
+
+.iss-grid { max-width: 860px; margin: 1.25rem auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.iss-grid .gv-table-wrap { margin: 0; max-width: none; }
+@media (max-width: 700px) { .iss-grid { grid-template-columns: 1fr; } }
+
+table.gv-table td.iss-val { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.iss-badge { display: inline-block; padding: 0.1rem 0.55rem; border-radius: 3px; border: 1px solid; font-weight: 700; letter-spacing: 0.06em; }
+
+.iss-badge.sun { color: #b8860b; border-color: #b8860b; background: rgba(255, 210, 60, 0.15); }
+
+.iss-badge.pen { color: #c0661a; border-color: #c0661a; background: rgba(255, 140, 40, 0.15); }
+
+.iss-badge.umb { color: #5b6bd5; border-color: #5b6bd5; background: rgba(91, 107, 213, 0.15); }
+
+.iss-pre { margin: 0; padding: 0.75rem 1rem; font-family: var(--mono); font-size: 0.62rem; line-height: 1.7; white-space: pre; overflow-x: auto; color: var(--text); }
+
+.iss-globe-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+#iss-globe-svg { position: relative; }
+
 .recipe-card { margin: 2rem auto; padding: 2rem 2.5rem; font-size: 15px; line-height: 1.7; }
 
 .recipe-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.25rem; }

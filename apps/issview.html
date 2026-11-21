@@ -126,10 +126,14 @@
     <div class="iss-toolbar">
       <button class="gv-img-pill active" data-view="globe">Globe</button>
       <button class="gv-img-pill" data-view="flat">Ground track</button>
-      <label class="iss-follow"><input type="checkbox" id="iss-follow" checked> Follow ISS</label>
+      <div class="iss-opts">
+        <label class="iss-follow" id="iss-bm-label"><input type="checkbox" id="iss-bm" checked> Blue Marble</label>
+        <label class="iss-follow" id="iss-follow-label"><input type="checkbox" id="iss-follow" checked> Follow ISS</label>
+      </div>
     </div>
 
-    <div class="gv-globe-wrap" id="iss-globe-wrap">
+    <div class="gv-globe-wrap" id="iss-globe-wrap" data-texture="/assets/data/blue_marble_topo_bathy.jpg">
+      <canvas id="iss-globe-canvas" class="iss-globe-canvas" width="512" height="512"></canvas>
       <svg id="iss-globe-svg" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"></svg>
     </div>
     <div class="gv-globe-wrap" id="iss-flat-wrap" style="display:none;cursor:default">
@@ -138,7 +142,7 @@
 
     <div class="gv-foot">
       <div class="gv-legend">
-        <div class="gv-legend-item"><div class="gv-swatch" style="background:#ff5a5a"></div> ISS</div>
+        <div class="gv-legend-item"><div class="gv-swatch" style="background:rgba(247,212,109,1.0)""></div> ISS</div>
         <div class="gv-legend-item"><div class="gv-swatch" style="background:rgba(255,255,255,0.35)"></div> Past 45 min</div>
         <div class="gv-legend-item"><div class="gv-swatch" style="border-top:2px dashed #ff9a9a;height:0"></div> Next 95 min</div>
         <div class="gv-legend-item"><div class="gv-swatch" style="background:rgba(255,90,90,0.15);border:1.5px solid #ff5a5a"></div> Visibility footprint</div>
@@ -180,7 +184,9 @@
     <strong>Data Sources &amp; Notes:</strong><br>
     <a href="https://celestrak.org/NORAD/elements/">CelesTrak</a> GP/TLE data for the ISS (refreshed every 6 h)<br>
     <a href="https://github.com/shashwatak/satellite-js">satellite.js</a> SGP4 propagation. ECI is TEME; ECEF is TEME rotated by GMST (no polar motion).<br>
-    Eclipse: conical shadow model using the apparent angular radii of Earth and Sun as seen from the ISS.
+    <a href="https://science.nasa.gov/earth/earth-observatory/collections/blue-marble/">NASA Blue Marble, Next Generation:</a> Topography and Bathymetry imagery.<br>
+    <a href="https://www.naturalearthdata.com/">Natural Earth:</a> Lakes, rivers, states and provinces vecotr dataset.<br>
+    <b>Eclipse:</b> conical shadow model using the apparent angular radii of Earth and Sun as seen from the ISS.<br>
   </div>
 
 </div><!-- /gv -->

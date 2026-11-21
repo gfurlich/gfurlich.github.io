@@ -31,7 +31,7 @@
 
   function makeLayers(svg) {
     var o = {};
-    ['bg', 'grat', 'land', 'borders', 'night', 'foot', 'past', 'future', 'sun', 'iss']
+    ['bg', 'grat', 'land', 'lakes', 'rivers', 'borders', 'states', 'night', 'foot', 'past', 'future', 'sun', 'iss']
       .forEach(function (k) { o[k] = svg.append('g'); });
     return o;
   }
@@ -152,10 +152,14 @@
     var visible = function (lon, lat) { return flat || d3.geoDistance([lon, lat], vc) < Math.PI / 2; };
 
     L.bg.selectAll('*').remove();
+    var textured = !!tex && bmOn;
     if (flat) {
       L.bg.append('rect').attr('width', 1000).attr('height', 500).attr('fill', '#04080f');
+      if (textured) L.bg.append('image').attr('href', texUrl).attr('width', 1000).attr('height', 500)
+        .attr('preserveAspectRatio', 'none');
     } else {
-      L.bg.append('circle').attr('cx', CX).attr('cy', CY).attr('r', scale).attr('fill', '#04080f');
+      /* Globe texture is painted on the canvas behind this SVG */
+      if (!textured) L.bg.append('circle').attr('cx', CX).attr('cy', CY).attr('r', scale).attr('fill', '#04080f');
       L.bg.append('circle').attr('cx', CX).attr('cy', CY).attr('r', scale)
         .attr('fill', 'none').attr('stroke', 'rgba(100,160,255,0.12)').attr('stroke-width', 2);
     }
@@ -166,10 +170,22 @@
     if (worldTopo) {
       L.land.selectAll('*').remove();
       addPath(L.land, topojson.feature(worldTopo, worldTopo.objects.land), path,
-        { fill: '#2a3d2a', stroke: '#3d5c3d', 'stroke-width': 0.5 });
+        textured ? { fill: 'none', stroke: 'rgba(255,255,255,0.18)', 'stroke-width': 0.5 }
+                : { fill: '#2a3d2a', stroke: '#3d5c3d', 'stroke-width': 0.5 });
       L.borders.selectAll('*').remove();
       addPath(L.borders, topojson.mesh(worldTopo, worldTopo.objects.countries, function (a, b) { return a !== b; }), path,
         { fill: 'none', stroke: '#4a6b4a', 'stroke-width': 0.8, 'stroke-dasharray': '2 2' });
+    }
+
+    /* Vector detail, shown only when the Blue Marble image is off */
+    ['lakes', 'rivers', 'states'].forEach(function (k) { L[k].selectAll('*').remove(); });
+    if (!textured) {
+      if (geo.lakes) addPath(L.lakes, geo.lakes, path,
+        { fill: '#0a1a2e', stroke: 'rgba(100,160,255,0.4)', 'stroke-width': 0.5 });
+      if (geo.rivers) addPath(L.rivers, geo.rivers, path,
+        { fill: 'none', stroke: 'rgba(90,150,230,0.65)', 'stroke-width': 0.6 });
+      if (geo.states) addPath(L.states, geo.states, path,
+        { fill: 'none', stroke: '#3a5c3a', 'stroke-width': 1, 'stroke-dasharray': '1.5 2' });
     }
 
     /* Night side */
@@ -237,8 +253,76 @@
     });
   }
 
+  /* == Vector overlays (Natural Earth) + Blue Marble toggle == */
+  var bmOn = true;
+  var geo = { states: null, lakes: null, rivers: null };
+  var NE = 'https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@master/geojson/';
+  function loadGeo(file, key, keep) {
+    fetch(NE + file)
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (gj) {
+        if (keep) gj = { type: 'FeatureCollection', features: gj.features.filter(keep) };
+        geo[key] = gj; redraw();
+      })
+      .catch(function (err) { console.warn(file + ' load failed:', err.message); });
+  }
+  document.getElementById('iss-bm').addEventListener('change', function (e) {
+    bmOn = e.target.checked; redraw();
+  });
+
+  /* == Blue Marble texture ==
+     The SVG can't texture-map a sphere, so each canvas pixel of the globe disk is
+     inverse-projected (orthographic) to lon/lat and sampled from the equirectangular
+     image. The flat view just uses the image directly. */
+  var gwrapEl = document.getElementById('iss-globe-wrap');
+  var texUrl = gwrapEl.getAttribute('data-texture');
+  var tex = null;
+  var tcv = document.getElementById('iss-globe-canvas');
+  var TW = 2048, TH = 1024;
+
+  function loadTexture() {
+    var img = new Image();
+    img.onload = function () {
+      try {
+        var c = document.createElement('canvas'); c.width = TW; c.height = TH;
+        var x = c.getContext('2d'); x.drawImage(img, 0, 0, TW, TH);
+        tex = x.getImageData(0, 0, TW, TH).data;
+        redraw();
+      } catch (e) { console.warn('Texture unreadable (cross-origin?):', e.message); }
+    };
+    img.onerror = function () { console.warn('Texture not found:', texUrl); };
+    img.src = texUrl;
+  }
+
+  function drawTexture() {
+    var ctx = tcv.getContext('2d');
+    if (!tex || !bmOn) { ctx.clearRect(0, 0, tcv.width, tcv.height); return; }
+    var N = tcv.width, k = SIZE / N;
+    var out = ctx.createImageData(N, N), d = out.data;
+    var lon0 = -rotation[0] * D2R, lat0 = -rotation[1] * D2R;
+    var sl = Math.sin(lat0), cl = Math.cos(lat0);
+    for (var j = 0; j < N; j++) {
+      var py = -((j + 0.5) * k - CY) / scale;
+      for (var i = 0; i < N; i++) {
+        var px = ((i + 0.5) * k - CX) / scale;
+        var r2 = px * px + py * py;
+        if (r2 > 1) continue;
+        var z = Math.sqrt(1 - r2);
+        var lat = Math.asin(z * sl + py * cl);
+        var lon = lon0 + Math.atan2(px, z * cl - py * sl);
+        var u = lon / (2 * Math.PI) + 0.5; u -= Math.floor(u);
+        var v = 0.5 - lat / Math.PI;
+        var ti = (Math.min(TH - 1, (v * TH) | 0) * TW + ((u * TW) | 0)) * 4;
+        var o = (j * N + i) * 4;
+        d[o] = tex[ti]; d[o + 1] = tex[ti + 1]; d[o + 2] = tex[ti + 2]; d[o + 3] = 255;
+      }
+    }
+    ctx.putImageData(out, 0, 0);
+  }
+
   function drawGlobe() {
     var proj = d3.geoOrthographic().scale(scale).translate([CX, CY]).rotate(rotation).clipAngle(90);
+    drawTexture();
     drawScene(globeLayers, proj, false);
   }
   function drawFlat() {
@@ -389,7 +473,7 @@
       });
       document.getElementById('iss-globe-wrap').style.display = view === 'globe' ? '' : 'none';
       document.getElementById('iss-flat-wrap').style.display = view === 'flat' ? '' : 'none';
-      document.querySelector('.iss-follow').style.display = view === 'globe' ? '' : 'none';
+      document.getElementById('iss-follow-label').style.display = view === 'globe' ? '' : 'none';
       document.getElementById('iss-hint').textContent =
         view === 'globe' ? 'Drag to rotate · scroll to zoom' : 'Equirectangular ground track';
       stopMomentum();
@@ -403,6 +487,13 @@
     .then(function (topo) { worldTopo = topo; redraw(); })
     .catch(function (err) { console.error('world-atlas load failed:', err); });
 
+  loadTexture();
+  loadGeo('ne_50m_admin_1_states_provinces_lakes.geojson', 'states', function (f) {
+    var p = f.properties || {};
+    return p.iso_a2 === 'US' || p.iso_a2 === 'CA' || p.adm0_a3 === 'USA' || p.adm0_a3 === 'CAN';
+  });
+  loadGeo('ne_50m_lakes.geojson', 'lakes');
+  loadGeo('ne_50m_rivers_lake_centerlines.geojson', 'rivers');
   loadTle().then(function () { tick(); setInterval(tick, 1000); });
   setInterval(loadTle, 6 * 3600 * 1000);
 
