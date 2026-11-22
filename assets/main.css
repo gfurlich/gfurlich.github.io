@@ -329,11 +329,8 @@ footer { background-color: #0f3f63; font-family: 'Fira Sans', sans-serif; color:
 
 .sat-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
 
-/* Style the navigation menu */
-.topnav-app { position: fixed; /* fixes it to the viewport, not the page */ top: 0; right: 0; z-index: 1000; /* above the canvas and all overlays */ background-color: #333; }
-
 /* Hide the links inside the navigation menu (except for logo/home) */
-.topnav-app #myLinks { display: none; position: fixed; /* fixed so it doesn't affect page layout */ top: 48px; /* below the hamburger button */ right: 0; background-color: #333; min-width: 160px; z-index: 1000; }
+.topnav-app #myLinks { display: none; position: fixed; /* fixed so it doesn't affect page layout */ top: 48px; /* below the hamburger button */ right: 0; background-color: #333; min-width: 160px; z-index: 1000; /* scroll when the list is taller than the screen */ max-height: calc(100vh - 48px); /* fallback for older browsers */ max-height: calc(100dvh - 48px); /* mobile: accounts for the collapsing address bar */ overflow-y: auto; overscroll-behavior: contain; /* don't scroll the page behind the menu */ -webkit-overflow-scrolling: touch; /* smooth scrolling on older iOS */ }
 
 /* Style navigation menu links */
 .topnav-app a { color: white; padding: 14px 16px; text-decoration: none; font-size: 17px; display: block; }

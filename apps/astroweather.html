@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en"> <!--- Header --->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        
+        Greg Furlich
+    </title>
+    <meta itemprop="description" name="description" content="Personal Website of Greg Furlich, PhD" />
+    <meta name="author" content="Greg Furlich">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    
+
+    <!-- Color and Font Schemes -->
+    <meta name="color-scheme" content="only light">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Bing Webmaster tools -->
+    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" /> 
+
+
+</head>
+<body><header>
+
+    <nav>
+       <div class="topnav">
+           <a href="/">
+               <p>
+                   <h> Greg Furlich</h>
+               </p>
+           </a>
+       </div>
+
+       <!-- Top Navigation Menu -->
+        <div class="topnav-app">
+
+            <!-- Navigation links (hidden by default) -->
+            <div id="myLinks">
+                <a href="/apps/starchart.html"><p>Star Chart</p></a>
+                <a href="/apps/solarsystem.html"><p>Solar System</p></a>
+                <a href="/apps/astroweather.html"><p>Obs. Report</p></a>
+                <a href="/apps/fulldisk.html"><p>Fulldisk View</p></a>
+                <a href="/apps/mesoview.html"><p>Meso View</p></a>
+                <a href="/apps/launches.html"><p>Launches</p></a>
+                <a href="/apps/issview.html"><p>ISS Tracker</p></a>
+                <a href="/apps/satview.html"><p>Satellite View</p></a>
+                <a href="/Research.html"><p>Research</p></a>
+                <a href="/Education.html"><p>Education</p></a>
+                <a href="/Projects.html"><p>Projects</p></a>
+                <a href="/Hobbies.html"><p>Hobbies</p></a>
+                <a href="/Photography.html"><p>Photography</p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="CU" src="/assets/logos/cub.png" height=30>
+                    </p>
+                </a>
+                <a href="https://github.com/gfurlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="github" src="/assets/logos/github.png" height=30>
+                    </p>
+                </a>
+                <a href="https://www.linkedin.com/in/greg-furlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="linkedin" src="/assets/logos/in.png" height=30>
+                    </p>
+                </a>
+                <a href="mailto:greg.furlich@colorado.edu">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="mzil" src="/assets/logos/mail.png" height=30>
+                    </p>
+                </a>
+            </div>
+
+            <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <i class="fa fa-bars" height=30></i>
+            </a>
+        </div>
+
+   </nav>
+
+   <script src="/assets/js/app_menu.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</header>
+
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <style>
+  /* dark mode: only the BACKGROUND is page-wide; all text/control styling is scoped to #aw-page
+     so the site's nav / burger menu keeps its own colors */
+  html:has(body.aw-dark), body.aw-dark { background:#050000; }
+
+  body.aw-dark #aw-page { background:#050000; color:#c42626; color-scheme:dark; padding-bottom:24px; }
+  body.aw-dark #aw-page h2, body.aw-dark #aw-page h3, body.aw-dark #aw-page label, body.aw-dark #aw-page p,
+  body.aw-dark #aw-page li, body.aw-dark #aw-page div { color:#c42626 !important; }
+  body.aw-dark #aw-page input, body.aw-dark #aw-page button { color-scheme:dark; background:#140303; color:#e83030; border:1px solid #5a1010; }
+  body.aw-dark #aw-page a { color:#ff4a4a; }
+
+  /* info box */
+  .aw-infobox { max-width:800px; margin:12px auto; padding:12px 18px; border:1px solid rgba(128,128,128,0.4);
+                border-radius:8px; font-size:12px; line-height:1.5; text-align:left; }
+  .aw-infobox h3 { margin:0 0 6px; font-size:13px; }
+  .aw-infobox ul { margin:0; padding-left:18px; }
+  .aw-infobox li { margin:3px 0; }
+  .aw-infobox .aw-credit { margin:8px 0 0; padding-top:8px; border-top:1px solid rgba(128,128,128,0.3); font-size:11px; }
+  body.aw-dark #aw-page .aw-infobox { border-color:#5a1010; background:#0d0202; }
+  body.aw-dark #aw-page .aw-infobox .aw-credit { border-top-color:#3a0a0a; }
+</style>
+
+<div id="aw-page">
+
+<div style="height: 6vh"></div>
+
+<h2 style="text-align:center">Astronomer's Observing Conditions Report</h2>
+<div id="aw-status" style="text-align:center;font-size:12px;color:grey;min-height:18px"></div>
+
+<div class="gv-info">
+  <canvas id="aw-chart" style="display:block;margin:0 auto;width:100%;max-width:1800px;touch-action:pan-y"></canvas>
+</div>
+<div style="font-size:11px;color:grey;text-align:center;padding:4px 0">Hover over the chart to read values for any hour. Darker = better observing conditions on every row.</div>
+
+<div class="ctrl">
+  <div class="row" style="display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:6px">
+      <label>Lat [°]</label><input type="number" id="aw-lat" value="40.0" step="0.1">
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <label>Lon [°]</label><input type="number" id="aw-lon" value="-105.3" step="0.1">
+    </div>
+    <button id="aw-load">Update</button>
+    <button id="aw-geo">Use my location</button>
+    <button id="aw-theme">Dark Mode</button>
+  </div>
+
+  <div class="gv-info">
+    <div class="aw-infobox">
+      <h3>About this report</h3>
+      <ul>
+        <li><b>Reading the chart:</b> each square is one hour in local time. Hover or tap an hour to see its values in the right-hand column.</li>
+        <li><b>Cloud Cover:</b> forecast total cloud cover.</li>
+        <li><b>Transparency:</b> estimated extra extinction at the zenith, in magnitudes, from aerosol optical depth, high cloud and humid haze.</li>
+        <li><b>Seeing:</b> estimated image blur (FWHM) in arcseconds, from the forecast temperature and wind profile: turbulence above 1&nbsp;km plus a surface-wind ground-layer term. It is a relative guide, not a calibrated measurement.</li>
+        <li><b>Darkness:</b> sun altitude (day, civil, nautical and astronomical twilight, night), brightened by moonlight.</li>
+        <li><b>Ground Wind</b> is at 10&nbsp;m; <b>Upper Wind</b> is at 250&nbsp;hPa (~10&nbsp;km).</li>
+        <li><b>Overall Score</b> = clear sky × mean(transparency, seeing) × night-sky darkness (sun and moon), shown 0&ndash;100.</li>
+      </ul>
+      <p class="aw-credit">
+        Weather data: <a href="https://open-meteo.com/">Open-Meteo</a>. Aerosol data: CAMS (Copernicus Atmosphere
+        Monitoring Service) via Open-Meteo.<br>
+        This report is inspired by <a href="https://www.cleardarksky.com/csk/">Clear Sky Charts</a>.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+</div><!-- /#aw-page -->
+
+<script src="/assets/js/astroweather.js"></script>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+  <!--- Footer Content --->
+  	&copy Greg Furlich 2026 <br>
+  	All Rights Reserved<br>
+</footer>
+</body>
+
+</html>
