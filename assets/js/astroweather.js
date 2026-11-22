@@ -222,7 +222,7 @@ const THEMES = {
   light: { bg: '#fafafa', label: '#555', value: '#222', accent: '#b03040', hover: '#000' },
   dark:  { bg: '#050000', label: '#9a2020', value: '#e83030', accent: '#ff4a4a', hover: '#ff4a4a' },
 };
-let darkMode = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
+let darkMode = false;   // day mode is the default; a saved choice (below) still wins
 try { const s = localStorage.getItem('aw-dark'); if (s !== null) darkMode = s === '1'; } catch (e) {}
 
 function applyTheme() {

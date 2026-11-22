@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en"> <!--- Header --->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        
+        Greg Furlich
+    </title>
+    <meta itemprop="description" name="description" content="Personal Website of Greg Furlich, PhD" />
+    <meta name="author" content="Greg Furlich">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    
+
+    <!-- Color and Font Schemes -->
+    <meta name="color-scheme" content="only light">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Bing Webmaster tools -->
+    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" /> 
+
+
+</head>
+<body><header>
+
+    <nav>
+       <div class="topnav">
+           <a href="/">
+               <p>
+                   <h> Greg Furlich</h>
+               </p>
+           </a>
+       </div>
+
+       <!-- Top Navigation Menu -->
+        <div class="topnav-app">
+
+            <!-- Navigation links (hidden by default) -->
+            <div id="myLinks">
+                <a href="/apps/starchart.html"><p>Star Chart</p></a>
+                <a href="/apps/solarsystem.html"><p>Solar System</p></a>
+                <a href="/apps/astroweather.html"><p>Obs. Report</p></a>
+                <a href="/apps/fulldisk.html"><p>Fulldisk View</p></a>
+                <a href="/apps/mesoview.html"><p>Meso View</p></a>
+                <a href="/apps/launches.html"><p>Launches</p></a>
+                <a href="/apps/issview.html"><p>ISS Tracker</p></a>
+                <a href="/apps/satview.html"><p>Satellite View</p></a>
+                <a href="/Research.html"><p>Research</p></a>
+                <a href="/Education.html"><p>Education</p></a>
+                <a href="/Projects.html"><p>Projects</p></a>
+                <a href="/Hobbies.html"><p>Hobbies</p></a>
+                <a href="/Photography.html"><p>Photography</p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="CU" src="/assets/logos/cub.png" height=30>
+                    </p>
+                </a>
+                <a href="https://github.com/gfurlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="github" src="/assets/logos/github.png" height=30>
+                    </p>
+                </a>
+                <a href="https://www.linkedin.com/in/greg-furlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="linkedin" src="/assets/logos/in.png" height=30>
+                    </p>
+                </a>
+                <a href="mailto:greg.furlich@colorado.edu">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="mzil" src="/assets/logos/mail.png" height=30>
+                    </p>
+                </a>
+            </div>
+
+            <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <i class="fa fa-bars" height=30></i>
+            </a>
+        </div>
+
+   </nav>
+
+   <script src="/assets/js/app_menu.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</header>
+
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <style>
+  #almanac { max-width: 980px; margin: 0 auto; padding: 12px; }
+  #almanac .ctrl { display:flex; flex-wrap:wrap; gap:16px; justify-content:center; align-items:center; margin:10px 0 16px; font-size:13px; }
+  #almanac .ctrl input { width: 90px; }
+  #almanac .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; }
+  #almanac .card { border:1px solid rgba(128,128,128,.35); border-radius:8px; padding:10px 14px; overflow-x:auto; }
+  #almanac .card.wide { grid-column: 1 / -1; }
+  #almanac h3 { margin:0 0 8px; font-size:15px; }
+  #almanac table { width:100%; border-collapse:collapse; font-size:13px; }
+  #almanac td, #almanac th { padding:3px 6px; text-align:left; white-space:nowrap; }
+  #almanac th { font-weight:600; opacity:.7; }
+  #almanac td.r { text-align:right; font-variant-numeric:tabular-nums; }
+  #almanac .note { font-size:11px; opacity:.6; margin-top:6px; }
+  #almanac #clock { text-align:center; font-size:15px; letter-spacing:.05em; }
+  #almanac.night { background:#0a0000; color:#c03030; }
+  #almanac.night .card { border-color:rgba(160,0,0,.5); }
+  #almanac.night input, #almanac.night button { background:#1a0000; color:#c03030; border:1px solid #600; }
+  #almanac .tbarwrap { position:relative; margin-top:12px; }
+  #almanac .tbar { height:22px; border-radius:4px; }
+  #almanac .tick { position:absolute; top:0; width:1px; height:22px; background:rgba(255,255,255,.6); }
+  #almanac .nowm { position:absolute; top:-4px; width:2px; height:30px; background:#f33; }
+  #almanac .thours { display:flex; justify-content:space-between; font-size:10px; opacity:.6; margin-top:2px; }
+  #almanac .tkey { display:flex; flex-wrap:wrap; gap:10px; font-size:10px; opacity:.8; margin-top:4px; }
+  #almanac .tkey i { display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:3px; }
+
+  /* Night mode: page background, cards, tables, inputs (incl. spinner arrows / date picker) */
+  body.night-mode, html:has(body.night-mode) { background:#0a0000 !important; color:#c03030; }
+  #almanac.night, #almanac.night * { color-scheme:dark; }
+  #almanac.night h3, #almanac.night label, #almanac.night .note, #almanac.night #clock { color:#c03030 !important; }
+  #almanac.night .card { background:#120000; }
+  #almanac.night table, #almanac.night tr, #almanac.night td, #almanac.night th {
+    background:transparent !important; color:#c03030 !important; border-color:rgba(160,0,0,.4) !important; }
+  #almanac.night input[type=number], #almanac.night input[type=date] {
+    filter:sepia(1) saturate(6) hue-rotate(-35deg) brightness(.8); }
+  #almanac.night .tbar, #almanac.night .tkey i {
+    filter:grayscale(1) sepia(1) hue-rotate(-50deg) saturate(5) brightness(.6); }
+  #almanac.night .tick { background:rgba(200,40,40,.6); }
+</style>
+
+<div style="height: 6vh"></div>
+
+<div id="almanac">
+  <div id="clock"></div>
+  <div style="text-align:right"><button id="night-btn">🌜︎ Night Mode</button></div>
+
+  <div class="ctrl">
+    <label>Date <input type="date" id="date" style="width:140px"></label>
+    <label>Lat [°] <input type="number" id="lat" value="40.0" step="0.1"></label>
+    <label>Lon [°] <input type="number" id="lon" value="-105.3" step="0.1"></label>
+    <button id="geo-btn"> 🗺 Use my location</button>
+  </div>
+
+  <div class="grid" id="cards"></div>
+</div>
+
+<script src="/assets/js/almanac.js"></script>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+  <!--- Footer Content --->
+  	&copy Greg Furlich 2026 <br>
+  	All Rights Reserved<br>
+</footer>
+</body>
+
+</html>

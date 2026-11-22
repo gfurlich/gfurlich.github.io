@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en"> <!--- Header --->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        
+        Greg Furlich
+    </title>
+    <meta itemprop="description" name="description" content="Personal Website of Greg Furlich, PhD" />
+    <meta name="author" content="Greg Furlich">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    
+
+    <!-- Color and Font Schemes -->
+    <meta name="color-scheme" content="only light">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Bing Webmaster tools -->
+    <meta name="msvalidate.01" content="BC72728F899DD0C341E344FFDDC4BEB8" /> 
+
+
+</head>
+<body><header>
+
+    <nav>
+       <div class="topnav">
+           <a href="/">
+               <p>
+                   <h> Greg Furlich</h>
+               </p>
+           </a>
+       </div>
+
+       <!-- Top Navigation Menu -->
+        <div class="topnav-app">
+
+            <!-- Navigation links (hidden by default) -->
+            <div id="myLinks">
+                <a href="/apps/starchart.html"><p>Star Chart</p></a>
+                <a href="/apps/solarsystem.html"><p>Solar System</p></a>
+                <a href="/apps/astroweather.html"><p>Obs. Report</p></a>
+                <a href="/apps/fulldisk.html"><p>Fulldisk View</p></a>
+                <a href="/apps/mesoview.html"><p>Meso View</p></a>
+                <a href="/apps/launches.html"><p>Launches</p></a>
+                <a href="/apps/issview.html"><p>ISS Tracker</p></a>
+                <a href="/apps/satview.html"><p>Satellite View</p></a>
+                <a href="/Research.html"><p>Research</p></a>
+                <a href="/Education.html"><p>Education</p></a>
+                <a href="/Projects.html"><p>Projects</p></a>
+                <a href="/Hobbies.html"><p>Hobbies</p></a>
+                <a href="/Photography.html"><p>Photography</p></a>
+                <a href="https://www.colorado.edu/center/nsi/greg-furlich">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="CU" src="/assets/logos/cub.png" height=30>
+                    </p>
+                </a>
+                <a href="https://github.com/gfurlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="github" src="/assets/logos/github.png" height=30>
+                    </p>
+                </a>
+                <a href="https://www.linkedin.com/in/greg-furlich/">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="linkedin" src="/assets/logos/in.png" height=30>
+                    </p>
+                </a>
+                <a href="mailto:greg.furlich@colorado.edu">
+                    <p style="display: flex;
+                    justify-content: center;
+                    align-items: center;">
+                        <img id="mzil" src="/assets/logos/mail.png" height=30>
+                    </p>
+                </a>
+            </div>
+
+            <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <i class="fa fa-bars" height=30></i>
+            </a>
+        </div>
+
+   </nav>
+
+   <script src="/assets/js/app_menu.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</header>
+
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <style>
+  #clock-app { text-align: center; padding: 10vh 12px; }
+  #clock-app .bar { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center; font-size:13px; margin-bottom:5vh; }
+  #clock-date { font-size: clamp(16px, 4vw, 28px); letter-spacing: .05em; opacity: .8; margin-bottom: 14px; }
+  #clock-app .row { display:flex; justify-content:center; align-items:center; }
+  #clock-main { --h: clamp(50px, 15vw, 150px); }
+  #clock-second-wrap { margin-top: 5vh; opacity: .85; }
+  #clock-second { --h: clamp(28px, 7vw, 70px); }
+  #second-label { font-size: 13px; letter-spacing: .08em; opacity: .7; margin-bottom: 6px; }
+  .dg { height: var(--h); aspect-ratio: 3 / 5; margin: 0 .6%; }
+  .cl { height: var(--h); aspect-ratio: .16; margin: 0 .4%; }
+  .dg polygon { fill: currentColor; opacity: .08; }
+  .dg polygon.on { opacity: 1; }
+  .cl rect { fill: currentColor; }
+  .ampm { font-size: calc(var(--h) * .2); margin-left: 10px; align-self: flex-end; opacity: .8; }
+
+  /* Night mode */
+  /* Paint the night background on <html> only: the sky canvas (z-index -1) sits above it,
+     whereas a body background would cover the canvas. */
+  html:has(body.night-mode) { background:#0a0000 !important; }
+  body.night-mode { background:transparent !important; color:#c03030; }
+  #clock-app.night, #clock-app.night * { color-scheme: dark; }
+  #clock-app.night { color:#c03030; }
+  #clock-app.night .dg, #clock-app.night .cl { filter: drop-shadow(0 0 6px rgba(200,0,0,.6)); }
+  #clock-app.night button, #clock-app.night select { background:#1a0000; color:#c03030; border:1px solid #600; }
+</style>
+
+<div id="clock-app">
+  <div class="bar">
+    <button id="fmt-btn">12-hour</button>
+    <label>Second clock
+      <select id="tz-select">
+        <option value="">None</option>
+        <option value="UTC">UTC</option>
+        <option value="America/New_York">New York</option>
+        <option value="America/Chicago">Chicago</option>
+        <option value="America/Denver">Denver</option>
+        <option value="America/Los_Angeles">Los Angeles</option>
+        <option value="Europe/London">London</option>
+        <option value="Europe/Paris">Paris</option>
+        <option value="Asia/Kolkata">Kolkata</option>
+        <option value="Asia/Tokyo">Tokyo</option>
+        <option value="Australia/Sydney">Sydney</option>
+      </select>
+    </label>
+    <button id="night-btn">🌜︎ Night Mode</button>
+  </div>
+
+  <div id="clock-date"></div>
+  <div class="row" id="clock-main"></div>
+
+  <div id="clock-second-wrap" hidden>
+    <div id="second-label"></div>
+    <div class="row" id="clock-second"></div>
+  </div>
+</div>
+
+<script>
+  //=== Seven-segment digit rendering (inline SVG, no fonts needed) ===//
+  const POLY = {
+    a: '10,4 14,0 46,0 50,4 46,8 14,8',
+    b: '56,5 60,9 60,45 56,49 52,45 52,9',
+    c: '56,51 60,55 60,91 56,95 52,91 52,55',
+    d: '10,96 14,92 46,92 50,96 46,100 14,100',
+    e: '4,51 8,55 8,91 4,95 0,91 0,55',
+    f: '4,5 8,9 8,45 4,49 0,45 0,9',
+    g: '10,50 14,46 46,46 50,50 46,54 14,54',
+  };
+  const SEG = { 0:'abcdef', 1:'bc', 2:'abdeg', 3:'abcdg', 4:'bcfg', 5:'acdfg', 6:'acdefg', 7:'abc', 8:'abcdefg', 9:'abcdfg', ' ':'' };
+
+  const digitSVG = ch => `<svg class="dg" viewBox="0 0 60 100">` +
+    Object.entries(POLY).map(([k, p]) => `<polygon class="${SEG[ch].includes(k) ? 'on' : ''}" points="${p}"/>`).join('') + `</svg>`;
+  const colonSVG = `<svg class="cl" viewBox="0 0 16 100"><rect x="4" y="28" width="8" height="8"/><rect x="4" y="64" width="8" height="8"/></svg>`;
+
+  //=== Time in a given timezone ('' = browser local) ===//
+  const fmtCache = {};
+  function hms(tz) {
+    const f = fmtCache[tz] ||= new Intl.DateTimeFormat('en-GB', {
+      timeZone: tz || undefined, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
+    const v = {};
+    f.formatToParts(new Date()).forEach(p => v[p.type] = +p.value);
+    return v;
+  }
+
+  let use12 = false;
+
+  function render(el, tz) {
+    const { hour, minute, second } = hms(tz);
+    const pad = n => String(n).padStart(2, '0');
+    const h = use12 ? (hour % 12 || 12) : hour;
+    const hh = use12 ? (h < 10 ? ' ' + h : '' + h) : pad(h);   // blank leading digit in 12-hour mode
+    const str = `${hh}:${pad(minute)}:${pad(second)}`;
+    el.innerHTML = [...str].map(c => c === ':' ? colonSVG : digitSVG(c)).join('')
+      + (use12 ? `<span class="ampm">${hour < 12 ? 'AM' : 'PM'}</span>` : '');
+  }
+
+  //=== Wiring ===//
+  const $ = id => document.getElementById(id);
+
+  function tick() {
+    $('clock-date').textContent = new Date().toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    render($('clock-main'), '');
+    const tz = $('tz-select').value;
+    $('clock-second-wrap').hidden = !tz;
+    if (tz) {
+      $('second-label').textContent = $('tz-select').selectedOptions[0].textContent;
+      render($('clock-second'), tz);
+    }
+  }
+
+  $('fmt-btn').addEventListener('click', e => {
+    use12 = !use12;
+    e.target.textContent = use12 ? '24-hour' : '12-hour';
+    tick();
+  });
+  $('tz-select').addEventListener('change', tick);
+  $('night-btn').addEventListener('click', e => {
+    const on = $('clock-app').classList.toggle('night');
+    document.body.classList.toggle('night-mode', on);
+    e.target.textContent = on ? '☀ Day Mode' : '🌜︎ Night Mode';
+  });
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+<script src="/assets/js/sky_background.js" defer></script>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+  <!--- Footer Content --->
+  	&copy Greg Furlich 2026 <br>
+  	All Rights Reserved<br>
+</footer>
+</body>
+
+</html>

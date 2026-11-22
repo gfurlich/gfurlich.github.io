@@ -145,15 +145,17 @@
 .wx-stats dt{font-size:11px;opacity:.8;margin-bottom:2px}
 .wx-stats dd{font-size:14px;font-weight:500;overflow-wrap:anywhere}
 
-/* hourly chart */
-.wx-chart{display:block;width:100%;height:auto;overflow:visible}
-.wx-chart .area{fill:rgba(60,120,210,.18)}
-.wx-chart .line{fill:none;stroke:#2f6fd0;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
-.wx-chart .dot{fill:#2f6fd0}
-.wx-chart text{font-size:13px;fill:currentColor;text-anchor:middle}
-.wx-chart .t{font-weight:600;font-size:14px}
-.wx-chart .h{opacity:.7}
-.wx-chart .pop{fill:var(--accent);font-size:12px}
+/* hourly table (scrolls inside its card) */
+.wx-hwrap{max-height:360px;overflow-y:auto;margin:0 -6px;padding:0 6px}
+.wx-htable{width:100%;border-collapse:collapse;font-size:13px}
+.wx-htable th{position:sticky;top:0;z-index:1;text-align:left;font-size:11px;font-weight:600;opacity:.8;padding:4px 6px;background:#dfe5ef;border-bottom:1px solid var(--line)}
+.wx-htable td{padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.wx-htable tr:last-child td{border-bottom:0}
+.wx-h-day td{padding:8px 6px 3px;font-size:12px;font-weight:700;border-bottom:0;background:rgba(128,128,128,.12)}
+.wx-h-time{white-space:nowrap;font-weight:600}
+.wx-h-temp{font-weight:600;white-space:nowrap}
+.wx-h-pop{color:var(--accent);white-space:nowrap}
+.wx-h-wind,.wx-h-hum{white-space:nowrap}
 
 /* 7-day */
 .wx-icon{width:36px;height:36px;border-radius:6px;display:block}
@@ -173,6 +175,16 @@
 
 .wx-credit{font-size:11px;opacity:.65;margin-top:20px}
 
+/* radar + forecast graph */
+.wx-cardhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.wx-cardhead h3{margin:0}
+.wx-cardhead a{font-size:12px}
+.wx .wx-media img{display:block;max-width:100%;height:auto;margin:0 auto;border-radius:6px;background:rgba(255,255,255,.5)}
+.wx .wx-media img[hidden]{display:none!important}
+.wx-graph-scroll{overflow-x:auto}
+.wx-media-note,.wx-media-msg{font-size:11px;opacity:.7;margin-top:6px}
+.wx-graph-card{margin-top:16px}
+
 @media (max-width:900px){
   .wx-layout{grid-template-columns:1fr}
 }
@@ -182,6 +194,7 @@
   .wx-day-row{grid-template-columns:62px minmax(0,1fr) 30px 54px 30px;gap:6px}
   .wx-day-row .wx-icon{display:none}
   .wx-day-detail{margin-left:0}
+  .wx-h-hum{display:none}
 }
 </style>
 
@@ -234,11 +247,32 @@
       </section>
     </div>
 
-    <section class="wx-card">
-      <h3>7-day forecast <small style="font-weight:400;opacity:.7">(tap a day for details)</small></h3>
-      <div id="wx-daily"></div>
-    </section>
+    <div class="wx-col">
+      <section class="wx-card">
+        <h3>7-day forecast <small style="font-weight:400;opacity:.7">(tap a day for details)</small></h3>
+        <div id="wx-daily"></div>
+      </section>
+
+      <section class="wx-card wx-media" id="wx-radar-card" hidden>
+        <div class="wx-cardhead">
+          <h3 id="wx-radar-title">Radar</h3>
+          <a id="wx-radar-link" href="https://radar.weather.gov" target="_blank" rel="noopener">Interactive radar &#8599;</a>
+        </div>
+        <img id="wx-radar" alt="Animated local NWS radar loop">
+        <p id="wx-radar-msg" class="wx-media-msg" hidden>The radar loop couldn't be loaded right now.</p>
+        <p class="wx-media-note">Animated loop of recent scans; refreshes about every 5 minutes.</p>
+      </section>
+    </div>
   </div>
+
+  <section class="wx-card wx-media wx-graph-card" id="wx-graph-card" hidden>
+    <div class="wx-cardhead">
+      <h3>Hourly weather forecast graph (48 hours)</h3>
+      <a id="wx-graph-link" href="https://forecast.weather.gov" target="_blank" rel="noopener">Full graph on forecast.weather.gov &#8599;</a>
+    </div>
+    <div class="wx-graph-scroll"><img id="wx-graph" alt="Hourly weather forecast graph: temperature, dewpoint, wind, sky cover, precipitation potential and humidity"></div>
+    <p id="wx-graph-msg" class="wx-media-msg" hidden>The forecast graph couldn't be loaded right now.</p>
+  </section>
 
   <p class="wx-credit">
     Data: <a href="https://www.weather.gov" target="_blank" rel="noopener">National Weather Service</a>

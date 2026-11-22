@@ -24,6 +24,9 @@
     // Color: null = read the background color of your .topnav bar at load time.
     color: null,
     fallbackColor: '#1c2b4a',
+    // Night mode: used while <body> has the class "night-mode" (toggled by the clock / almanac pages)
+    nightColor: '#b02828',
+    nightLineLighten: 0.12,   // keep constellation lines red instead of pinkish-white
 
     fov: 100,                 // degrees across the larger screen dimension
     timeScale: 20,             // 1 = real time. 600 = sky turns 10 min per second (fun for testing)
@@ -166,6 +169,7 @@
   const ctx = canvas.getContext('2d');
 
   let rgb = [28, 43, 74];
+  let night = false;        // mirrors body.night-mode
   const c = (a) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
 
   function parseColor(str) {
@@ -210,7 +214,7 @@
         if (el) { col = parseColor(getComputedStyle(el).backgroundColor); if (col) break; }
       }
     }
-    rgb = col || parseColor(cfg.fallbackColor);
+    rgb = night ? parseColor(cfg.nightColor) : (col || parseColor(cfg.fallbackColor));
     spriteCache.clear();
   }
 
@@ -514,7 +518,7 @@
 
     // Constellation lines (lighter tint of the star color)
     if (cfg.constellationLines) {
-      const L = cfg.lineLighten;
+      const L = night ? cfg.nightLineLighten : cfg.lineLighten;
       ctx.strokeStyle = `rgba(${Math.round(rgb[0] + (255 - rgb[0]) * L)},${Math.round(rgb[1] + (255 - rgb[1]) * L)},${Math.round(rgb[2] + (255 - rgb[2]) * L)},${cfg.lineAlpha})`;
       ctx.lineWidth = cfg.lineWidth;
       ctx.beginPath();
@@ -605,7 +609,13 @@
   // ------------------------------------------------------------------
   function start() {
     document.body.prepend(canvas);
+    night = document.body.classList.contains('night-mode');
     pickColor();
+    // Re-color the sky whenever night mode is toggled
+    new MutationObserver(() => {
+      const n = document.body.classList.contains('night-mode');
+      if (n !== night) { night = n; pickColor(); }
+    }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
     resize();
     window.addEventListener('resize', resize);
     window.addEventListener('load', pickColor);   // re-read once all CSS has applied
